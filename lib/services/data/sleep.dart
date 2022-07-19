@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:vital_flutter/services/data/vitals.dart';
 import 'user.dart';
 
 part 'sleep.g.dart';
@@ -82,11 +83,11 @@ class SleepData {
 
 @JsonSerializable()
 class SleepStreamResponse {
-  List<SleepMeasurement> hrv;
-  List<SleepMeasurement> heartrate;
-  List<SleepMeasurement> hypnogram;
+  List<Measurement> hrv;
+  List<Measurement> heartrate;
+  List<Measurement> hypnogram;
   @JsonKey(name: 'respiratory_rate')
-  List<SleepMeasurement> respiratoryRate;
+  List<Measurement> respiratoryRate;
 
   SleepStreamResponse({
     this.hrv = const [],
@@ -96,23 +97,4 @@ class SleepStreamResponse {
   });
 
   factory SleepStreamResponse.fromJson(Map<String, dynamic> json) => _$SleepStreamResponseFromJson(json);
-}
-
-@JsonSerializable()
-class SleepMeasurement {
-  int id;
-  DateTime timestamp;
-  double? value;
-  String? type;
-  String? unit;
-
-  SleepMeasurement({
-    required this.id,
-    required this.timestamp,
-    this.value,
-    this.type,
-    this.unit,
-  });
-
-  factory SleepMeasurement.fromJson(Map<String, dynamic> json) => _$SleepMeasurementFromJson(json);
 }

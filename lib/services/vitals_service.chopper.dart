@@ -17,17 +17,17 @@ class _$VitalsService extends VitalsService {
   final definitionType = VitalsService;
 
   @override
-  Future<Response<Object>> _timeseriesRequest(
+  Future<Response<List<Measurement>>> _timeseriesRequest(
       String userId, String resource, String startDate,
       {String? endDate, String? provider}) {
     final $url = 'timeseries/${userId}/${resource}';
-    final $body = <String, dynamic>{
+    final $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider
     };
-    final $request = Request('GET', $url, client.baseUrl, body: $body);
-    return client.send<Object, Object>($request,
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<List<Measurement>, Measurement>($request,
         requestConverter: JsonConverter.requestFactory);
   }
 }

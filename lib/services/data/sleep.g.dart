@@ -81,19 +81,19 @@ Map<String, dynamic> _$SleepDataToJson(SleepData instance) => <String, dynamic>{
 SleepStreamResponse _$SleepStreamResponseFromJson(Map<String, dynamic> json) =>
     SleepStreamResponse(
       hrv: (json['hrv'] as List<dynamic>?)
-              ?.map((e) => SleepMeasurement.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => Measurement.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       heartrate: (json['heartrate'] as List<dynamic>?)
-              ?.map((e) => SleepMeasurement.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => Measurement.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       hypnogram: (json['hypnogram'] as List<dynamic>?)
-              ?.map((e) => SleepMeasurement.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => Measurement.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       respiratoryRate: (json['respiratory_rate'] as List<dynamic>?)
-              ?.map((e) => SleepMeasurement.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => Measurement.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );
@@ -105,22 +105,4 @@ Map<String, dynamic> _$SleepStreamResponseToJson(
       'heartrate': instance.heartrate,
       'hypnogram': instance.hypnogram,
       'respiratory_rate': instance.respiratoryRate,
-    };
-
-SleepMeasurement _$SleepMeasurementFromJson(Map<String, dynamic> json) =>
-    SleepMeasurement(
-      id: json['id'] as int,
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      value: (json['value'] as num?)?.toDouble(),
-      type: json['type'] as String?,
-      unit: json['unit'] as String?,
-    );
-
-Map<String, dynamic> _$SleepMeasurementToJson(SleepMeasurement instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'timestamp': instance.timestamp.toIso8601String(),
-      'value': instance.value,
-      'type': instance.type,
-      'unit': instance.unit,
     };
