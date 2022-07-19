@@ -1,0 +1,1 @@
+enum Region { eu, us }
