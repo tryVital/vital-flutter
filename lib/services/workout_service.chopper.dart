@@ -17,38 +17,36 @@ class _$WorkoutService extends WorkoutService {
   final definitionType = WorkoutService;
 
   @override
-  Future<Response<Object>> getWorkout(
-      String userId, DateTime startDate, DateTime? endDate, String? provider) {
+  Future<Response<WorkoutsResponse>> getWorkouts(
+      String userId, DateTime startDate,
+      {DateTime? endDate, String? provider}) {
     final $url = 'summary/workouts/${userId}';
-    final $body = <String, dynamic>{
+    final $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider
     };
-    final $request = Request('GET', $url, client.baseUrl, body: $body);
-    return client.send<Object, Object>($request,
-        requestConverter: JsonConverter.requestFactory);
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<WorkoutsResponse, WorkoutsResponse>($request);
   }
 
   @override
-  Future<Response<Object>> getWorkoutRaw(
+  Future<Response<Object>> getWorkoutsRaw(
       String userId, DateTime startDate, DateTime? endDate, String? provider) {
     final $url = 'summary/workouts/${userId}/raw';
-    final $body = <String, dynamic>{
+    final $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider
     };
-    final $request = Request('GET', $url, client.baseUrl, body: $body);
-    return client.send<Object, Object>($request,
-        requestConverter: JsonConverter.requestFactory);
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<Object>> getWorkoutStream(String workoutId) {
+  Future<Response<WorkoutStreamResponse>> getWorkoutStream(String workoutId) {
     final $url = 'timeseries/workouts/${workoutId}/stream';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<Object, Object>($request,
-        requestConverter: JsonConverter.requestFactory);
+    return client.send<WorkoutStreamResponse, WorkoutStreamResponse>($request);
   }
 }

@@ -27,7 +27,6 @@ class _$VitalsService extends VitalsService {
       'provider': provider
     };
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
-    return client.send<List<Measurement>, Measurement>($request,
-        requestConverter: JsonConverter.requestFactory);
+    return client.send<List<Measurement>, Measurement>($request);
   }
 }

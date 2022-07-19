@@ -2,42 +2,44 @@ library vital;
 
 import 'dart:async';
 import 'package:chopper/chopper.dart';
+import 'package:vital_flutter/services/data/workout.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
+import 'package:vital_flutter/services/utils/json_serializable_converter.dart';
 
 part 'workout_service.chopper.dart';
 
 @ChopperApi()
 abstract class WorkoutService extends ChopperService {
   @Get(path: 'summary/workouts/{user_id}')
-  @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<Object>> getWorkout(
+  Future<Response<WorkoutsResponse>> getWorkouts(
     @Path('user_id') String userId,
-    @Field('start_date') DateTime startDate,
-    @Field('end_date') DateTime? endDate,
-    @Field('provider') String? provider,
-  );
+    @Query('start_date') DateTime startDate, {
+    @Query('end_date') DateTime? endDate,
+    @Query('provider') String? provider,
+  });
 
   @Get(path: 'summary/workouts/{user_id}/raw')
-  @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<Object>> getWorkoutRaw(
+  Future<Response<Object>> getWorkoutsRaw(
     @Path('user_id') String userId,
-    @Field('start_date') DateTime startDate,
-    @Field('end_date') DateTime? endDate,
-    @Field('provider') String? provider,
+    @Query('start_date') DateTime startDate,
+    @Query('end_date') DateTime? endDate,
+    @Query('provider') String? provider,
   );
 
   @Get(path: 'timeseries/workouts/{workout_id}/stream')
-  @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<Object>> getWorkoutStream(
+  Future<Response<WorkoutStreamResponse>> getWorkoutStream(
     @Path('workout_id') String workoutId,
   );
 
   static WorkoutService create(String baseUrl, String apiKey) {
     final client = ChopperClient(
-      baseUrl: baseUrl,
-      interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
-    );
+        baseUrl: baseUrl,
+        interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+        converter: const JsonSerializableConverter({
+          WorkoutsResponse: WorkoutsResponse.fromJson,
+          WorkoutStreamResponse: WorkoutStreamResponse.fromJson,
+        }));
 
     return _$WorkoutService(client);
   }

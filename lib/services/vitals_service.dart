@@ -13,7 +13,6 @@ part 'vitals_service.chopper.dart';
 @ChopperApi()
 abstract class VitalsService extends ChopperService {
   @Get(path: 'timeseries/{user_id}/{resource}')
-  @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<List<Measurement>>> _timeseriesRequest(
     @Path('user_id') String userId,
     @Path('resource') String resource,

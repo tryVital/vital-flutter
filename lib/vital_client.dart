@@ -1,6 +1,5 @@
 import 'package:vital_flutter/services/activity_service.dart';
 import 'package:vital_flutter/services/body_service.dart';
-import 'package:vital_flutter/services/devices_service.dart';
 import 'package:vital_flutter/services/link_service.dart';
 import 'package:vital_flutter/services/profile_service.dart';
 import 'package:vital_flutter/services/sleep_service.dart';
@@ -18,7 +17,6 @@ class VitalClient {
 
   late final activityService = ActivityService.create(_baseUrl, _apiKey);
   late final bodyService = BodyService.create(_baseUrl, _apiKey);
-  late final devicesService = DevicesService.create(_baseUrl, _apiKey);
   late final linkService = LinkService.create(_baseUrl, _apiKey);
   late final profileService = ProfileService.create(_baseUrl, _apiKey);
   late final sleepService = SleepService.create(_baseUrl, _apiKey);

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/region.dart';
-import 'package:vital_flutter/services/data/vitals.dart';
 import 'package:vital_flutter/services/user_service.dart';
 import 'package:vital_flutter/services/vitals_service.dart';
 import 'package:vital_flutter/vital_client.dart';
