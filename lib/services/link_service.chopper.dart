@@ -17,7 +17,7 @@ class _$LinkService extends LinkService {
   final definitionType = LinkService;
 
   @override
-  Future<Response<Object>> createLink(
+  Future<Response<CreateLinkResponse>> createLink(
       String userId, String provider, String redirectUrl) {
     final $url = 'link/token';
     final $body = <String, dynamic>{
@@ -26,14 +26,14 @@ class _$LinkService extends LinkService {
       'redirect_url': redirectUrl
     };
     final $request = Request('POST', $url, client.baseUrl, body: $body);
-    return client.send<Object, Object>($request,
+    return client.send<CreateLinkResponse, CreateLinkResponse>($request,
         requestConverter: JsonConverter.requestFactory);
   }
 
   @override
-  Future<Response<Object>> passwordProvider(
-      String username, String password, String redirectUrl, String linkToken) {
-    final $url = 'link/provider/password/{provider}';
+  Future<Response<Object>> passwordProvider(String provider, String username,
+      String password, String redirectUrl, String linkToken) {
+    final $url = 'link/provider/password/${provider}';
     final $headers = {
       'LinkToken': linkToken,
     };
@@ -50,9 +50,9 @@ class _$LinkService extends LinkService {
   }
 
   @override
-  Future<Response<Object>> emailProvider(
-      String email, String? region, String linkToken) {
-    final $url = 'link/provider/email/{provider}';
+  Future<Response<Object>> _emailProvider(
+      String provider, String email, String? region, String linkToken) {
+    final $url = 'link/provider/email/${provider}';
     final $headers = {
       'x-vital-link-token': linkToken,
     };
@@ -65,14 +65,15 @@ class _$LinkService extends LinkService {
   }
 
   @override
-  Future<Response<Object>> oauthProvider(String provider, String linkToken) {
+  Future<Response<OauthLinkResponse>> oauthProvider(
+      String provider, String linkToken) {
     final $url = 'link/provider/oauth/${provider}';
     final $headers = {
       'LinkToken': linkToken,
     };
 
-    final $request = Request('POST', $url, client.baseUrl, headers: $headers);
-    return client.send<Object, Object>($request,
+    final $request = Request('GET', $url, client.baseUrl, headers: $headers);
+    return client.send<OauthLinkResponse, OauthLinkResponse>($request,
         requestConverter: JsonConverter.requestFactory);
   }
 }
