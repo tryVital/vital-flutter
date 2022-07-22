@@ -41,3 +41,17 @@ Map<String, dynamic> _$OauthLinkResponseToJson(OauthLinkResponse instance) =>
       'is_active': instance.isActive,
       'id': instance.id,
     };
+
+EmailProviderResponse _$EmailProviderResponseFromJson(
+        Map<String, dynamic> json) =>
+    EmailProviderResponse(
+      redirectUrl: json['redirect_url'] as String?,
+      success: json['success'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$EmailProviderResponseToJson(
+        EmailProviderResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'redirect_url': instance.redirectUrl,
+    };

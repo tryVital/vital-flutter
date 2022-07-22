@@ -43,3 +43,17 @@ class OauthLinkResponse {
 
   factory OauthLinkResponse.fromJson(Map<String, dynamic> json) => _$OauthLinkResponseFromJson(json);
 }
+
+@JsonSerializable()
+class EmailProviderResponse {
+  bool success;
+  @JsonKey(name: 'redirect_url')
+  String? redirectUrl;
+
+  EmailProviderResponse({
+    this.redirectUrl,
+    this.success = false,
+  });
+
+  factory EmailProviderResponse.fromJson(Map<String, dynamic> json) => _$EmailProviderResponseFromJson(json);
+}

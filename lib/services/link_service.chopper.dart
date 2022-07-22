@@ -31,8 +31,8 @@ class _$LinkService extends LinkService {
   }
 
   @override
-  Future<Response<Object>> passwordProvider(String provider, String username,
-      String password, String redirectUrl, String linkToken) {
+  Future<Response<EmailProviderResponse>> passwordProvider(String provider,
+      String username, String password, String redirectUrl, String linkToken) {
     final $url = 'link/provider/password/${provider}';
     final $headers = {
       'LinkToken': linkToken,
@@ -45,12 +45,12 @@ class _$LinkService extends LinkService {
     };
     final $request =
         Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
-    return client.send<Object, Object>($request,
+    return client.send<EmailProviderResponse, EmailProviderResponse>($request,
         requestConverter: JsonConverter.requestFactory);
   }
 
   @override
-  Future<Response<Object>> _emailProvider(
+  Future<Response<EmailProviderResponse>> _emailProvider(
       String provider, String email, String? region, String linkToken) {
     final $url = 'link/provider/email/${provider}';
     final $headers = {
@@ -60,7 +60,7 @@ class _$LinkService extends LinkService {
     final $body = <String, dynamic>{'email': email, 'region': region};
     final $request =
         Request('POST', $url, client.baseUrl, body: $body, headers: $headers);
-    return client.send<Object, Object>($request,
+    return client.send<EmailProviderResponse, EmailProviderResponse>($request,
         requestConverter: JsonConverter.requestFactory);
   }
 

@@ -22,7 +22,7 @@ abstract class LinkService extends ChopperService {
 
   @Post(path: 'link/provider/password/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<Object>> passwordProvider(
+  Future<Response<EmailProviderResponse>> passwordProvider(
     @Path('provider') String provider,
     @Field('username') String username,
     @Field('password') String password,
@@ -32,14 +32,14 @@ abstract class LinkService extends ChopperService {
 
   @Post(path: 'link/provider/email/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<Object>> _emailProvider(
+  Future<Response<EmailProviderResponse>> _emailProvider(
     @Path('provider') String provider,
     @Field('email') String email,
     @Field('region') String? region,
     @Header('x-vital-link-token') String linkToken,
   );
 
-  Future<Response<Object>> emailProvider(
+  Future<Response<EmailProviderResponse>> emailProvider(
     String provider,
     String email,
     Region region,
@@ -52,7 +52,7 @@ abstract class LinkService extends ChopperService {
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<OauthLinkResponse>> oauthProvider(
     @Path('provider') String provider,
-    @Header('LinkToken') String linkToken, //TODO: Check if "LinkToken" or "x-vital..."
+    @Header('LinkToken') String linkToken,
   );
 
   static LinkService create(String baseUrl, String apiKey) {
@@ -62,6 +62,7 @@ abstract class LinkService extends ChopperService {
       converter: const JsonSerializableConverter({
         CreateLinkResponse: CreateLinkResponse.fromJson,
         OauthLinkResponse: OauthLinkResponse.fromJson,
+        EmailProviderResponse: EmailProviderResponse.fromJson,
       }),
     );
 

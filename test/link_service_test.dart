@@ -16,11 +16,11 @@ void main() {
   tearDown(() {});
 
   test('Link service', () async {
-    //const apiKey = 'sk_eu_HCgKZT1Icv0Oyw8mmpyPu6E2NuD-bnmeFFeg43k2hgw';
-    const apiKey = 'sk_us_309IjVjh-vSuDw-DM_06k3b3N2NzuItWYmQ9pRhLDV0';
+    const apiKey = 'sk_eu_HCgKZT1Icv0Oyw8mmpyPu6E2NuD-bnmeFFeg43k2hgw';
+    //const apiKey = 'sk_us_309IjVjh-vSuDw-DM_06k3b3N2NzuItWYmQ9pRhLDV0';
     final VitalClient client = VitalClient()
       ..init(
-        region: Region.us,
+        region: Region.eu,
         environment: Environment.sandbox,
         apiKey: apiKey,
       );
@@ -33,17 +33,20 @@ void main() {
     final oauth = await linkService.oauthProvider('strava', link.body!.linkToken!);
     print(oauth);
 
+    final deregister = await client.userService.deregisterProvider(users.body![1].userId!, 'freestyle_libre');
+    print(deregister);
+
     final link2 = await linkService.createLink(users.body![0].userId!, 'freestyle_libre', 'callback://freestyle');
     print(link2);
     final email = await linkService.emailProvider(
       'freestyle_libre',
       'jan.knotek@gmail.com',
-      Region.us,
+      Region.eu,
       link2.body!.linkToken!,
     );
     print(email);
 
-    final link3 = await linkService.createLink(users.body![0].userId!, 'renpho', 'callback://renpho');
+    /*final link3 = await linkService.createLink(users.body![0].userId!, 'renpho', 'callback://renpho');
     print(link3);
     final password = await linkService.passwordProvider(
       'renpho',
@@ -52,7 +55,7 @@ void main() {
       'callback://renpho',
       link2.body!.linkToken!,
     );
-    print(password);
+    print(password);*/
   });
 }
 
