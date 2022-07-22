@@ -48,7 +48,7 @@ class SleepData {
   double? averageHrv;
   @JsonKey(name: 'respiratory_rate')
   double? respiratoryRate;
-  Source source;
+  Source? source;
   @JsonKey(name: 'sleep_stream')
   SleepStreamResponse? sleepStream;
 
@@ -74,7 +74,7 @@ class SleepData {
     this.temperatureDelta,
     this.averageHrv,
     this.respiratoryRate,
-    required this.source,
+    this.source,
     this.sleepStream,
   });
 

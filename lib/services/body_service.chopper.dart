@@ -17,7 +17,7 @@ class _$BodyService extends BodyService {
   final definitionType = BodyService;
 
   @override
-  Future<Response<BodyData>> getBodyData(
+  Future<Response<BodyDataResponse>> getBodyData(
       String userId, DateTime startDate, DateTime? endDate, String? provider) {
     final $url = '/summary/body/${userId}';
     final $params = <String, dynamic>{
@@ -26,6 +26,6 @@ class _$BodyService extends BodyService {
       'provider': provider
     };
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
-    return client.send<BodyData, BodyData>($request);
+    return client.send<BodyDataResponse, BodyDataResponse>($request);
   }
 }

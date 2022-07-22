@@ -1,40 +1,77 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_flutter/environment.dart';
-import 'package:vital_flutter/region.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:vital_flutter/services/profile_service.dart';
-import 'package:vital_flutter/services/user_service.dart';
-import 'package:vital_flutter/vital_client.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    HttpOverrides.global = _MyHttpOverrides();
-  });
+  setUp(() {});
 
   tearDown(() {});
 
-  test('Profile service', () async {
-    //const apiKey = 'sk_eu_HCgKZT1Icv0Oyw8mmpyPu6E2NuD-bnmeFFeg43k2hgw';
-    const apiKey = 'sk_us_309IjVjh-vSuDw-DM_06k3b3N2NzuItWYmQ9pRhLDV0';
-    final VitalClient client = VitalClient()
-      ..init(
-        region: Region.us,
-        environment: Environment.sandbox,
-        apiKey: apiKey,
-      );
-    final UserService userService = client.userService;
-    final ProfileService profileService = client.profileService;
+  group('Profile service', () {
+    test('Get profile', () async {
+      final httpClient = profileClient(fakeProfileResponse);
 
-    final users = await userService.getAll();
+      final sut = ProfileService.create(httpClient, '', apiKey);
+      final response = await sut.getProfile(userId, null);
 
-    final profile = await profileService.getProfile(
-      users.body![0].userId!,
-      null,
-    );
-    print(profile);
+      final profile = response.body!;
+      expect(profile.id, userId);
+      expect(profile.userId, userId);
+      expect(profile.height, 180);
+      expect(profile.source!.name, 'Oura');
+      expect(profile.source!.slug, 'oura');
+    });
+
+    test('Get profile nulls', () async {
+      final httpClient = profileClient(fakeProfileResponseNulls);
+
+      final sut = ProfileService.create(httpClient, '', apiKey);
+      final response = await sut.getProfile(userId, null);
+
+      final profile = response.body!;
+      expect(profile.id, userId);
+      expect(profile.userId, userId);
+      expect(profile.height, null);
+      expect(profile.source, null);
+    });
   });
 }
 
-class _MyHttpOverrides extends HttpOverrides {}
+MockClient profileClient(String response) {
+  return MockClient((http.Request req) async {
+    expect(req.url.toString(), '/summary/profile/user_id_1');
+    expect(req.method, 'GET');
+    expect(req.headers['x-vital-api-key'], apiKey);
+    return http.Response(
+      response,
+      200,
+      headers: {'content-type': 'application/json; charset=utf-8'},
+    );
+  });
+}
+
+const apiKey = 'API_KEY';
+const userId = 'user_id_1';
+
+const fakeProfileResponse = '''{
+    "user_id": "user_id_1",
+    "user_key": "user_key_1",
+    "id": "user_id_1",
+    "height": 180,
+    "source": {
+        "name": "Oura",
+        "slug": "oura",
+        "logo": "https://storage.googleapis.com/vital-assets/oura.png"
+    }
+}''';
+
+const fakeProfileResponseNulls = '''{
+    "user_id": "user_id_1",
+    "user_key": null,
+    "id": "user_id_1",
+    "height": null,
+    "source": null
+}''';

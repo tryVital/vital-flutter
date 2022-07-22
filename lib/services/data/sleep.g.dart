@@ -45,7 +45,9 @@ SleepData _$SleepDataFromJson(Map<String, dynamic> json) => SleepData(
       temperatureDelta: (json['temperature_delta'] as num?)?.toDouble(),
       averageHrv: (json['average_hrv'] as num?)?.toDouble(),
       respiratoryRate: (json['respiratory_rate'] as num?)?.toDouble(),
-      source: Source.fromJson(json['source'] as Map<String, dynamic>),
+      source: json['source'] == null
+          ? null
+          : Source.fromJson(json['source'] as Map<String, dynamic>),
       sleepStream: json['sleep_stream'] == null
           ? null
           : SleepStreamResponse.fromJson(

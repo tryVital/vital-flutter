@@ -13,7 +13,7 @@ part 'body_service.chopper.dart';
 @ChopperApi()
 abstract class BodyService extends ChopperService {
   @Get(path: '/summary/body/{user_id}')
-  Future<Response<BodyData>> getBodyData(
+  Future<Response<BodyDataResponse>> getBodyData(
     @Path('user_id') String userId,
     @Query('start_date') DateTime startDate,
     @Query('end_date') DateTime? endDate,

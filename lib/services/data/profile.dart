@@ -6,19 +6,19 @@ part 'profile.g.dart';
 @JsonSerializable()
 class Profile {
   @JsonKey(name: 'user_id')
-  String? userId;
+  String userId;
   @JsonKey(name: 'user_key')
   String? userKey;
   String id;
   double? height;
-  Source source;
+  Source? source;
 
   Profile({
-    this.userId,
+    required this.userId,
     this.userKey,
     required this.id,
     this.height,
-    required this.source,
+    this.source,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
