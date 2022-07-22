@@ -6,6 +6,7 @@ import 'package:vital_flutter/services/data/workout.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
 import 'package:vital_flutter/services/utils/json_serializable_converter.dart';
+import 'package:http/http.dart' as http;
 
 part 'workout_service.chopper.dart';
 
@@ -32,8 +33,9 @@ abstract class WorkoutService extends ChopperService {
     @Path('workout_id') String workoutId,
   );
 
-  static WorkoutService create(String baseUrl, String apiKey) {
+  static WorkoutService create(http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
+        client: httpClient,
         baseUrl: baseUrl,
         interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
         converter: const JsonSerializableConverter({

@@ -6,6 +6,7 @@ import 'package:vital_flutter/services/data/body.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
 import 'package:vital_flutter/services/utils/json_serializable_converter.dart';
+import 'package:http/http.dart' as http;
 
 part 'body_service.chopper.dart';
 
@@ -19,8 +20,9 @@ abstract class BodyService extends ChopperService {
     @Query('provider') String? provider,
   );
 
-  static BodyService create(String baseUrl, String apiKey) {
+  static BodyService create(http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
+      client: httpClient,
       baseUrl: baseUrl,
       interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
       converter: const JsonSerializableConverter({

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
+import 'package:http/http.dart' as http;
 
 import 'data/user.dart';
 import 'utils/json_serializable_converter.dart';
@@ -42,8 +43,9 @@ abstract class UserService extends ChopperService {
   @Post(path: '/user/refresh/{user_id}', optionalBody: true)
   Future<Response<RefreshResponse>> refreshUser(@Path('user_id') String userId);
 
-  static UserService create(String baseUrl, String apiKey) {
+  static UserService create(http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
+        client: httpClient,
         baseUrl: baseUrl,
         interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
         converter: const JsonSerializableConverter({

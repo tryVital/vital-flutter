@@ -38,17 +38,17 @@ class _$TestkitsService extends TestkitsService {
   }
 
   @override
-  Future<Response<Object>> getOrderStatus(String orderId) {
+  Future<Response<OrderData>> getOrderStatus(String orderId) {
     final $url = 'testkit/orders/${orderId}';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<Object, Object>($request);
+    return client.send<OrderData, OrderData>($request);
   }
 
   @override
-  Future<Response<Object>> getOrder(String orderId) {
+  Future<Response<OrderData>> getOrder(String orderId) {
     final $url = 'testkit/orders/${orderId}';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<Object, Object>($request);
+    return client.send<OrderData, OrderData>($request);
   }
 
   @override

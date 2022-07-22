@@ -6,6 +6,7 @@ import 'package:vital_flutter/services/data/sleep.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
 import 'package:vital_flutter/services/utils/json_serializable_converter.dart';
+import 'package:http/http.dart' as http;
 
 part 'sleep_service.chopper.dart';
 
@@ -65,8 +66,9 @@ abstract class SleepService extends ChopperService {
   @Get(path: 'timeseries/sleep/{sleep_id}/stream')
   Future<Response<SleepStreamResponse>> getSleepStream(@Path('sleep_id') String sleepId);
 
-  static SleepService create(String baseUrl, String apiKey) {
+  static SleepService create(http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
+      client: httpClient,
       baseUrl: baseUrl,
       interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
       converter: const JsonSerializableConverter({

@@ -6,6 +6,7 @@ import 'package:vital_flutter/services/data/testkits.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
 import 'package:vital_flutter/services/utils/json_serializable_converter.dart';
+import 'package:http/http.dart' as http;
 
 part 'testkits_service.chopper.dart';
 
@@ -29,10 +30,10 @@ abstract class TestkitsService extends ChopperService {
 
   @Get(path: 'testkit/orders/{order_id}')
   @Deprecated('For backwards compatibility, use getOrder')
-  Future<Response<Object>> getOrderStatus(@Path('order_id') String orderId);
+  Future<Response<OrderData>> getOrderStatus(@Path('order_id') String orderId);
 
   @Get(path: 'testkit/orders/{order_id}')
-  Future<Response<Object>> getOrder(@Path('order_id') String orderId);
+  Future<Response<OrderData>> getOrder(@Path('order_id') String orderId);
 
   @Get(path: 'testkit/orders')
   Future<Response<OrdersResponse>> _getAllOrders(
@@ -62,14 +63,16 @@ abstract class TestkitsService extends ChopperService {
   @Post(path: 'testkit/orders/{order_id}/cancel', optionalBody: true)
   Future<Response<OrderResponse>> cancelOrder(@Path('order_id') String orderId);
 
-  static TestkitsService create(String baseUrl, String apiKey) {
+  static TestkitsService create(http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
+        client: httpClient,
         baseUrl: baseUrl,
         interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
         converter: const JsonSerializableConverter({
           OrdersResponse: OrdersResponse.fromJson,
           TestkitsResponse: TestkitsResponse.fromJson,
           OrderResponse: OrderResponse.fromJson,
+          OrderData: OrderData.fromJson,
         }));
 
     return _$TestkitsService(client);

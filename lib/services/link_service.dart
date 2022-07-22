@@ -7,6 +7,7 @@ import 'package:vital_flutter/services/data/link.dart';
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
 import 'package:vital_flutter/services/utils/json_serializable_converter.dart';
+import 'package:http/http.dart' as http;
 
 part 'link_service.chopper.dart';
 
@@ -55,8 +56,9 @@ abstract class LinkService extends ChopperService {
     @Header('LinkToken') String linkToken,
   );
 
-  static LinkService create(String baseUrl, String apiKey) {
+  static LinkService create(http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
+      client: httpClient,
       baseUrl: baseUrl,
       interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
       converter: const JsonSerializableConverter({

@@ -87,6 +87,15 @@ OrderData _$OrderDataFromJson(Map<String, dynamic> json) => OrderData(
       outboundTrackingUrl: json['outbound_tracking_url'] as String?,
       outboundCourier: json['outbound_courier'] as String?,
       inboundCourier: json['inbound_courier'] as String?,
+      patientAddress: json['patient_address'] == null
+          ? null
+          : PatientAddress.fromJson(
+              json['patient_address'] as Map<String, dynamic>),
+      patientDetails: json['patient_details'] == null
+          ? null
+          : PatientDetails.fromJson(
+              json['patient_details'] as Map<String, dynamic>),
+      sampleId: json['sample_id'] as String?,
     );
 
 Map<String, dynamic> _$OrderDataToJson(OrderData instance) => <String, dynamic>{
@@ -105,6 +114,9 @@ Map<String, dynamic> _$OrderDataToJson(OrderData instance) => <String, dynamic>{
       'outbound_tracking_url': instance.outboundTrackingUrl,
       'outbound_courier': instance.outboundCourier,
       'inbound_courier': instance.inboundCourier,
+      'patient_address': instance.patientAddress,
+      'patient_details': instance.patientDetails,
+      'sample_id': instance.sampleId,
     };
 
 Testkit _$TestkitFromJson(Map<String, dynamic> json) => Testkit(

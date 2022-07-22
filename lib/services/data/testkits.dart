@@ -91,6 +91,12 @@ class OrderData {
   String? outboundCourier;
   @JsonKey(name: 'inbound_courier')
   String? inboundCourier;
+  @JsonKey(name: 'patient_address')
+  PatientAddress? patientAddress;
+  @JsonKey(name: 'patient_details')
+  PatientDetails? patientDetails;
+  @JsonKey(name: 'sample_id')
+  String? sampleId;
 
   OrderData({
     this.userId,
@@ -108,6 +114,9 @@ class OrderData {
     this.outboundTrackingUrl,
     this.outboundCourier,
     this.inboundCourier,
+    this.patientAddress,
+    this.patientDetails,
+    this.sampleId,
   });
 
   factory OrderData.fromJson(Map<String, dynamic> json) => _$OrderDataFromJson(json);

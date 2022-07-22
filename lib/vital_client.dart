@@ -7,29 +7,32 @@ import 'package:vital_flutter/services/testkits_service.dart';
 import 'package:vital_flutter/services/user_service.dart';
 import 'package:vital_flutter/services/vitals_service.dart';
 import 'package:vital_flutter/services/workout_service.dart';
+import 'package:http/http.dart' as http;
 
 import 'environment.dart';
 import 'region.dart';
 
 class VitalClient {
+  late final http.Client _httpClient;
   late final String _baseUrl;
   late final String _apiKey;
 
-  late final activityService = ActivityService.create(_baseUrl, _apiKey);
-  late final bodyService = BodyService.create(_baseUrl, _apiKey);
-  late final linkService = LinkService.create(_baseUrl, _apiKey);
-  late final profileService = ProfileService.create(_baseUrl, _apiKey);
-  late final sleepService = SleepService.create(_baseUrl, _apiKey);
-  late final testkitsService = TestkitsService.create(_baseUrl, _apiKey);
-  late final userService = UserService.create(_baseUrl, _apiKey);
-  late final vitalsService = VitalsService.create(_baseUrl, _apiKey);
-  late final workoutService = WorkoutService.create(_baseUrl, _apiKey);
+  late final activityService = ActivityService.create(_httpClient, _baseUrl, _apiKey);
+  late final bodyService = BodyService.create(_httpClient, _baseUrl, _apiKey);
+  late final linkService = LinkService.create(_httpClient, _baseUrl, _apiKey);
+  late final profileService = ProfileService.create(_httpClient, _baseUrl, _apiKey);
+  late final sleepService = SleepService.create(_httpClient, _baseUrl, _apiKey);
+  late final testkitsService = TestkitsService.create(_httpClient, _baseUrl, _apiKey);
+  late final userService = UserService.create(_httpClient, _baseUrl, _apiKey);
+  late final vitalsService = VitalsService.create(_httpClient, _baseUrl, _apiKey);
+  late final workoutService = WorkoutService.create(_httpClient, _baseUrl, _apiKey);
 
   init({
     required Region region,
     required Environment environment,
     required String apiKey,
   }) {
+    _httpClient = http.Client();
     _baseUrl = _resolveUrl(region, environment);
     _apiKey = apiKey;
   }
