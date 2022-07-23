@@ -1,70 +1,287 @@
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_flutter/environment.dart';
-import 'package:vital_flutter/region.dart';
+import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/services/user_service.dart';
-import 'package:vital_flutter/vital_client.dart';
-import 'package:vital_flutter/vital_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('vital_flutter');
-
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    HttpOverrides.global = _MyHttpOverrides();
+  setUp(() {});
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+  tearDown(() {});
+
+  group('User service', () {
+    test('Get all users', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/'));
+        expect(req.method, 'GET');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeUsersResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
+
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.getAll();
+      expect(response.body!.length, 2);
+      final user = response.body![0];
+      validateFirstUser(user);
+
+      expect(response.body![1].connectedSources.length, 0);
     });
-  });
 
-  tearDown(() {
-    channel.setMockMethodCallHandler(null);
-  });
+    test('Get user', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/$userId'));
+        expect(req.method, 'GET');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeUserResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
 
-  test('getPlatformVersion', () async {
-    expect(await VitalFlutter.platformVersion, '42');
-  });
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.getUser(userId);
+      validateFirstUser(response.body!);
+    });
 
-  test('User service', () async {
-    const apiKey = 'sk_us_309IjVjh-vSuDw-DM_06k3b3N2NzuItWYmQ9pRhLDV0';
+    test('Resolve user', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/key/User%20Name'));
+        expect(req.method, 'GET');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeUserResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
 
-    final VitalClient client = VitalClient()
-      ..init(
-        region: Region.us,
-        environment: Environment.sandbox,
-        apiKey: apiKey,
-      );
-    final UserService userService = client.userService;
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.resolveUser(userName);
+      validateFirstUser(response.body!);
+    });
 
-    //const apiKey = 'sk_eu_HCgKZT1Icv0Oyw8mmpyPu6E2NuD-bnmeFFeg43k2hgw';
+    test('Get providers', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/providers/$userId'));
+        expect(req.method, 'GET');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeProvidersResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
 
-    //print(await userService.createUser("Jan 3"));
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.getProviders(userId);
+      final provider = response.body!.providers[0];
+      expect(provider.name, 'Fitbit');
+      expect(provider.slug, 'fitbit');
+    });
 
-    final result = await userService.getAll();
-    print(result);
-    print("=====\n\n\n");
-    final user = await userService.getUser(result.body![0].userId!);
-    print(user);
-    final userId = user.body!.userId!;
+    test('Get refresh user', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/refresh/$userId'));
+        expect(req.method, 'POST');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeRefreshResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
 
-    final response = await userService.refreshUser(userId);
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.refreshUser(userId);
+      expect(response.body!.refreshedSources.length, 5);
+      expect(response.body!.failedSources.length, 3);
+    });
 
-    final providers = await userService.getProviders(userId);
+    test('Create user', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/key'));
+        expect(req.method, 'POST');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeCreateUserResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
 
-    //final resolve = await userService.resolveUser("Jan 3");
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.createUser(userName);
+      final user = response.body!;
+      expect(user.userId, userId);
+      expect(user.userKey, userKey);
+      expect(user.clientUserId, clientUserId);
+    });
 
-    //final create = await userService.createUser("Jan test 4");
-    //print(create);
+    test('Delete user', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/$userId'));
+        expect(req.method, 'DELETE');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeDeleteUserResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
 
-    //final delete = await userService.deleteUser(create.body!.userId!);
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.deleteUser(userId);
+      expect(response.body!.success, true);
+    });
 
-    //print(delete);
-    //await userService.deregisterProvider(userId, 'oura');
-    /*print(await userService.getAll());*/
+    test('Deregister provider', () async {
+      final httpClient = MockClient((http.Request req) async {
+        expect(req.url.toString(), startsWith('/user/$userId/strava'));
+        expect(req.method, 'DELETE');
+        expect(req.headers['x-vital-api-key'], apiKey);
+        return http.Response(
+          fakeDeregisterProviderResponse,
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      });
+
+      final sut = UserService.create(httpClient, '', apiKey);
+      final response = await sut.deregisterProvider(userId, 'strava');
+      expect(response.body!.success, true);
+    });
   });
 }
 
-class _MyHttpOverrides extends HttpOverrides {}
+validateFirstUser(User user) {
+  expect(user.userId, userId);
+  expect(user.userKey, userKey);
+  expect(user.clientUserId, clientUserId);
+  expect(user.teamId, teamId);
+  expect(user.connectedSources.length, 3);
+  expect(user.connectedSources[0].source!.name, 'Fitbit');
+  expect(user.connectedSources[0].source!.slug, 'fitbit');
+}
+
+const userId = 'user_id_1';
+const userKey = 'user_key_1';
+const teamId = 'team_id_1';
+const clientUserId = 'Test 1';
+const userName = 'User Name';
+const apiKey = 'API_KEY';
+
+const fakeUsersResponse = '''
+[
+    {
+        "user_id": "user_id_1",
+        "user_key": "user_key_1",
+        "team_id": "team_id_1",
+        "client_user_id": "Test 1",
+        "created_on": "2021-04-02T16:03:11.847830+00:00",
+        "connected_sources": [
+            {
+                "source": {
+                    "name": "Fitbit",
+                    "slug": "fitbit",
+                    "logo": "https://storage.googleapis.com/vital-assets/fitbit.png"
+                },
+                "created_on": "2022-06-15T13:44:34.770879+00:00"
+            },
+            {
+                "source": {
+                    "name": null,
+                    "slug": null,
+                    "logo": null
+                },
+                "created_on": "2022-03-01T12:25:15.558385+00:00"
+            },
+            {
+                "source": null,
+                "created_on": null
+            }
+        ]
+    },
+    {
+        "user_id": "user_id_2",
+        "user_key": "user_key_2",
+        "team_id": "team_id_2",
+        "client_user_id": "Test 2",
+        "created_on": "2021-12-01T22:43:32.570793+00:00",
+        "connected_sources": null
+    }
+]
+''';
+
+const fakeUserResponse = '''
+{
+    "user_id": "user_id_1",
+    "user_key": "user_key_1",
+    "team_id": "team_id_1",
+    "client_user_id": "Test 1",
+    "created_on": "2021-04-02T16:03:11.847830+00:00",
+    "connected_sources": [
+        {
+            "source": {
+                "name": "Fitbit",
+                "slug": "fitbit",
+                "logo": "https://storage.googleapis.com/vital-assets/fitbit.png"
+            },
+            "created_on": "2022-06-15T13:44:34.770879+00:00"
+        },
+        {
+            "source": {
+                "name": null,
+                "slug": null,
+                "logo": null
+            },
+            "created_on": "2022-03-01T12:25:15.558385+00:00"
+        },
+        {
+            "source": null,
+            "created_on": null
+        }
+    ]
+}
+''';
+
+const fakeRefreshResponse = '''
+{
+    "success": true,
+    "user_id": "user_id_1",
+    "refreshed_sources": [
+        "Freestyle Libre/vitals/glucose",
+        "Garmin/body",
+        "Garmin/activity",
+        "Garmin/workouts",
+        "Garmin/sleep"
+    ],
+    "failed_sources": [
+        "Fitbit/heartrate",
+        "Fitbit/body",
+        "Fitbit/activity"
+    ]
+}
+''';
+
+const fakeProvidersResponse = '''{
+    "providers": [
+        {
+            "name": "Fitbit",
+            "slug": "fitbit",
+            "logo": "https://storage.googleapis.com/vital-assets/fitbit.png"
+        },
+        {
+        }
+    ]
+}''';
+
+const fakeCreateUserResponse = '''{"user_id":"user_id_1","user_key":"user_key_1","client_user_id":"Test 1"}''';
+const fakeDeleteUserResponse = '''{"success":true}''';
+const fakeDeregisterProviderResponse = '''{"success":true}''';

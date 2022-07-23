@@ -1,42 +1,99 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_flutter/environment.dart';
-import 'package:vital_flutter/region.dart';
-import 'package:vital_flutter/services/user_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:vital_flutter/services/data/vitals.dart';
 import 'package:vital_flutter/services/vitals_service.dart';
-import 'package:vital_flutter/vital_client.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    HttpOverrides.global = _MyHttpOverrides();
-  });
+  setUp(() {});
 
   tearDown(() {});
 
-  test('Vitals service', () async {
-    //const apiKey = 'sk_eu_HCgKZT1Icv0Oyw8mmpyPu6E2NuD-bnmeFFeg43k2hgw';
-    const apiKey = 'sk_us_309IjVjh-vSuDw-DM_06k3b3N2NzuItWYmQ9pRhLDV0';
-    final VitalClient client = VitalClient()
-      ..init(
-        region: Region.us,
-        environment: Environment.sandbox,
-        apiKey: apiKey,
+  group('Vitals service', () {
+    test('Get cholesterol', () async {
+      for (final type in CholesterolType.values) {
+        final httpClient = createVitalsClient('/timeseries/$userId/cholesterol/${type.name}');
+
+        final sut = VitalsService.create(httpClient, '', apiKey);
+        final response = await sut.getCholesterol(
+          type,
+          userId,
+          DateTime.parse('2022-07-01'),
+          endDate: DateTime.parse('2022-07-21'),
+        );
+        checkMeasurements(response.body!);
+      }
+    });
+
+    test('Get glucose', () async {
+      final httpClient = createVitalsClient('/timeseries/$userId/glucose');
+
+      final sut = VitalsService.create(httpClient, '', apiKey);
+      final response = await sut.getGlucose(
+        userId,
+        DateTime.parse('2022-07-01'),
+        endDate: DateTime.parse('2022-07-21'),
       );
-    final UserService userService = client.userService;
-    final VitalsService vitalsService = client.vitalsService;
-
-    final users = await userService.getAll();
-
-    final glucose = await vitalsService.getGlucose(
-      users.body![0].userId!,
-      DateTime.parse('2022-01-01'),
-      endDate: DateTime.now(),
-      provider: null,
-    );
-    print(glucose);
+      checkMeasurements(response.body!);
+    });
   });
 }
 
-class _MyHttpOverrides extends HttpOverrides {}
+MockClient createVitalsClient(String path) {
+  return MockClient((http.Request req) async {
+    expect(req.url.toString(), startsWith(path));
+    expect(req.method, 'GET');
+    expect(req.headers['x-vital-api-key'], apiKey);
+    expect(req.url.queryParameters['start_date'], startsWith('2022-07-01'));
+    expect(req.url.queryParameters['end_date'], startsWith('2022-07-21'));
+    return http.Response(
+      fakeResponse,
+      200,
+      headers: {'content-type': 'application/json; charset=utf-8'},
+    );
+  });
+}
+
+checkMeasurements(List<Measurement> measurements) {
+  expect(measurements.length, 3);
+  expect(measurements[0].id, 1);
+  expect(measurements[0].value, 5.7);
+  expect(measurements[0].type, 'automatic');
+  expect(measurements[0].unit, 'mmol/L');
+
+  expect(measurements[1].id, 2);
+  expect(measurements[1].value, null);
+  expect(measurements[1].type, null);
+  expect(measurements[1].unit, null);
+
+  expect(measurements[2].id, 3);
+  expect(measurements[2].value, null);
+  expect(measurements[2].type, null);
+  expect(measurements[2].unit, null);
+}
+
+const apiKey = 'API_KEY';
+const userId = 'user_id_1';
+
+const fakeResponse = '''[
+    {
+        "id": 1,
+        "timestamp": "2022-01-01T03:16:31+00:00",
+        "value": 5.7,
+        "type": "automatic",
+        "unit": "mmol/L"
+    },
+    {
+        "id": 2,
+        "timestamp": "2022-01-02T03:16:31+00:00",
+        "value": null,
+        "type": null,
+        "unit": null
+    },
+    {
+      "id": 3,
+      "timestamp": "2022-01-03T03:16:31+00:00"  
+    }
+]''';
