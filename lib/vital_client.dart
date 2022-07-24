@@ -1,5 +1,8 @@
+import 'package:fimber/fimber.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vital_flutter/services/activity_service.dart';
 import 'package:vital_flutter/services/body_service.dart';
+import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/services/link_service.dart';
 import 'package:vital_flutter/services/profile_service.dart';
 import 'package:vital_flutter/services/sleep_service.dart';
@@ -51,5 +54,19 @@ class VitalClient {
       }
     };
     return '${urls[region]![environment]!}/v2';
+  }
+
+  Future<bool> linkProvider(User user, String provider) {
+    return linkService
+        .createLink(user.userId!, 'strava', 'callback://sample')
+        .then((tokenResponse) => linkService.oauthProvider(
+              provider: 'strava',
+              linkToken: tokenResponse.body!.linkToken!,
+            ))
+        .then((oauthResponse) => launchUrlString(oauthResponse.body!.oauthUrl!, mode: LaunchMode.externalApplication))
+        .catchError((e) {
+      Fimber.e(e);
+      return false;
+    });
   }
 }
