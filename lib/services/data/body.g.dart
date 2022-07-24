@@ -6,14 +6,13 @@ part of 'body.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-BodyDataResponse _$BodyDataResponseFromJson(Map<String, dynamic> json) => BodyDataResponse(
-      body: (json['body'] as List<dynamic>?)?.map((e) => BodyData.fromJson(e as Map<String, dynamic>)).toList() ??
+BodyDataResponse _$BodyDataResponseFromJson(Map<String, dynamic> json) =>
+    BodyDataResponse(
+      body: (json['body'] as List<dynamic>?)
+              ?.map((e) => BodyData.fromJson(e as Map<String, dynamic>))
+              .toList() ??
           const [],
     );
-
-Map<String, dynamic> _$BodyDataResponseToJson(BodyDataResponse instance) => <String, dynamic>{
-      'body': instance.body,
-    };
 
 BodyData _$BodyDataFromJson(Map<String, dynamic> json) => BodyData(
       userId: json['user_id'] as String?,
@@ -24,13 +23,3 @@ BodyData _$BodyDataFromJson(Map<String, dynamic> json) => BodyData(
       fat: (json['fat'] as num?)?.toDouble(),
       source: Source.fromJson(json['source'] as Map<String, dynamic>),
     );
-
-Map<String, dynamic> _$BodyDataToJson(BodyData instance) => <String, dynamic>{
-      'user_id': instance.userId,
-      'user_key': instance.userKey,
-      'id': instance.id,
-      'date': instance.date.toIso8601String(),
-      'weight': instance.weight,
-      'fat': instance.fat,
-      'source': instance.source,
-    };

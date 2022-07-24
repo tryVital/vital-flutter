@@ -11,11 +11,6 @@ CreateLinkResponse _$CreateLinkResponseFromJson(Map<String, dynamic> json) =>
       linkToken: json['link_token'] as String?,
     );
 
-Map<String, dynamic> _$CreateLinkResponseToJson(CreateLinkResponse instance) =>
-    <String, dynamic>{
-      'link_token': instance.linkToken,
-    };
-
 OauthLinkResponse _$OauthLinkResponseFromJson(Map<String, dynamic> json) =>
     OauthLinkResponse(
       name: json['name'] as String?,
@@ -29,29 +24,9 @@ OauthLinkResponse _$OauthLinkResponseFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int? ?? -1,
     );
 
-Map<String, dynamic> _$OauthLinkResponseToJson(OauthLinkResponse instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'slug': instance.slug,
-      'description': instance.description,
-      'logo': instance.logo,
-      'group': instance.group,
-      'oauth_url': instance.oauthUrl,
-      'auth_type': instance.authType,
-      'is_active': instance.isActive,
-      'id': instance.id,
-    };
-
 EmailProviderResponse _$EmailProviderResponseFromJson(
         Map<String, dynamic> json) =>
     EmailProviderResponse(
       redirectUrl: json['redirect_url'] as String?,
       success: json['success'] as bool? ?? false,
     );
-
-Map<String, dynamic> _$EmailProviderResponseToJson(
-        EmailProviderResponse instance) =>
-    <String, dynamic>{
-      'success': instance.success,
-      'redirect_url': instance.redirectUrl,
-    };

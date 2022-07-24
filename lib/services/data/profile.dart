@@ -3,7 +3,7 @@ import 'user.dart';
 
 part 'profile.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Profile {
   @JsonKey(name: 'user_id')
   String userId;

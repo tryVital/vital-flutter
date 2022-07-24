@@ -15,11 +15,3 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
           ? null
           : Source.fromJson(json['source'] as Map<String, dynamic>),
     );
-
-Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
-      'user_id': instance.userId,
-      'user_key': instance.userKey,
-      'id': instance.id,
-      'height': instance.height,
-      'source': instance.source,
-    };

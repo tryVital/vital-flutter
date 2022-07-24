@@ -6,15 +6,13 @@ part of 'activity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ActivitiesResponse _$ActivitiesResponseFromJson(Map<String, dynamic> json) => ActivitiesResponse(
-      activity:
-          (json['activity'] as List<dynamic>?)?.map((e) => Activity.fromJson(e as Map<String, dynamic>)).toList() ??
-              const [],
+ActivitiesResponse _$ActivitiesResponseFromJson(Map<String, dynamic> json) =>
+    ActivitiesResponse(
+      activity: (json['activity'] as List<dynamic>?)
+              ?.map((e) => Activity.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
-
-Map<String, dynamic> _$ActivitiesResponseToJson(ActivitiesResponse instance) => <String, dynamic>{
-      'activity': instance.activity,
-    };
 
 Activity _$ActivityFromJson(Map<String, dynamic> json) => Activity(
       userId: json['user_id'] as String?,
@@ -30,18 +28,3 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) => Activity(
       high: (json['high'] as num?)?.toDouble(),
       source: Source.fromJson(json['source'] as Map<String, dynamic>),
     );
-
-Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
-      'user_id': instance.userId,
-      'user_key': instance.userKey,
-      'id': instance.id,
-      'date': instance.date.toIso8601String(),
-      'calories_total': instance.caloriesTotal,
-      'calories_active': instance.caloriesActive,
-      'steps': instance.steps,
-      'daily_movement': instance.dailyMovement,
-      'low': instance.low,
-      'medium': instance.medium,
-      'high': instance.high,
-      'source': instance.source,
-    };

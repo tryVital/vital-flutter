@@ -3,7 +3,7 @@ import 'user.dart';
 
 part 'body.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class BodyDataResponse {
   List<BodyData> body;
 
@@ -14,7 +14,7 @@ class BodyDataResponse {
   factory BodyDataResponse.fromJson(Map<String, dynamic> json) => _$BodyDataResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class BodyData {
   @JsonKey(name: 'user_id')
   String? userId;

@@ -13,11 +13,6 @@ WorkoutsResponse _$WorkoutsResponseFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$WorkoutsResponseToJson(WorkoutsResponse instance) =>
-    <String, dynamic>{
-      'workouts': instance.workouts,
-    };
-
 Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
       userId: json['user_id'] as String,
       userKey: json['user_key'] as String,
@@ -61,56 +56,16 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
           : Source.fromJson(json['source'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$WorkoutToJson(Workout instance) => <String, dynamic>{
-      'user_id': instance.userId,
-      'user_key': instance.userKey,
-      'id': instance.id,
-      'title': instance.title,
-      'timezone_offset': instance.timezoneOffset,
-      'average_hr': instance.averageHr,
-      'max_hr': instance.maxHr,
-      'distance': instance.distance,
-      'time_start': instance.timeStart?.toIso8601String(),
-      'time_end': instance.timeEnd?.toIso8601String(),
-      'calories': instance.calories,
-      'sport': instance.sport,
-      'hr_zones': instance.hrZones,
-      'moving_time': instance.movingTime,
-      'total_elevation_gain': instance.totalElevationGain,
-      'elev_high': instance.elevHigh,
-      'elev_low': instance.elevLow,
-      'average_speed': instance.averageSpeed,
-      'max_speed': instance.maxSpeed,
-      'average_watts': instance.averageWatts,
-      'device_watts': instance.deviceWatts,
-      'max_watts': instance.maxWatts,
-      'weighted_average_watts': instance.weightedAverageWatts,
-      'map': instance.map,
-      'provider_id': instance.providerId,
-      'source': instance.source,
-    };
-
 Sport _$SportFromJson(Map<String, dynamic> json) => Sport(
       json['id'] as int,
       json['name'] as String,
     );
-
-Map<String, dynamic> _$SportToJson(Sport instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-    };
 
 MapData _$MapDataFromJson(Map<String, dynamic> json) => MapData(
       id: json['id'] as String,
       polyline: json['polyline'] as String?,
       summaryPolyline: json['summary_polyline'] as String?,
     );
-
-Map<String, dynamic> _$MapDataToJson(MapData instance) => <String, dynamic>{
-      'id': instance.id,
-      'polyline': instance.polyline,
-      'summary_polyline': instance.summaryPolyline,
-    };
 
 WorkoutStreamResponse _$WorkoutStreamResponseFromJson(
         Map<String, dynamic> json) =>
@@ -154,18 +109,3 @@ WorkoutStreamResponse _$WorkoutStreamResponseFromJson(
               .toList() ??
           const [],
     );
-
-Map<String, dynamic> _$WorkoutStreamResponseToJson(
-        WorkoutStreamResponse instance) =>
-    <String, dynamic>{
-      'time': instance.time,
-      'cadence': instance.cadence,
-      'altitude': instance.altitude,
-      'velocity_smooth': instance.velocitySmooth,
-      'heartrate': instance.heartrate,
-      'lat': instance.lat,
-      'lng': instance.lng,
-      'distance': instance.distance,
-      'power': instance.power,
-      'resistance': instance.resistance,
-    };

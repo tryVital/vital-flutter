@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'link.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class CreateLinkResponse {
   @JsonKey(name: 'link_token')
   String? linkToken;
@@ -14,7 +14,7 @@ class CreateLinkResponse {
   factory CreateLinkResponse.fromJson(Map<String, dynamic> json) => _$CreateLinkResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class OauthLinkResponse {
   String? name;
   String? slug;
@@ -44,7 +44,7 @@ class OauthLinkResponse {
   factory OauthLinkResponse.fromJson(Map<String, dynamic> json) => _$OauthLinkResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EmailProviderResponse {
   bool success;
   @JsonKey(name: 'redirect_url')

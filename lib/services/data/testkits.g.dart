@@ -32,13 +32,6 @@ OrderResponse _$OrderResponseFromJson(Map<String, dynamic> json) =>
           : OrderData.fromJson(json['order'] as Map<String, dynamic>),
     )..message = json['message'] as String?;
 
-Map<String, dynamic> _$OrderResponseToJson(OrderResponse instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'message': instance.message,
-      'order': instance.order,
-    };
-
 OrdersResponse _$OrdersResponseFromJson(Map<String, dynamic> json) =>
     OrdersResponse(
       orders: (json['orders'] as List<dynamic>?)
@@ -47,11 +40,6 @@ OrdersResponse _$OrdersResponseFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$OrdersResponseToJson(OrdersResponse instance) =>
-    <String, dynamic>{
-      'orders': instance.orders,
-    };
-
 TestkitsResponse _$TestkitsResponseFromJson(Map<String, dynamic> json) =>
     TestkitsResponse(
       testkits: (json['testkits'] as List<dynamic>?)
@@ -59,11 +47,6 @@ TestkitsResponse _$TestkitsResponseFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
     );
-
-Map<String, dynamic> _$TestkitsResponseToJson(TestkitsResponse instance) =>
-    <String, dynamic>{
-      'testkits': instance.testkits,
-    };
 
 OrderData _$OrderDataFromJson(Map<String, dynamic> json) => OrderData(
       userId: json['user_id'] as String?,
@@ -98,27 +81,6 @@ OrderData _$OrderDataFromJson(Map<String, dynamic> json) => OrderData(
       sampleId: json['sample_id'] as String?,
     );
 
-Map<String, dynamic> _$OrderDataToJson(OrderData instance) => <String, dynamic>{
-      'user_id': instance.userId,
-      'user_key': instance.userKey,
-      'id': instance.id,
-      'team_id': instance.teamId,
-      'created_on': instance.createdOn?.toIso8601String(),
-      'updated_on': instance.updatedOn?.toIso8601String(),
-      'status': instance.status,
-      'testkit_id': instance.testkitId,
-      'testkit': instance.testkit,
-      'inbound_tracking_number': instance.inboundTrackingNumber,
-      'outbound_tracking_number': instance.outboundTrackingNumber,
-      'inbound_tracking_url': instance.inboundTrackingUrl,
-      'outbound_tracking_url': instance.outboundTrackingUrl,
-      'outbound_courier': instance.outboundCourier,
-      'inbound_courier': instance.inboundCourier,
-      'patient_address': instance.patientAddress,
-      'patient_details': instance.patientDetails,
-      'sample_id': instance.sampleId,
-    };
-
 Testkit _$TestkitFromJson(Map<String, dynamic> json) => Testkit(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -132,29 +94,12 @@ Testkit _$TestkitFromJson(Map<String, dynamic> json) => Testkit(
       price: (json['price'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$TestkitToJson(Testkit instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'description': instance.description,
-      'markers': instance.markers,
-      'turnaround_time_lower': instance.turnaroundTimeLower,
-      'turnaround_time_upper': instance.turnaroundTimeUpper,
-      'price': instance.price,
-    };
-
 TestkitMarker _$TestkitMarkerFromJson(Map<String, dynamic> json) =>
     TestkitMarker(
       name: json['name'] as String,
       slug: json['slug'] as String,
       description: json['description'] as String?,
     );
-
-Map<String, dynamic> _$TestkitMarkerToJson(TestkitMarker instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'slug': instance.slug,
-      'description': instance.description,
-    };
 
 PatientAddress _$PatientAddressFromJson(Map<String, dynamic> json) =>
     PatientAddress(

@@ -14,11 +14,6 @@ SleepResponse _$SleepResponseFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$SleepResponseToJson(SleepResponse instance) =>
-    <String, dynamic>{
-      'sleep': instance.sleep,
-    };
-
 SleepData _$SleepDataFromJson(Map<String, dynamic> json) => SleepData(
       userId: json['user_id'] as String?,
       userKey: json['user_key'] as String?,
@@ -54,32 +49,6 @@ SleepData _$SleepDataFromJson(Map<String, dynamic> json) => SleepData(
               json['sleep_stream'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$SleepDataToJson(SleepData instance) => <String, dynamic>{
-      'user_id': instance.userId,
-      'user_key': instance.userKey,
-      'id': instance.id,
-      'date': instance.date.toIso8601String(),
-      'bedtime_start': instance.bedtimeStart?.toIso8601String(),
-      'bedtime_stop': instance.bedtimeStop?.toIso8601String(),
-      'timezone_offset': instance.timezoneOffset,
-      'duration': instance.duration,
-      'total': instance.total,
-      'awake': instance.awake,
-      'light': instance.light,
-      'rem': instance.rem,
-      'deep': instance.deep,
-      'score': instance.score,
-      'hr_lowest': instance.hrLowest,
-      'hr_average': instance.hrAverage,
-      'efficiency': instance.efficiency,
-      'latency': instance.latency,
-      'temperature_delta': instance.temperatureDelta,
-      'average_hrv': instance.averageHrv,
-      'respiratory_rate': instance.respiratoryRate,
-      'source': instance.source,
-      'sleep_stream': instance.sleepStream,
-    };
-
 SleepStreamResponse _$SleepStreamResponseFromJson(Map<String, dynamic> json) =>
     SleepStreamResponse(
       hrv: (json['hrv'] as List<dynamic>?)
@@ -99,12 +68,3 @@ SleepStreamResponse _$SleepStreamResponseFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
     );
-
-Map<String, dynamic> _$SleepStreamResponseToJson(
-        SleepStreamResponse instance) =>
-    <String, dynamic>{
-      'hrv': instance.hrv,
-      'heartrate': instance.heartrate,
-      'hypnogram': instance.hypnogram,
-      'respiratory_rate': instance.respiratoryRate,
-    };

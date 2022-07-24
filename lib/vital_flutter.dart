@@ -1,7 +1,8 @@
-
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+export 'region.dart';
+export 'vital_client.dart';
 
 class VitalFlutter {
   static const MethodChannel _channel = MethodChannel('vital_flutter');

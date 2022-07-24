@@ -13,12 +13,3 @@ Measurement _$MeasurementFromJson(Map<String, dynamic> json) => Measurement(
       type: json['type'] as String?,
       unit: json['unit'] as String?,
     );
-
-Map<String, dynamic> _$MeasurementToJson(Measurement instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'timestamp': instance.timestamp.toIso8601String(),
-      'value': instance.value,
-      'type': instance.type,
-      'unit': instance.unit,
-    };

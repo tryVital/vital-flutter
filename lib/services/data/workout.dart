@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:vital_flutter/services/data/user.dart';
 part 'workout.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkoutsResponse {
   List<Workout> workouts;
 
@@ -11,7 +11,7 @@ class WorkoutsResponse {
   factory WorkoutsResponse.fromJson(Map<String, dynamic> json) => _$WorkoutsResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Workout {
   @JsonKey(name: 'user_id')
   String userId;
@@ -91,7 +91,7 @@ class Workout {
   factory Workout.fromJson(Map<String, dynamic> json) => _$WorkoutFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Sport {
   int id;
   String name;
@@ -101,7 +101,7 @@ class Sport {
   factory Sport.fromJson(Map<String, dynamic> json) => _$SportFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class MapData {
   String id;
   String? polyline;
@@ -117,7 +117,7 @@ class MapData {
   factory MapData.fromJson(Map<String, dynamic> json) => _$MapDataFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkoutStreamResponse {
   List<int> time;
   List<double> cadence;

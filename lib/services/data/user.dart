@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class User {
   @JsonKey(name: 'user_id')
   String? userId;
@@ -29,7 +29,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ConnectedSource {
   Source? source;
   @JsonKey(name: 'created_on')
@@ -43,7 +43,7 @@ class ConnectedSource {
   factory ConnectedSource.fromJson(Map<String, dynamic> json) => _$ConnectedSourceFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Source {
   String? name;
   String? slug;
@@ -58,7 +58,7 @@ class Source {
   factory Source.fromJson(Map<String, dynamic> json) => _$SourceFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class RefreshResponse {
   bool success;
   @JsonKey(name: 'user_id')
@@ -80,7 +80,7 @@ class RefreshResponse {
   factory RefreshResponse.fromJson(Map<String, dynamic> json) => _$RefreshResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ProvidersResponse {
   List<Source> providers;
 
@@ -91,7 +91,7 @@ class ProvidersResponse {
   factory ProvidersResponse.fromJson(Map<String, dynamic> json) => _$ProvidersResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class CreateUserResponse {
   @JsonKey(name: 'user_id')
   String? userId;
@@ -109,7 +109,7 @@ class CreateUserResponse {
   factory CreateUserResponse.fromJson(Map<String, dynamic> json) => _$CreateUserResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class DeleteUserResponse {
   bool success;
   String? error;
@@ -122,7 +122,7 @@ class DeleteUserResponse {
   factory DeleteUserResponse.fromJson(Map<String, dynamic> json) => _$DeleteUserResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class DeregisterProviderResponse {
   bool success;
 

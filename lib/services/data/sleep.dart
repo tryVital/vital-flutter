@@ -4,7 +4,7 @@ import 'user.dart';
 
 part 'sleep.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class SleepResponse {
   List<SleepData> sleep;
 
@@ -15,7 +15,7 @@ class SleepResponse {
   factory SleepResponse.fromJson(Map<String, dynamic> json) => _$SleepResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class SleepData {
   @JsonKey(name: 'user_id')
   String? userId;
@@ -81,7 +81,7 @@ class SleepData {
   factory SleepData.fromJson(Map<String, dynamic> json) => _$SleepDataFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class SleepStreamResponse {
   List<Measurement> hrv;
   List<Measurement> heartrate;

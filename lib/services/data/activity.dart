@@ -3,7 +3,7 @@ import 'user.dart';
 
 part 'activity.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ActivitiesResponse {
   List<Activity> activity;
 
@@ -14,7 +14,7 @@ class ActivitiesResponse {
   factory ActivitiesResponse.fromJson(Map<String, dynamic> json) => _$ActivitiesResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Activity {
   @JsonKey(name: 'user_id')
   String? userId;

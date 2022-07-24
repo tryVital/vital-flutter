@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:chopper/chopper.dart';
 
 // ignore: prefer_generic_function_type_aliases
@@ -37,17 +36,6 @@ class JsonSerializableConverter extends JsonConverter {
     final jsonRes = super.convertResponse(response);
 
     return jsonRes.copyWith<ResultType>(body: _decode<Item>(jsonRes.body));
-  }
-
-  @override
-  // all objects should implements toJson method
-  Request convertRequest(Request request) => super.convertRequest(request);
-
-  Response convertError<ResultType, Item>(Response response) {
-    // use [JsonConverter] to decode json
-    final jsonRes = super.convertError(response);
-
-    return jsonRes;
   }
 }
 

@@ -26,7 +26,7 @@ class CreateOrderRequest {
   Map<String, dynamic> toJson() => _$CreateOrderRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class OrderResponse {
   String? status;
   String? message;
@@ -40,7 +40,7 @@ class OrderResponse {
   factory OrderResponse.fromJson(Map<String, dynamic> json) => _$OrderResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class OrdersResponse {
   List<OrderData> orders;
 
@@ -51,7 +51,7 @@ class OrdersResponse {
   factory OrdersResponse.fromJson(Map<String, dynamic> json) => _$OrdersResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class TestkitsResponse {
   List<Testkit> testkits;
 
@@ -62,7 +62,7 @@ class TestkitsResponse {
   factory TestkitsResponse.fromJson(Map<String, dynamic> json) => _$TestkitsResponseFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class OrderData {
   @JsonKey(name: 'user_id')
   String? userId;
@@ -122,7 +122,7 @@ class OrderData {
   factory OrderData.fromJson(Map<String, dynamic> json) => _$OrderDataFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Testkit {
   String id;
   String name;
@@ -147,7 +147,7 @@ class Testkit {
   factory Testkit.fromJson(Map<String, dynamic> json) => _$TestkitFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class TestkitMarker {
   String name;
   String slug;

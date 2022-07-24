@@ -8,8 +8,6 @@
             "name": "vital_flutter",
             "request": "launch",
             "type": "dart",
-            "program": "lib/test.dart",
-            "console": "terminal"
         },
         {
             "name": "vital_flutter (profile mode)",
