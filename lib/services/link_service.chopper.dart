@@ -31,8 +31,12 @@ class _$LinkService extends LinkService {
   }
 
   @override
-  Future<Response<EmailProviderResponse>> passwordProvider(String provider,
-      String username, String password, String redirectUrl, String linkToken) {
+  Future<Response<EmailProviderResponse>> passwordProvider(
+      {required String provider,
+      required String username,
+      required String password,
+      required String redirectUrl,
+      required String linkToken}) {
     final $url = 'link/provider/password/${provider}';
     final $headers = {
       'LinkToken': linkToken,
@@ -66,7 +70,7 @@ class _$LinkService extends LinkService {
 
   @override
   Future<Response<OauthLinkResponse>> oauthProvider(
-      String provider, String linkToken) {
+      {required String provider, required String linkToken}) {
     final $url = 'link/provider/oauth/${provider}';
     final $headers = {
       'LinkToken': linkToken,

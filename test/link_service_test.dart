@@ -1,62 +1,109 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/region.dart';
 import 'package:vital_flutter/services/link_service.dart';
-import 'package:vital_flutter/services/user_service.dart';
-import 'package:vital_flutter/vital_client.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
-    HttpOverrides.global = _MyHttpOverrides();
-  });
+  setUp(() {});
 
   tearDown(() {});
 
-  test('Link service', () async {
-    const apiKey = 'sk_eu_HCgKZT1Icv0Oyw8mmpyPu6E2NuD-bnmeFFeg43k2hgw';
-    //const apiKey = 'sk_us_309IjVjh-vSuDw-DM_06k3b3N2NzuItWYmQ9pRhLDV0';
-    final VitalClient client = VitalClient()
-      ..init(
-        region: Region.eu,
-        environment: Environment.sandbox,
-        apiKey: apiKey,
+  group('Link service', () {
+    test('Create link token', () async {
+      final httpClient = linkClient('POST', '/link/token', fakeCreateLinkResponse);
+
+      final sut = LinkService.create(httpClient, '', apiKey);
+      final response = await sut.createLink(userId, 'strava', 'callback://vital');
+
+      final linkTokenResponse = response.body!;
+      expect(linkTokenResponse.linkToken, linkToken);
+    });
+
+    test('Link oauth provider', () async {
+      final httpClient = linkClient('GET', '/link/provider/oauth/strava', fakeLinkOauthProviderResponse);
+
+      final sut = LinkService.create(httpClient, '', apiKey);
+      final response = await sut.oauthProvider(
+        provider: 'strava',
+        linkToken: linkToken,
       );
-    final UserService userService = client.userService;
-    final LinkService linkService = client.linkService;
 
-    final users = await userService.getAll();
-    final link = await linkService.createLink(users.body![0].userId!, 'strava', 'callback://strava');
-    print(link);
-    final oauth = await linkService.oauthProvider('strava', link.body!.linkToken!);
-    print(oauth);
+      final oauthResponse = response.body!;
+      expect(oauthResponse.oauthUrl, 'https://www.strava.com/oauth/');
+      expect(oauthResponse.isActive, true);
+      expect(oauthResponse.authType, 'oauth');
+      expect(oauthResponse.id, 5);
+    });
 
-    final deregister = await client.userService.deregisterProvider(users.body![1].userId!, 'freestyle_libre');
-    print(deregister);
+    test('Link email provider', () async {
+      final httpClient = linkClient('POST', '/link/provider/email/strava', fakeEmailLinkResponse);
 
-    final link2 = await linkService.createLink(users.body![0].userId!, 'freestyle_libre', 'callback://freestyle');
-    print(link2);
-    final email = await linkService.emailProvider(
-      'freestyle_libre',
-      'jan.knotek@gmail.com',
-      Region.eu,
-      link2.body!.linkToken!,
-    );
-    print(email);
+      final sut = LinkService.create(httpClient, '', apiKey);
+      final response = await sut.emailProvider(
+        provider: 'strava',
+        email: 'test@test.com',
+        region: Region.us,
+        linkToken: linkToken,
+      );
 
-    /*final link3 = await linkService.createLink(users.body![0].userId!, 'renpho', 'callback://renpho');
-    print(link3);
-    final password = await linkService.passwordProvider(
-      'renpho',
-      'jan.knotek@gmail.com',
-      'testrenpho12',
-      'callback://renpho',
-      link2.body!.linkToken!,
-    );
-    print(password);*/
+      final result = response.body!;
+      expect(result.success, true);
+      expect(result.redirectUrl, 'callback://vital');
+    });
+
+    test('Link password provider', () async {
+      final httpClient = linkClient('POST', '/link/provider/password/strava', fakeEmailLinkResponse);
+
+      final sut = LinkService.create(httpClient, '', apiKey);
+      final response = await sut.passwordProvider(
+        provider: 'strava',
+        username: 'username',
+        password: 'password',
+        redirectUrl: 'callback://vital',
+        linkToken: linkToken,
+      );
+
+      final result = response.body!;
+      expect(result.success, true);
+      expect(result.redirectUrl, 'callback://vital');
+    });
   });
 }
 
-class _MyHttpOverrides extends HttpOverrides {}
+MockClient linkClient(String method, String path, String response) {
+  return MockClient((http.Request req) async {
+    expect(req.url.toString(), path);
+    expect(req.method, method);
+    expect(req.headers['x-vital-api-key'], apiKey);
+    return http.Response(
+      response,
+      200,
+      headers: {'content-type': 'application/json; charset=utf-8'},
+    );
+  });
+}
+
+const apiKey = 'API_KEY';
+const userId = 'user_id_1';
+const linkToken = 'linkTokenSample';
+
+const fakeCreateLinkResponse = '''{
+    "link_token": "linkTokenSample"
+}''';
+
+const fakeLinkOauthProviderResponse = '''{
+    "name": "Strava",
+    "slug": "strava",
+    "description": "Activity Social Network",
+    "logo": "https://storage.googleapis.com/vital-assets/strava.png",
+    "group": null,
+    "oauth_url": "https://www.strava.com/oauth/",
+    "auth_type": "oauth",
+    "is_active": true,
+    "id": 5
+}''';
+
+const fakeEmailLinkResponse = '''{"success":true,"redirect_url":"callback://vital"}''';
