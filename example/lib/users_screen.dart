@@ -14,10 +14,17 @@ class UsersScreen extends StatelessWidget {
           title: const Text('Vital SDK example app'),
           actions: [
             IconButton(
-                onPressed: () {
-                  bloc.refresh();
-                },
-                icon: const Icon(Icons.refresh)),
+              onPressed: () {
+                _displayCreateUserDialog(context);
+              },
+              icon: const Icon(Icons.person_add),
+            ),
+            IconButton(
+              onPressed: () {
+                bloc.refresh();
+              },
+              icon: const Icon(Icons.refresh),
+            ),
           ],
         ),
         body: const UsersPage());
@@ -105,4 +112,36 @@ class UserWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _displayCreateUserDialog(BuildContext context) async {
+  final VitalBloc bloc = Provider.of(context, listen: false);
+  final textFieldController = TextEditingController();
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('User name:'),
+          content: TextField(
+            onChanged: (value) {},
+            controller: textFieldController,
+            decoration: const InputDecoration(hintText: "User name"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                bloc.createUser(textFieldController.text);
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      });
 }

@@ -6,7 +6,8 @@ import 'package:vital_flutter/vital_flutter.dart';
 
 class VitalBloc {
   final client = VitalClient();
-  late final users = client.userService.getAll();
+
+  final StreamController<List<User>> usersController = StreamController();
 
   final String apiKey;
   final Region region;
@@ -15,17 +16,28 @@ class VitalBloc {
     client.init(region: region, environment: Environment.sandbox, apiKey: apiKey);
   }
 
-  Stream<List<User>?> getUsers() {
-    return Stream.fromFuture(users.then((value) => value.body));
+  Stream<List<User>> getUsers() {
+    refresh();
+    return usersController.stream;
   }
 
-  void refresh() {}
+  void refresh() {
+    unawaited(client.userService.getAll().then((response) {
+      if (response.body != null) {
+        usersController.sink.add(response.body!);
+      }
+    }));
+  }
 
-  Future<bool> launchLink(User user) async {
-    return client.linkProvider(user, 'strava');
+  createUser(String userName) {
+    unawaited(client.userService.createUser(userName).then((value) => refresh()));
   }
 
   deleteUser(User user) {
-    unawaited(client.userService.deleteUser(user.userId!));
+    unawaited(client.userService.deleteUser(user.userId!).then((value) => refresh()));
+  }
+
+  Future<bool> launchLink(User user) async {
+    return client.linkProvider(user, 'strava', 'vitalexample://callback');
   }
 }

@@ -56,11 +56,11 @@ class VitalClient {
     return '${urls[region]![environment]!}/v2';
   }
 
-  Future<bool> linkProvider(User user, String provider) {
+  Future<bool> linkProvider(User user, String provider, String callback) {
     return linkService
-        .createLink(user.userId!, 'strava', 'callback://sample')
+        .createLink(user.userId!, provider, callback)
         .then((tokenResponse) => linkService.oauthProvider(
-              provider: 'strava',
+              provider: provider,
               linkToken: tokenResponse.body!.linkToken!,
             ))
         .then((oauthResponse) => launchUrlString(oauthResponse.body!.oauthUrl!, mode: LaunchMode.externalApplication))
