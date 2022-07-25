@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/vital_flutter.dart';
@@ -23,5 +25,7 @@ class VitalBloc {
     return client.linkProvider(user, 'strava');
   }
 
-  deleteUser(User user) {}
+  deleteUser(User user) {
+    unawaited(client.userService.deleteUser(user.userId!));
+  }
 }
