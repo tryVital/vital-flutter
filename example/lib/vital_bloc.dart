@@ -40,4 +40,20 @@ class VitalBloc {
   Future<bool> launchLink(User user) async {
     return client.linkProvider(user, 'strava', 'vitalexample://callback');
   }
+
+  void connectHealthPlatform() async {
+    client.platformServices.configure(apiKey, region);
+  }
+
+  void setUserId() {
+    client.platformServices.setUserId('eba7c0a2-dc01-49f5-a361-5149bd318f43');
+  }
+
+  void askForHealthResources() {
+    client.platformServices.askForResources();
+  }
+
+  void syncHealthPlatform() {
+    client.platformServices.syncData();
+  }
 }
