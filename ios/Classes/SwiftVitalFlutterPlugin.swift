@@ -20,7 +20,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    print("FlutterPlugin \(call.method) \(call.arguments)")
+    print("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
     
     switch call.method {
     case "configure":
@@ -34,7 +34,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       askForResources(resources: call.arguments as! [String], result: result)
       return
     case "syncData":
-      VitalHealthKitClient.shared.syncData(for: [.profile, .body])
+      syncData(resources: call.arguments as? [String], result: result)
       result(nil)
       return
     case "subscribeToStatus":
@@ -82,6 +82,54 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     }
   }
 
+  private func askForResources(resources: [String], result: @escaping FlutterResult){
+    Task {
+        do {
+          let outcome = try await VitalHealthKitClient.shared.ask(for: resources.map { try mapResourceToVitalResource($0) })
+          switch outcome {
+            case .success:
+              result(nil)
+            case .failure(let message):
+              result(FlutterError.init(code: "failure",
+                                      message: message,
+                                      details: nil))
+            case .healthKitNotAvailable:
+              result(FlutterError.init(code: "healthKitNotAvailable",
+                                      message: "healthKitNotAvailable",
+                                      details: nil))
+          }
+        } catch VitalError.UnsupportedResource(let errorMessage) {
+          result(FlutterError.init(code: "errorMessage",
+                                     message: errorMessage,
+                                     details: nil))
+        } catch {
+          result(FlutterError.init(code: "Unknown error",
+                                        message: nil,
+                                        details: nil))
+        } 
+      }
+  }
+
+  private func syncData(resources: [String]?, result: @escaping FlutterResult){
+     do {
+      if let res = resources {
+        try VitalHealthKitClient.shared.syncData(for: res.map { try mapResourceToVitalResource($0) })
+      } else {
+        VitalHealthKitClient.shared.syncData()
+      }
+      result(nil)
+     } catch VitalError.UnsupportedResource(let errorMessage) {
+      result(FlutterError.init(code: "errorMessage",
+                                  message: errorMessage,
+                                  details: nil))
+    } catch {
+      result(FlutterError.init(code: "Unknown error",
+                                    message: nil,
+                                    details: nil))
+    } 
+  }
+
+
   private func resolveEnvironment(region: String, environment: String) throws -> Environment {
     switch region {
     case "eu":
@@ -109,35 +157,6 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     default:
       throw VitalError.UnsupportedRegion("\(region)") 
     }
-  }
-
-  private func askForResources(resources: [String], result: @escaping FlutterResult){
-    Task {
-        do {
-          let outcome = try await VitalHealthKitClient.shared.ask(for: resources.map { try mapResourceToVitalResource($0) })
-          print("FlutterPlugin askForResources \(outcome)")
-          switch outcome {
-            case .success:
-              result(nil)
-            case .failure(let message):
-              result(FlutterError.init(code: "failure",
-                                      message: message,
-                                      details: nil))
-            case .healthKitNotAvailable:
-              result(FlutterError.init(code: "healthKitNotAvailable",
-                                      message: "healthKitNotAvailable",
-                                      details: nil))
-          }
-        } catch VitalError.UnsupportedRegion(let errorMessage) {
-          result(FlutterError.init(code: "UnsupportedRegion",
-                                     message: errorMessage,
-                                     details: nil))
-        } catch {
-          result(FlutterError.init(code: "Unknown error",
-                                        message: nil,
-                                        details: nil))
-        } 
-      }
   }
 
   private func mapResourceToVitalResource(_ name: String) throws -> VitalResource {

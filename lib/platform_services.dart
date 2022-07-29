@@ -50,8 +50,8 @@ class PlatformServices {
     await _channel.invokeMethod('askForResources', resources.map((it) => it.name).toList());
   }
 
-  Future<void> syncData() async {
-    await _channel.invokeMethod('syncData');
+  Future<void> syncData({List<VitalResource>? resources}) async {
+    await _channel.invokeMethod('syncData', resources?.map((it) => it.name).toList());
   }
 
   Stream<String> get status => _streamController.stream;

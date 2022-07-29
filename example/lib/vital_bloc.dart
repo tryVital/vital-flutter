@@ -56,7 +56,8 @@ class VitalBloc {
   }
 
   void askForHealthResources() {
-    client.platformServices.askForResources([VitalResource.profile, VitalResource.activity]);
+    client.platformServices
+        .askForResources([VitalResource.profile, VitalResource.body, VitalResource.activity, VitalResource.hearthRate]);
   }
 
   void syncHealthPlatform() {
