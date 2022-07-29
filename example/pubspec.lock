@@ -65,7 +65,7 @@ packages:
     source: hosted
     version: "1.3.0"
   fimber:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: fimber
       url: "https://pub.dartlang.org"

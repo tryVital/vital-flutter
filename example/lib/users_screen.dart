@@ -44,44 +44,87 @@ class UsersPage extends StatelessWidget {
         if (users == null) {
           return const Center(child: CircularProgressIndicator.adaptive());
         }
-        return Column(children: [
-          Expanded(
-              child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            itemBuilder: ((context, index) => UserWidget(
-                  user: users[index],
-                  linkAction: () => bloc.launchLink(users[index]),
-                  deleteAction: () => bloc.deleteUser(users[index]),
-                )),
-            itemCount: users.length,
-          )),
-          MaterialButton(
-            onPressed: () {
-              bloc.connectHealthPlatform();
-            },
-            child: const Text('Configure Health Kit'),
-          ),
-          MaterialButton(
-            onPressed: () {
-              bloc.setUserId();
-            },
-            child: const Text('Set user id'),
-          ),
-          MaterialButton(
-            onPressed: () {
-              bloc.askForHealthResources();
-            },
-            child: const Text('Ask for resources'),
-          ),
-          MaterialButton(
-            onPressed: () {
-              bloc.syncHealthPlatform();
-            },
-            child: const Text('Sync data'),
-          ),
-          const SizedBox(height: 40)
-        ]);
+        return SafeArea(
+          child: Column(children: [
+            Expanded(
+                child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              itemBuilder: ((context, index) => UserWidget(
+                    user: users[index],
+                    linkAction: () => bloc.launchLink(users[index]),
+                    deleteAction: () => bloc.deleteUser(users[index]),
+                  )),
+              itemCount: users.length,
+            )),
+            HealthKitWidget(bloc: bloc)
+          ]),
+        );
       },
+    );
+  }
+}
+
+class HealthKitWidget extends StatelessWidget {
+  const HealthKitWidget({
+    Key? key,
+    required this.bloc,
+  }) : super(key: key);
+
+  final VitalBloc bloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        const Text(
+          'HealthKit:',
+          style: TextStyle(fontSize: 18),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Wrap(
+            spacing: 8,
+            children: [
+              MaterialButton(
+                color: Colors.blueGrey.shade100,
+                onPressed: () {
+                  bloc.connectHealthPlatform();
+                },
+                child: const Text('Configure'),
+              ),
+              MaterialButton(
+                color: Colors.blueGrey.shade100,
+                onPressed: () {
+                  bloc.setUserId();
+                },
+                child: const Text('Set user id'),
+              ),
+              MaterialButton(
+                color: Colors.blueGrey.shade100,
+                onPressed: () {
+                  bloc.askForHealthResources();
+                },
+                child: const Text('Ask for resources'),
+              ),
+              MaterialButton(
+                color: Colors.blueGrey.shade100,
+                onPressed: () {
+                  bloc.syncHealthPlatform();
+                },
+                child: const Text('Sync data'),
+              ),
+              const SizedBox(height: 40)
+            ],
+          ),
+        ),
+        StreamBuilder(
+          stream: bloc.status,
+          builder: ((context, AsyncSnapshot<String> snapshot) {
+            return Text('Status: ${snapshot.data ?? '-'}');
+          }),
+        )
+      ]),
     );
   }
 }

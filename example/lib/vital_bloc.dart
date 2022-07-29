@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/vital_flutter.dart';
+import 'package:vital_flutter/vital_resource.dart';
 
 class VitalBloc {
   final client = VitalClient();
@@ -11,9 +12,10 @@ class VitalBloc {
 
   final String apiKey;
   final Region region;
+  final Environment environment;
 
-  VitalBloc(this.apiKey, this.region) {
-    client.init(region: region, environment: Environment.sandbox, apiKey: apiKey);
+  VitalBloc(this.apiKey, this.region, this.environment) {
+    client.init(region: region, environment: environment, apiKey: apiKey);
   }
 
   Stream<List<User>> getUsers() {
@@ -42,7 +44,11 @@ class VitalBloc {
   }
 
   void connectHealthPlatform() async {
-    client.platformServices.configure(apiKey, region);
+    await client.platformServices.configure(
+      apiKey: apiKey,
+      region: region,
+      environment: environment,
+    );
   }
 
   void setUserId() {
@@ -50,10 +56,12 @@ class VitalBloc {
   }
 
   void askForHealthResources() {
-    client.platformServices.askForResources();
+    client.platformServices.askForResources([VitalResource.profile, VitalResource.activity]);
   }
 
   void syncHealthPlatform() {
     client.platformServices.syncData();
   }
+
+  Stream<String> get status => client.platformServices.status;
 }

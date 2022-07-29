@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vital_flutter/environment.dart';
 
 import 'package:vital_flutter/vital_flutter.dart';
 import 'package:vital_flutter_example/users_screen.dart';
 import 'package:vital_flutter_example/vital_bloc.dart';
+import 'package:fimber/fimber.dart';
 
 const apiKey = 'sk_eu_S5LdXTS_CAtdFrkX9OYsiVq_jGHaIXtZyBPbBtPkzhA';
 const region = Region.eu;
 
 void main() {
+  Fimber.plantTree(DebugTree());
   runApp(const MyApp());
 }
 
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(backgroundColor: Colors.grey.shade300),
       ),
       home: Provider<VitalBloc>(
-        create: (context) => VitalBloc(apiKey, region),
+        create: (context) => VitalBloc(apiKey, region, Environment.sandbox),
         child: const UsersScreen(),
       ),
     );
