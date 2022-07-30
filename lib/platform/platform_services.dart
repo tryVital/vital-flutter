@@ -1,15 +1,18 @@
 import 'dart:async';
 
 import 'package:fimber/fimber.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vital_flutter/environment.dart';
+import 'package:vital_flutter/platform/data/permission_outcome.dart';
+import 'package:vital_flutter/platform/data/sync_data.dart';
 import 'package:vital_flutter/region.dart';
 import 'package:vital_flutter/vital_resource.dart';
 
 class PlatformServices {
   var _statusSubscribed = false;
   var _configured = false;
-  late final StreamController<String> _streamController = StreamController(onListen: () async {
+  late final StreamController<SyncStatus> _streamController = StreamController(onListen: () async {
     _statusSubscribed = true;
     if (_configured) {
       await _channel.invokeMethod('subscribeToStatus');
@@ -24,8 +27,8 @@ class PlatformServices {
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case "sendStatus":
-          Fimber.d("sendStatus ${call.arguments}");
-          _streamController.sink.add(call.arguments);
+          Fimber.d("sendStatus ${call.arguments[0]} ${call.arguments[1]} ${call.arguments[2]}");
+          _streamController.sink.add(mapArgumentsToStatus(call.arguments as List<dynamic>));
           break;
         default:
           break;
@@ -46,13 +49,19 @@ class PlatformServices {
     await _channel.invokeMethod('setUserId', userId);
   }
 
-  Future<void> askForResources(List<VitalResource> resources) async {
-    await _channel.invokeMethod('askForResources', resources.map((it) => it.name).toList());
+  Future<PermissionOutcome> askForResources(List<VitalResource> resources) async {
+    final outcome = await _channel.invokeMethod('askForResources', resources.map((it) => it.name).toList());
+    print(outcome);
+    if (outcome == null) {
+      return PermissionOutcome.success();
+    } else {
+      return PermissionOutcome.failure('${outcome}');
+    }
   }
 
   Future<void> syncData({List<VitalResource>? resources}) async {
     await _channel.invokeMethod('syncData', resources?.map((it) => it.name).toList());
   }
 
-  Stream<String> get status => _streamController.stream;
+  Stream<SyncStatus> get status => _streamController.stream;
 }

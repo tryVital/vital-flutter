@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import VitalHealthKit
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {

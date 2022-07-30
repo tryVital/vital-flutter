@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:vital_flutter/platform_services.dart';
+import 'package:vital_flutter/platform/platform_services.dart';
 import 'package:vital_flutter/vital_flutter.dart';
 import 'package:vital_flutter/services/activity_service.dart';
 import 'package:vital_flutter/services/body_service.dart';

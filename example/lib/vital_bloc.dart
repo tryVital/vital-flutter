@@ -64,5 +64,5 @@ class VitalBloc {
     client.platformServices.syncData();
   }
 
-  Stream<String> get status => client.platformServices.status;
+  Stream<String> get status => client.platformServices.status.map((event) => event.status.name);
 }
