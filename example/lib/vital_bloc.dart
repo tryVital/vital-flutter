@@ -60,7 +60,8 @@ class VitalBloc {
       VitalResource.profile,
       VitalResource.body,
       VitalResource.activity,
-      VitalResource.hearthRate,
+      VitalResource.heartRate,
+      VitalResource.bloodPressure,
       VitalResource.glucose
     ]);
   }
@@ -70,7 +71,6 @@ class VitalBloc {
   }
 
   Stream<String> get status => client.platformServices.status.map((event) {
-        print("Status decoded: $event");
         return event.status.name;
       });
 }

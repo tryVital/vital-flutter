@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:fimber/fimber.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/platform/data/permission_outcome.dart';
@@ -26,7 +26,7 @@ class PlatformServices {
   PlatformServices(MethodChannel channel) : _channel = channel {
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
-        case "sendStatus":
+        case 'sendStatus':
           Fimber.d("sendStatus ${call.arguments[0]} ${call.arguments[1]} ${call.arguments[2]}");
           _streamController.sink.add(mapArgumentsToStatus(call.arguments as List<dynamic>));
           break;
@@ -51,11 +51,19 @@ class PlatformServices {
 
   Future<PermissionOutcome> askForResources(List<VitalResource> resources) async {
     final outcome = await _channel.invokeMethod('askForResources', resources.map((it) => it.name).toList());
-    print(outcome);
     if (outcome == null) {
       return PermissionOutcome.success();
     } else {
-      return PermissionOutcome.failure('${outcome}');
+      final error = jsonDecode(outcome);
+      final code = error['code'];
+      final message = error['message'];
+      if (code == 'healthKitNotAvailable') {
+        return PermissionOutcome.healthKitNotAvailable(message);
+      } else if (code == 'UnsupportedResource') {
+        return PermissionOutcome.failure('Unsupported Resource: $message');
+      } else {
+        return PermissionOutcome.failure('Unknown error');
+      }
     }
   }
 

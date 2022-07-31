@@ -164,7 +164,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         return .vitals(.glucose)
       case "bloodPressure":
         return .vitals(.bloodPressure)
-      case "hearthRate":
+      case "heartRate":
         return .vitals(.hearthRate)
       default:
         throw VitalError.UnsupportedResource(name)
@@ -210,9 +210,9 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     }
   }
 
-  private func encodePostResourceData(_ data: PostResourceData) -> [String?]{
+  private func encodePostResourceData(_ data: PostResourceData) -> String? {
     let payload: String? = encode(data.payload)
-    return [data.name, payload]
+    return payload
   }
 
   private func encode(_ encodable: Encodable) -> String? {

@@ -27,9 +27,9 @@ class SyncStatusFailed extends SyncStatus {
   SyncStatusFailed(this.resource, this.error) : super(SyncStatusType.failedSyncing);
 }
 
-class SyncStatusSuccessSyncing extends SyncStatus {
+class SyncStatusSuccessSyncing<T> extends SyncStatus {
   final VitalResource resource;
-  final PostResourceData data;
+  final T data;
 
   SyncStatusSuccessSyncing(this.resource, this.data) : super(SyncStatusType.successSyncing);
 }
@@ -59,9 +59,10 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
     case 'failedSyncing':
       return SyncStatusFailed(VitalResource.values.firstWhere((it) => it.name == arguments[1]), arguments[2]);
     case 'successSyncing':
+      final resource = VitalResource.values.firstWhere((it) => it.name == arguments[1]);
       return SyncStatusSuccessSyncing(
-        VitalResource.values.firstWhere((it) => it.name == arguments[1]),
-        PostResourceData.fromArgument(arguments[2]),
+        resource,
+        fromArgument(resource, arguments[2]),
       );
     case 'nothingToSync':
       return SyncStatusNothingToSync(VitalResource.values.firstWhere((it) => it.name == arguments[1]));
@@ -86,63 +87,27 @@ enum PostResourceDataType {
   unknown,
 }
 
-class PostResourceData {
-  final PostResourceDataType type;
-
-  PostResourceData(this.type);
-
-  factory PostResourceData.fromArgument(List<dynamic> argument) {
-    switch (argument[0]) {
-      case "activity":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.activity,
-          (jsonDecode(argument[1]) as List).map((e) => ActivitySummary.fromJson(e)).toList(),
-        );
-      case "profile":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.profile,
-          ProfileSummary.fromJson(jsonDecode(argument[1])),
-        );
-      case "body":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.body,
-          BodySummary.fromJson(jsonDecode(argument[1])),
-        );
-      case "sleep":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.sleep,
-          (jsonDecode(argument[1]) as List).map((e) => SleepSummary.fromJson(e)).toList(),
-        );
-      case "workout":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.workout,
-          (jsonDecode(argument[1]) as List).map((e) => WorkoutSummary.fromJson(e)).toList(),
-        );
-      case "glucose":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.glucose,
-          (jsonDecode(argument[1]) as List).map((e) => QuantitySample.fromJson(e)).toList(),
-        );
-      case "bloodPressure":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.bloodPressure,
-          (jsonDecode(argument[1]) as List).map((e) => BloodPressureSample.fromJson(e)).toList(),
-        );
-      case "heartRate":
-        return PostResourceSummaryData._init(
-          PostResourceDataType.hearthRate,
-          (jsonDecode(argument[1]) as List).map((e) => QuantitySample.fromJson(e)).toList(),
-        );
-      default:
-        return PostResourceData(PostResourceDataType.unknown);
-    }
+Object? fromArgument(VitalResource resource, String argument) {
+  switch (resource) {
+    case VitalResource.activity:
+      return (jsonDecode(argument) as List).map((e) => ActivitySummary.fromJson(e)).toList();
+    case VitalResource.profile:
+      return ProfileSummary.fromJson(jsonDecode(argument));
+    case VitalResource.body:
+      return BodySummary.fromJson(jsonDecode(argument));
+    case VitalResource.sleep:
+      return (jsonDecode(argument) as List).map((e) => SleepSummary.fromJson(e)).toList();
+    case VitalResource.workout:
+      return (jsonDecode(argument) as List).map((e) => WorkoutSummary.fromJson(e)).toList();
+    case VitalResource.glucose:
+      return (jsonDecode(argument) as List).map((e) => QuantitySample.fromJson(e)).toList();
+    case VitalResource.bloodPressure:
+      return (jsonDecode(argument) as List).map((e) => BloodPressureSample.fromJson(e)).toList();
+    case VitalResource.heartRate:
+      return (jsonDecode(argument) as List).map((e) => QuantitySample.fromJson(e)).toList();
+    default:
+      return null;
   }
-}
-
-class PostResourceSummaryData<T> extends PostResourceData {
-  final T summary;
-
-  PostResourceSummaryData._init(PostResourceDataType type, this.summary) : super(type);
 }
 
 @JsonSerializable()
