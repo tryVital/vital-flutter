@@ -6,13 +6,16 @@ class VitalBloc {
   final client = VitalClient();
 
   final StreamController<List<User>> usersController = StreamController();
+  final StreamController<User?> selectedUserController = StreamController();
 
   final String apiKey;
   final Region region;
   final Environment environment;
+  User? _selectedUser;
 
   VitalBloc(this.apiKey, this.region, this.environment) {
     client.init(region: region, environment: environment, apiKey: apiKey);
+    _connectHealthPlatform();
   }
 
   Stream<List<User>> getUsers() {
@@ -40,12 +43,8 @@ class VitalBloc {
     return client.linkProvider(user, 'strava', 'vitalexample://callback');
   }
 
-  void connectHealthPlatform() async {
+  void _connectHealthPlatform() async {
     await client.healthkitServices.configure();
-  }
-
-  void setUserId() {
-    client.healthkitServices.setUserId('eba7c0a2-dc01-49f5-a361-5149bd318f43');
   }
 
   void askForHealthResources() {
@@ -59,11 +58,22 @@ class VitalBloc {
     ]);
   }
 
-  void syncHealthPlatform() {
-    client.healthkitServices.syncData();
+  void selectUser(User user) {
+    _selectedUser = user;
+    selectedUserController.sink.add(user);
+  }
+
+  void syncHealthPlatform() async {
+    final userId = _selectedUser?.userId;
+    if (userId != null) {
+      await client.healthkitServices.setUserId(userId);
+      client.healthkitServices.syncData();
+    }
   }
 
   Stream<String> get status => client.healthkitServices.status.map((event) {
         return event.status.name;
       });
+
+  Stream<User?> get selectedUser => selectedUserController.stream;
 }

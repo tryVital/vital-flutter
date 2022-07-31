@@ -53,6 +53,7 @@ class UsersPage extends StatelessWidget {
                     user: users[index],
                     linkAction: () => bloc.launchLink(users[index]),
                     deleteAction: () => bloc.deleteUser(users[index]),
+                    onTap: () => bloc.selectUser(users[index]),
                   )),
               itemCount: users.length,
             )),
@@ -89,30 +90,21 @@ class HealthKitWidget extends StatelessWidget {
               MaterialButton(
                 color: Colors.blueGrey.shade100,
                 onPressed: () {
-                  bloc.connectHealthPlatform();
-                },
-                child: const Text('Configure'),
-              ),
-              MaterialButton(
-                color: Colors.blueGrey.shade100,
-                onPressed: () {
-                  bloc.setUserId();
-                },
-                child: const Text('Set user id'),
-              ),
-              MaterialButton(
-                color: Colors.blueGrey.shade100,
-                onPressed: () {
                   bloc.askForHealthResources();
                 },
                 child: const Text('Ask for resources'),
               ),
-              MaterialButton(
-                color: Colors.blueGrey.shade100,
-                onPressed: () {
-                  bloc.syncHealthPlatform();
-                },
-                child: const Text('Sync data'),
+              StreamBuilder(
+                stream: bloc.selectedUser,
+                builder: (context, AsyncSnapshot<User?> snapshot) => MaterialButton(
+                  color: Colors.blueGrey.shade100,
+                  onPressed: snapshot.data != null
+                      ? () {
+                          bloc.syncHealthPlatform();
+                        }
+                      : null,
+                  child: const Text('Sync data'),
+                ),
               ),
               const SizedBox(height: 40)
             ],
@@ -133,53 +125,58 @@ class UserWidget extends StatelessWidget {
   final User user;
   final VoidCallback? linkAction;
   final VoidCallback? deleteAction;
+  final VoidCallback? onTap;
 
   const UserWidget({
     Key? key,
     required this.user,
     this.linkAction,
     this.deleteAction,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.person,
-            color: Colors.grey,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              user.clientUserId ?? '',
-              style: const TextStyle(fontSize: 18.0),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.person,
+              color: Colors.grey,
             ),
-          ),
-          if (linkAction != null) ...[
             const SizedBox(width: 12),
-            IconButton(
-              onPressed: linkAction,
-              icon: const Icon(
-                Icons.copy,
-                color: Colors.grey,
+            Expanded(
+              child: Text(
+                user.clientUserId ?? '',
+                style: const TextStyle(fontSize: 18.0),
               ),
-            )
+            ),
+            if (linkAction != null) ...[
+              const SizedBox(width: 12),
+              IconButton(
+                onPressed: linkAction,
+                icon: const Icon(
+                  Icons.copy,
+                  color: Colors.grey,
+                ),
+              )
+            ],
+            if (deleteAction != null) ...[
+              const SizedBox(width: 12),
+              IconButton(
+                onPressed: deleteAction,
+                icon: const Icon(
+                  Icons.delete,
+                  color: Colors.grey,
+                ),
+              ),
+            ]
           ],
-          if (deleteAction != null) ...[
-            const SizedBox(width: 12),
-            IconButton(
-              onPressed: deleteAction,
-              icon: const Icon(
-                Icons.delete,
-                color: Colors.grey,
-              ),
-            ),
-          ]
-        ],
+        ),
       ),
     );
   }

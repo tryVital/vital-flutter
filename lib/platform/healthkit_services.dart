@@ -15,6 +15,7 @@ class HealthkitServices {
   late final StreamController<SyncStatus> _streamController = StreamController(onListen: () async {
     _statusSubscribed = true;
     if (_configured) {
+      Fimber.d('Healthkit subscribeToStatus (stream)');
       await _channel.invokeMethod('subscribeToStatus');
     }
   }, onCancel: () async {
@@ -46,9 +47,11 @@ class HealthkitServices {
   }
 
   Future<void> configure() async {
+    Fimber.d('Healthkit configure $_apiKey, $_region $_environment');
     await _channel.invokeMethod('configure', [_apiKey, _region.name, _environment.name]);
-    if (_statusSubscribed && !_configured) {
-      _configured = true;
+    _configured = true;
+    if (_statusSubscribed) {
+      Fimber.d('Healthkit subscribeToStatus (configure)');
       await _channel.invokeMethod('subscribeToStatus');
     }
   }
