@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vital_flutter/vital_resource.dart';
+import 'package:vital_flutter/platform/healthkit_resource.dart';
 
 part 'sync_data.g.dart';
 
@@ -21,27 +21,27 @@ abstract class SyncStatus {
 }
 
 class SyncStatusFailed extends SyncStatus {
-  final VitalResource resource;
+  final HealthkitResource resource;
   final String? error;
 
   SyncStatusFailed(this.resource, this.error) : super(SyncStatusType.failedSyncing);
 }
 
 class SyncStatusSuccessSyncing<T> extends SyncStatus {
-  final VitalResource resource;
+  final HealthkitResource resource;
   final T data;
 
   SyncStatusSuccessSyncing(this.resource, this.data) : super(SyncStatusType.successSyncing);
 }
 
 class SyncStatusNothingToSync extends SyncStatus {
-  final VitalResource resource;
+  final HealthkitResource resource;
 
   SyncStatusNothingToSync(this.resource) : super(SyncStatusType.nothingToSync);
 }
 
 class SyncStatusSyncing extends SyncStatus {
-  final VitalResource resource;
+  final HealthkitResource resource;
 
   SyncStatusSyncing(this.resource) : super(SyncStatusType.syncing);
 }
@@ -57,17 +57,17 @@ class SyncStatusUnknown extends SyncStatus {
 SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
   switch (arguments[0] as String) {
     case 'failedSyncing':
-      return SyncStatusFailed(VitalResource.values.firstWhere((it) => it.name == arguments[1]), arguments[2]);
+      return SyncStatusFailed(HealthkitResource.values.firstWhere((it) => it.name == arguments[1]), arguments[2]);
     case 'successSyncing':
-      final resource = VitalResource.values.firstWhere((it) => it.name == arguments[1]);
+      final resource = HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
       return SyncStatusSuccessSyncing(
         resource,
         fromArgument(resource, arguments[2]),
       );
     case 'nothingToSync':
-      return SyncStatusNothingToSync(VitalResource.values.firstWhere((it) => it.name == arguments[1]));
+      return SyncStatusNothingToSync(HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
     case 'syncing':
-      return SyncStatusSyncing(VitalResource.values.firstWhere((it) => it.name == arguments[1]));
+      return SyncStatusSyncing(HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
     case 'syncingCompleted':
       return SyncStatusCompleted();
     default:
@@ -87,23 +87,23 @@ enum PostResourceDataType {
   unknown,
 }
 
-Object? fromArgument(VitalResource resource, String argument) {
+Object? fromArgument(HealthkitResource resource, String argument) {
   switch (resource) {
-    case VitalResource.activity:
+    case HealthkitResource.activity:
       return (jsonDecode(argument) as List).map((e) => ActivitySummary.fromJson(e)).toList();
-    case VitalResource.profile:
+    case HealthkitResource.profile:
       return ProfileSummary.fromJson(jsonDecode(argument));
-    case VitalResource.body:
+    case HealthkitResource.body:
       return BodySummary.fromJson(jsonDecode(argument));
-    case VitalResource.sleep:
+    case HealthkitResource.sleep:
       return (jsonDecode(argument) as List).map((e) => SleepSummary.fromJson(e)).toList();
-    case VitalResource.workout:
+    case HealthkitResource.workout:
       return (jsonDecode(argument) as List).map((e) => WorkoutSummary.fromJson(e)).toList();
-    case VitalResource.glucose:
+    case HealthkitResource.glucose:
       return (jsonDecode(argument) as List).map((e) => QuantitySample.fromJson(e)).toList();
-    case VitalResource.bloodPressure:
+    case HealthkitResource.bloodPressure:
       return (jsonDecode(argument) as List).map((e) => BloodPressureSample.fromJson(e)).toList();
-    case VitalResource.heartRate:
+    case HealthkitResource.heartRate:
       return (jsonDecode(argument) as List).map((e) => QuantitySample.fromJson(e)).toList();
     default:
       return null;

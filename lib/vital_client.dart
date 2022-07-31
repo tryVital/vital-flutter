@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:vital_flutter/platform/platform_services.dart';
+import 'package:vital_flutter/platform/healthkit_services.dart';
 import 'package:vital_flutter/vital_flutter.dart';
 import 'package:vital_flutter/services/activity_service.dart';
 import 'package:vital_flutter/services/body_service.dart';
@@ -23,6 +23,7 @@ class VitalClient {
   late final String _baseUrl;
   late final String _apiKey;
   late final Region _region;
+  late final Environment _environment;
 
   late final activityService = ActivityService.create(_httpClient, _baseUrl, _apiKey);
   late final bodyService = BodyService.create(_httpClient, _baseUrl, _apiKey);
@@ -36,7 +37,12 @@ class VitalClient {
 
   static const MethodChannel _channel = MethodChannel('vital_flutter');
 
-  late final platformServices = PlatformServices(_channel);
+  late final healthkitServices = HealthkitServices(
+    _channel,
+    apiKey: _apiKey,
+    region: _region,
+    environment: _environment,
+  );
 
   init({
     required Region region,
@@ -47,6 +53,7 @@ class VitalClient {
     _baseUrl = _resolveUrl(region, environment);
     _apiKey = apiKey;
     _region = region;
+    _environment = environment;
   }
 
   String _resolveUrl(Region region, Environment environment) {

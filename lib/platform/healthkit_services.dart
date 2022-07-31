@@ -7,9 +7,9 @@ import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/platform/data/permission_outcome.dart';
 import 'package:vital_flutter/platform/data/sync_data.dart';
 import 'package:vital_flutter/region.dart';
-import 'package:vital_flutter/vital_resource.dart';
+import 'package:vital_flutter/platform/healthkit_resource.dart';
 
-class PlatformServices {
+class HealthkitServices {
   var _statusSubscribed = false;
   var _configured = false;
   late final StreamController<SyncStatus> _streamController = StreamController(onListen: () async {
@@ -22,8 +22,16 @@ class PlatformServices {
     await _channel.invokeMethod('unsubscribeFromStatus');
   });
   final MethodChannel _channel;
+  final String _apiKey;
+  final Region _region;
+  final Environment _environment;
 
-  PlatformServices(MethodChannel channel) : _channel = channel {
+  HealthkitServices(MethodChannel channel,
+      {required String apiKey, required Region region, required Environment environment})
+      : _apiKey = apiKey,
+        _region = region,
+        _environment = environment,
+        _channel = channel {
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'sendStatus':
@@ -37,8 +45,8 @@ class PlatformServices {
     });
   }
 
-  Future<void> configure({required String apiKey, required Region region, required Environment environment}) async {
-    await _channel.invokeMethod('configure', [apiKey, region.name, environment.name]);
+  Future<void> configure() async {
+    await _channel.invokeMethod('configure', [_apiKey, _region.name, _environment.name]);
     if (_statusSubscribed && !_configured) {
       _configured = true;
       await _channel.invokeMethod('subscribeToStatus');
@@ -49,7 +57,7 @@ class PlatformServices {
     await _channel.invokeMethod('setUserId', userId);
   }
 
-  Future<PermissionOutcome> askForResources(List<VitalResource> resources) async {
+  Future<PermissionOutcome> askForResources(List<HealthkitResource> resources) async {
     final outcome = await _channel.invokeMethod('askForResources', resources.map((it) => it.name).toList());
     if (outcome == null) {
       return PermissionOutcome.success();
@@ -67,7 +75,7 @@ class PlatformServices {
     }
   }
 
-  Future<void> syncData({List<VitalResource>? resources}) async {
+  Future<void> syncData({List<HealthkitResource>? resources}) async {
     await _channel.invokeMethod('syncData', resources?.map((it) => it.name).toList());
   }
 

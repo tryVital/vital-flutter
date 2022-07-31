@@ -1,9 +1,6 @@
 import 'dart:async';
-
-import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/vital_flutter.dart';
-import 'package:vital_flutter/vital_resource.dart';
 
 class VitalBloc {
   final client = VitalClient();
@@ -44,33 +41,29 @@ class VitalBloc {
   }
 
   void connectHealthPlatform() async {
-    await client.platformServices.configure(
-      apiKey: apiKey,
-      region: region,
-      environment: environment,
-    );
+    await client.healthkitServices.configure();
   }
 
   void setUserId() {
-    client.platformServices.setUserId('eba7c0a2-dc01-49f5-a361-5149bd318f43');
+    client.healthkitServices.setUserId('eba7c0a2-dc01-49f5-a361-5149bd318f43');
   }
 
   void askForHealthResources() {
-    client.platformServices.askForResources([
-      VitalResource.profile,
-      VitalResource.body,
-      VitalResource.activity,
-      VitalResource.heartRate,
-      VitalResource.bloodPressure,
-      VitalResource.glucose
+    client.healthkitServices.askForResources([
+      HealthkitResource.profile,
+      HealthkitResource.body,
+      HealthkitResource.activity,
+      HealthkitResource.heartRate,
+      HealthkitResource.bloodPressure,
+      HealthkitResource.glucose
     ]);
   }
 
   void syncHealthPlatform() {
-    client.platformServices.syncData();
+    client.healthkitServices.syncData();
   }
 
-  Stream<String> get status => client.platformServices.status.map((event) {
+  Stream<String> get status => client.healthkitServices.status.map((event) {
         return event.status.name;
       });
 }

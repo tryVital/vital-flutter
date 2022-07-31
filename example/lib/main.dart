@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vital_flutter/environment.dart';
-
 import 'package:vital_flutter/vital_flutter.dart';
 import 'package:vital_flutter_example/users_screen.dart';
 import 'package:vital_flutter_example/vital_bloc.dart';

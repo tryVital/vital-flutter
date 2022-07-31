@@ -1,4 +1,4 @@
-enum VitalResource {
+enum HealthkitResource {
   profile,
   body,
   workout,

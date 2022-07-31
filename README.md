@@ -34,25 +34,21 @@ client.linkProvider(user, 'strava', 'vitalexample://callback');
 2. To use HealthKit client you need to call configure first:
 
 ```dart
-await client.platformServices.configure(
-      apiKey: apiKey,
-      region: region,
-      environment: environment,
-    );
+await client.healthkitServices.configure();
 ```
 
 3. Set User ID
 
 ```dart
-client.platformServices.setUserId('eba7c0a2-dc01-49f5-a361-...);
+client.healthkitServices.setUserId('eba7c0a2-dc01-49f5-a361-...);
 ```
 
 4. Ask user for permissions to collect HealthKit data.
 
 ```dart
-client.platformServices.askForResources([
-      VitalResource.profile,
-      VitalResource.body,
+client.healthkitServices.askForResources([
+      HealthkitResource.profile,
+      HealthkitResource.body,
       ...
     ]);
 ```
@@ -60,17 +56,18 @@ client.platformServices.askForResources([
 5. Sync data
 
 ```dart
-client.platformServices.syncData();
+client.healthkitServices.syncData();
 ```
 
 6. Observe sync status using status stream
 
 ```dart
-Stream<String> status = client.platformServices.status
+Stream<SyncStatus> status = client.healthkitServices.status
 ```
 
 ## Documentation
 
+For more example usage run the sample app with your API key and Region set in `main.dart`.
 Please refer to the [official Vital](https://docs.tryvital.io/welcome/libraries) docs provide a full reference on using this library.
 
 ## License
