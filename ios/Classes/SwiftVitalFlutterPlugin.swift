@@ -205,7 +205,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
           case .bloodPressure:
             return "bloodPressure"
           case .hearthRate:
-            return "hearthRate"
+            return "heartRate"
         }
     }
   }

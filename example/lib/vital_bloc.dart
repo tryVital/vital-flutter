@@ -56,13 +56,21 @@ class VitalBloc {
   }
 
   void askForHealthResources() {
-    client.platformServices
-        .askForResources([VitalResource.profile, VitalResource.body, VitalResource.activity, VitalResource.hearthRate]);
+    client.platformServices.askForResources([
+      VitalResource.profile,
+      VitalResource.body,
+      VitalResource.activity,
+      VitalResource.hearthRate,
+      VitalResource.glucose
+    ]);
   }
 
   void syncHealthPlatform() {
     client.platformServices.syncData();
   }
 
-  Stream<String> get status => client.platformServices.status.map((event) => event.status.name);
+  Stream<String> get status => client.platformServices.status.map((event) {
+        print("Status decoded: $event");
+        return event.status.name;
+      });
 }
