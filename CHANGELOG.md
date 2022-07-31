@@ -1,3 +1,7 @@
-## 0.0.1
+## 0.2.0
 
-* TODO: Describe initial release.
+* Support for HealthKit
+
+## 0.1.0
+
+* REST Client for https://tryvital.io/
