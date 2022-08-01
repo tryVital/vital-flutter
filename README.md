@@ -2,6 +2,10 @@
 
 The official Flutter package for Vital API and HealthKit
 
+## Installing
+
+Package is available on [https://pub.dev](https://pub.dev/packages/vital_flutter/install).
+
 ## Getting Started
 
 Initialise client with region, environment and api key
