@@ -57,7 +57,7 @@ class UsersPage extends StatelessWidget {
                   )),
               itemCount: users.length,
             )),
-            HealthKitWidget(bloc: bloc)
+            const HealthKitWidget()
           ]),
         );
       },
@@ -65,16 +65,19 @@ class UsersPage extends StatelessWidget {
   }
 }
 
-class HealthKitWidget extends StatelessWidget {
+class HealthKitWidget extends StatefulWidget {
   const HealthKitWidget({
     Key? key,
-    required this.bloc,
   }) : super(key: key);
 
-  final VitalBloc bloc;
+  @override
+  State<HealthKitWidget> createState() => _HealthKitWidgetState();
+}
 
+class _HealthKitWidgetState extends State<HealthKitWidget> {
   @override
   Widget build(BuildContext context) {
+    final VitalBloc bloc = Provider.of(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
