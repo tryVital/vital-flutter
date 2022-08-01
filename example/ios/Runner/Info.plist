@@ -43,5 +43,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>App collects the data from Health Kit for you to analyse them in using TryVital.</string>
 </dict>
 </plist>
