@@ -44,7 +44,8 @@ class VitalBloc {
   }
 
   void _connectHealthPlatform() async {
-    await client.healthkitServices.configure();
+    await client.healthkitServices.configureClient();
+    await client.healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
   }
 
   void askForHealthResources() {

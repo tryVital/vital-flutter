@@ -15,9 +15,6 @@ import 'package:vital_flutter/services/vitals_service.dart';
 import 'package:vital_flutter/services/workout_service.dart';
 import 'package:http/http.dart' as http;
 
-import 'environment.dart';
-import 'region.dart';
-
 class VitalClient {
   late final http.Client _httpClient;
   late final String _baseUrl;

@@ -35,17 +35,6 @@ ActivitySummary _$ActivitySummaryFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$ActivitySummaryToJson(ActivitySummary instance) =>
-    <String, dynamic>{
-      'date': instance.date.toIso8601String(),
-      'activeEnergyBurned': instance.activeEnergyBurned,
-      'basalEnergyBurned': instance.basalEnergyBurned,
-      'steps': instance.steps,
-      'floorsClimbed': instance.floorsClimbed,
-      'distanceWalkingRunning': instance.distanceWalkingRunning,
-      'vo2Max': instance.vo2Max,
-    };
-
 BodySummary _$BodySummaryFromJson(Map<String, dynamic> json) => BodySummary(
       bodyMass: (json['bodyMass'] as List<dynamic>?)
               ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
@@ -57,12 +46,6 @@ BodySummary _$BodySummaryFromJson(Map<String, dynamic> json) => BodySummary(
           const [],
     );
 
-Map<String, dynamic> _$BodySummaryToJson(BodySummary instance) =>
-    <String, dynamic>{
-      'bodyMass': instance.bodyMass,
-      'bodyFatPercentage': instance.bodyFatPercentage,
-    };
-
 QuantitySample _$QuantitySampleFromJson(Map<String, dynamic> json) =>
     QuantitySample(
       id: json['id'] as String?,
@@ -73,17 +56,6 @@ QuantitySample _$QuantitySampleFromJson(Map<String, dynamic> json) =>
       type: json['type'] as String?,
       unit: json['unit'] as String,
     );
-
-Map<String, dynamic> _$QuantitySampleToJson(QuantitySample instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'value': instance.value,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
-      'sourceBundle': instance.sourceBundle,
-      'type': instance.type,
-      'unit': instance.unit,
-    };
 
 SleepSummary _$SleepSummaryFromJson(Map<String, dynamic> json) => SleepSummary(
       id: json['id'] as String?,
@@ -112,19 +84,6 @@ SleepSummary _$SleepSummaryFromJson(Map<String, dynamic> json) => SleepSummary(
           const [],
     );
 
-Map<String, dynamic> _$SleepSummaryToJson(SleepSummary instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
-      'sourceBundle': instance.sourceBundle,
-      'heartRate': instance.heartRate,
-      'restingHeartRate': instance.restingHeartRate,
-      'heartRateVariability': instance.heartRateVariability,
-      'oxygenSaturation': instance.oxygenSaturation,
-      'respiratoryRate': instance.respiratoryRate,
-    };
-
 WorkoutSummary _$WorkoutSummaryFromJson(Map<String, dynamic> json) =>
     WorkoutSummary(
       id: json['id'] as String?,
@@ -144,19 +103,6 @@ WorkoutSummary _$WorkoutSummaryFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$WorkoutSummaryToJson(WorkoutSummary instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
-      'sourceBundle': instance.sourceBundle,
-      'sport': instance.sport,
-      'calories': instance.calories,
-      'distance': instance.distance,
-      'heartRate': instance.heartRate,
-      'respiratoryRate': instance.respiratoryRate,
-    };
-
 BloodPressureSample _$BloodPressureSampleFromJson(Map<String, dynamic> json) =>
     BloodPressureSample(
       systolic:
@@ -168,14 +114,6 @@ BloodPressureSample _$BloodPressureSampleFromJson(Map<String, dynamic> json) =>
           : QuantitySample.fromJson(json['pulse'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$BloodPressureSampleToJson(
-        BloodPressureSample instance) =>
-    <String, dynamic>{
-      'systolic': instance.systolic,
-      'diastolic': instance.diastolic,
-      'pulse': instance.pulse,
-    };
-
 ProfileSummary _$ProfileSummaryFromJson(Map<String, dynamic> json) =>
     ProfileSummary(
       biologicalSex:
@@ -186,13 +124,6 @@ ProfileSummary _$ProfileSummaryFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['dateOfBirth'] as String),
       height: json['height'] as int?,
     );
-
-Map<String, dynamic> _$ProfileSummaryToJson(ProfileSummary instance) =>
-    <String, dynamic>{
-      'biologicalSex': _$BiologicalSexEnumMap[instance.biologicalSex]!,
-      'dateOfBirth': instance.dateOfBirth?.toIso8601String(),
-      'height': instance.height,
-    };
 
 const _$BiologicalSexEnumMap = {
   BiologicalSex.male: 'male',
