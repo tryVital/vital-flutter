@@ -11,10 +11,10 @@ import 'package:vital_flutter/platform/healthkit_resource.dart';
 
 class HealthkitServices {
   var _statusSubscribed = false;
-  var _configured = false;
+  var _healthKitConfigured = false;
   late final StreamController<SyncStatus> _streamController = StreamController(onListen: () async {
     _statusSubscribed = true;
-    if (_configured) {
+    if (_healthKitConfigured) {
       Fimber.d('Healthkit subscribeToStatus (stream)');
       await _channel.invokeMethod('subscribeToStatus');
     }
@@ -46,10 +46,19 @@ class HealthkitServices {
     });
   }
 
-  Future<void> configure() async {
+  Future<void> configureClient() async {
     Fimber.d('Healthkit configure $_apiKey, $_region $_environment');
-    await _channel.invokeMethod('configure', [_apiKey, _region.name, _environment.name]);
-    _configured = true;
+    await _channel.invokeMethod('configureClient', [_apiKey, _region.name, _environment.name]);
+  }
+
+  Future<void> configureHealthkit({
+    bool autoSyncEnabled = false,
+    bool backgroundDeliveryEnabled = false,
+    bool logsEnabled = true,
+  }) async {
+    Fimber.d('Healthkit configureHealthkit $autoSyncEnabled, $backgroundDeliveryEnabled $logsEnabled');
+    await _channel.invokeMethod('configureHealthkit', [autoSyncEnabled, backgroundDeliveryEnabled, logsEnabled]);
+    _healthKitConfigured = true;
     if (_statusSubscribed) {
       Fimber.d('Healthkit subscribeToStatus (configure)');
       await _channel.invokeMethod('subscribeToStatus');

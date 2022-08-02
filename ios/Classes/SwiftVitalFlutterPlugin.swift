@@ -26,8 +26,11 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     print("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
     
     switch call.method {
-    case "configure":
-      configure(call.arguments as! [String], result: result)
+    case "configureClient":
+      configureClient(call.arguments as! [String], result: result)
+      return
+    case "configureHealthkit":
+      configureHealthkit(call.arguments as! [Bool], result: result)
       return
     case "setUserId":
       VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
@@ -56,7 +59,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
                                      details: nil))
   }
 
-  private func configure(_ arguments: [String], result: @escaping FlutterResult){
+  private func configureClient(_ arguments: [String], result: @escaping FlutterResult){
     let apiKey = arguments[0]
     let region = arguments[1]
     let environment = arguments[2]
@@ -65,12 +68,28 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         apiKey: apiKey,
         environment: try resolveEnvironment(region: region, environment: environment)
       )
-      VitalHealthKitClient.configure()
       result(nil)
     } catch VitalError.UnsupportedEnvironment(let errorMessage) {
       result(encode(ErrorResult(code: "UnsupportedEnvironment", message: errorMessage)))
     } catch VitalError.UnsupportedRegion(let errorMessage) {
       result(encode(ErrorResult(code: "UnsupportedRegion", message: errorMessage)))
+    } catch {
+      result(encode(ErrorResult(code: "Unknown error")))
+    }
+  }
+
+  private func configureHealthkit(_ arguments: [Bool], result: @escaping FlutterResult){
+    let autoSyncEnabled = arguments[0] as Bool
+    let backgroundDeliveryEnabled = arguments[1] as Bool
+    let logsEnabled = arguments[2] as Bool
+    do {
+      VitalHealthKitClient.configure(
+        .init(autoSyncEnabled: autoSyncEnabled,
+              backgroundDeliveryEnabled: backgroundDeliveryEnabled,
+              logsEnabled: logsEnabled
+              )
+      )
+      result(nil)
     } catch {
       result(encode(ErrorResult(code: "Unknown error")))
     }

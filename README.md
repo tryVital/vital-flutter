@@ -1,6 +1,10 @@
 # vital_flutter
 
-The official Flutter package for Vital API and HealthKit
+The official Flutter package for Vital APIs allowing fitness apps linking with tryvital.io and with support for HealthKit.
+
+## Installing
+
+Package is available on [https://pub.dev](https://pub.dev/packages/vital_flutter/install).
 
 ## Getting Started
 
@@ -34,7 +38,8 @@ client.linkProvider(user, 'strava', 'vitalexample://callback');
 2. To use HealthKit client you need to call configure first:
 
 ```dart
-await client.healthkitServices.configure();
+await client.healthkitServices.configureClient();
+await client.healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
 ```
 
 3. Set User ID

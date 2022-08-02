@@ -110,7 +110,7 @@ Object? fromArgument(HealthkitResource resource, String argument) {
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ActivitySummary {
   final DateTime date;
   final List<QuantitySample> activeEnergyBurned;
@@ -133,7 +133,7 @@ class ActivitySummary {
   factory ActivitySummary.fromJson(Map<String, dynamic> json) => _$ActivitySummaryFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class BodySummary {
   final List<QuantitySample> bodyMass;
   final List<QuantitySample> bodyFatPercentage;
@@ -143,7 +143,7 @@ class BodySummary {
   factory BodySummary.fromJson(Map<String, dynamic> json) => _$BodySummaryFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class QuantitySample {
   final String? id;
   final double value;
@@ -166,7 +166,7 @@ class QuantitySample {
   factory QuantitySample.fromJson(Map<String, dynamic> json) => _$QuantitySampleFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class SleepSummary {
   final String? id;
   final DateTime startDate;
@@ -194,7 +194,7 @@ class SleepSummary {
   factory SleepSummary.fromJson(Map<String, dynamic> json) => _$SleepSummaryFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class WorkoutSummary {
   final String? id;
   final DateTime startDate;
@@ -222,7 +222,7 @@ class WorkoutSummary {
   factory WorkoutSummary.fromJson(Map<String, dynamic> json) => _$WorkoutSummaryFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class BloodPressureSample {
   final QuantitySample systolic;
   final QuantitySample diastolic;
@@ -244,7 +244,7 @@ enum BiologicalSex {
   notSet,
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ProfileSummary {
   final BiologicalSex biologicalSex;
   final DateTime? dateOfBirth;
