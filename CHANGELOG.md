@@ -1,3 +1,7 @@
+## 0.2.2
+
+* HealthKit - split configure method into configureClient and configureHealthkit with auto sync, logging and background delivery options
+
 ## 0.2.0
 
 * Support for HealthKit
