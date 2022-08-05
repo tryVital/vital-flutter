@@ -22,8 +22,8 @@ class HttpRequestLoggingInterceptor extends HttpLoggingInterceptor {
 
   @override
   FutureOr<Response> onResponse(Response response) {
-    final base = response.base.request!;
-    chopperLogger.info('<-- ${response.statusCode} ${base.url}');
+    final base = response.base.request;
+    chopperLogger.info('<-- ${response.statusCode} ${base?.url}');
 
     response.base.headers.forEach((k, v) => chopperLogger.info('$k: $v'));
 
@@ -36,7 +36,7 @@ class HttpRequestLoggingInterceptor extends HttpLoggingInterceptor {
       }
     }
 
-    chopperLogger.info('--> END ${base.method}$bytes');
+    chopperLogger.info('--> END ${base?.method}$bytes');
     return response;
   }
 }
