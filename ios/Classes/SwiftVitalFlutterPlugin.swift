@@ -82,11 +82,13 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let autoSyncEnabled = arguments[0] as Bool
     let backgroundDeliveryEnabled = arguments[1] as Bool
     let logsEnabled = arguments[2] as Bool
+    let daysFetched: Int = arguments[3] as Int
     do {
       VitalHealthKitClient.configure(
         .init(autoSyncEnabled: autoSyncEnabled,
               backgroundDeliveryEnabled: backgroundDeliveryEnabled,
-              logsEnabled: logsEnabled
+              logsEnabled: logsEnabled,
+              daysFetched: numberOfDays
               )
       )
       result(nil)
@@ -185,6 +187,18 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         return .vitals(.bloodPressure)
       case "heartRate":
         return .vitals(.hearthRate)
+      case "steps":
+        return .individual(.steps)
+      case "activeEnergyBurned":
+        return .individual(.activeEnergyBurned)
+      case "basalEnergyBurned":
+        return .individual(.basalEnergyBurned)
+      case "floorClimbed":
+        return .individual(.floorClimbed)
+      case "distanceWalkingRunning":
+        return .individual(.distanceWalkingRunning)
+      case "vo2Max":
+        return .individual(.vo2Max)
       default:
         throw VitalError.UnsupportedResource(name)
     }
@@ -225,6 +239,21 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
             return "bloodPressure"
           case .hearthRate:
             return "heartRate"
+        }
+      case .individual(let type):
+        switch type {
+          case .steps:
+            return "steps"
+          case .activeEnergyBurned:
+            return "activeEnergyBurned"
+          case .basalEnergyBurned:
+            return "basalEnergyBurned"
+          case .floorClimbed:
+            return "floorClimbed"
+          case .distanceWalkingRunning:
+            return "distanceWalkingRunning"
+          case .vo2Max:
+            return "vo2Max"
         }
     }
   }
