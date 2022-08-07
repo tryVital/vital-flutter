@@ -30,7 +30,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       configureClient(call.arguments as! [String], result: result)
       return
     case "configureHealthkit":
-      configureHealthkit(call.arguments as! [Bool], result: result)
+      configureHealthkit(call.arguments as! [AnyObject], result: result)
       return
     case "setUserId":
       VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
@@ -78,17 +78,17 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     }
   }
 
-  private func configureHealthkit(_ arguments: [Bool], result: @escaping FlutterResult){
-    let autoSyncEnabled = arguments[0] as Bool
-    let backgroundDeliveryEnabled = arguments[1] as Bool
-    let logsEnabled = arguments[2] as Bool
-    let daysFetched: Int = arguments[3] as Int
+  private func configureHealthkit(_ arguments: [AnyObject], result: @escaping FlutterResult){
+    let autoSyncEnabled = arguments[0] as! Bool
+    let backgroundDeliveryEnabled = arguments[1] as! Bool
+    let logsEnabled = arguments[2] as! Bool
+    let daysFetched: Int = arguments[3] as! Int
     do {
       VitalHealthKitClient.configure(
         .init(autoSyncEnabled: autoSyncEnabled,
               backgroundDeliveryEnabled: backgroundDeliveryEnabled,
               logsEnabled: logsEnabled,
-              daysFetched: numberOfDays
+              daysFetched: daysFetched
               )
       )
       result(nil)
@@ -193,8 +193,8 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         return .individual(.activeEnergyBurned)
       case "basalEnergyBurned":
         return .individual(.basalEnergyBurned)
-      case "floorClimbed":
-        return .individual(.floorClimbed)
+      case "floorsClimbed":
+        return .individual(.floorsClimbed)
       case "distanceWalkingRunning":
         return .individual(.distanceWalkingRunning)
       case "vo2Max":
@@ -248,8 +248,8 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
             return "activeEnergyBurned"
           case .basalEnergyBurned:
             return "basalEnergyBurned"
-          case .floorClimbed:
-            return "floorClimbed"
+          case .floorsClimbed:
+            return "floorsClimbed"
           case .distanceWalkingRunning:
             return "distanceWalkingRunning"
           case .vo2Max:
