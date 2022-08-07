@@ -199,6 +199,10 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         return .individual(.distanceWalkingRunning)
       case "vo2Max":
         return .individual(.vo2Max)
+      case "weight":
+        return .individual(.weight)
+      case "bodyFat":
+        return .individual(.bodyFat)
       default:
         throw VitalError.UnsupportedResource(name)
     }
@@ -254,6 +258,10 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
             return "distanceWalkingRunning"
           case .vo2Max:
             return "vo2Max"
+          case .weight:
+            return "weight"
+          case .bodyFat:
+            return "bodyFat"
         }
     }
   }
