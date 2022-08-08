@@ -32,11 +32,13 @@ class VitalBloc {
   }
 
   createUser(String userName) {
-    unawaited(client.userService.createUser(userName).then((value) => refresh()));
+    unawaited(
+        client.userService.createUser(userName).then((value) => refresh()));
   }
 
   deleteUser(User user) {
-    unawaited(client.userService.deleteUser(user.userId!).then((value) => refresh()));
+    unawaited(
+        client.userService.deleteUser(user.userId!).then((value) => refresh()));
   }
 
   Future<bool> launchLink(User user) async {
@@ -45,7 +47,8 @@ class VitalBloc {
 
   void _connectHealthPlatform() async {
     await client.healthkitServices.configureClient();
-    await client.healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
+    await client.healthkitServices
+        .configureHealthkit(backgroundDeliveryEnabled: true);
   }
 
   void askForHealthResources() {
@@ -55,7 +58,8 @@ class VitalBloc {
       HealthkitResource.activity,
       HealthkitResource.heartRate,
       HealthkitResource.bloodPressure,
-      HealthkitResource.glucose
+      HealthkitResource.glucose,
+      HealthkitResource.sleep
     ]);
   }
 

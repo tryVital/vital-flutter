@@ -1,6 +1,6 @@
 name: vital_flutter
 description: The official Flutter package for Vital APIs allowing fitness apps linking with tryvital.io and with support for HealthKit.
-version: 0.2.3
+version: 0.2.4
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
