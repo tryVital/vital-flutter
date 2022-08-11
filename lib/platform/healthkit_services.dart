@@ -23,6 +23,8 @@ class HealthkitServices {
     _statusSubscribed = false;
     await _channel.invokeMethod('unsubscribeFromStatus');
   });
+  late final _statusStream = _streamController.stream.asBroadcastStream();
+
   final MethodChannel _channel;
   final String _apiKey;
   final Region _region;
@@ -102,5 +104,5 @@ class HealthkitServices {
         'syncData', resources?.map((it) => it.name).toList());
   }
 
-  Stream<SyncStatus> get status => _streamController.stream;
+  Stream<SyncStatus> get status => _statusStream;
 }

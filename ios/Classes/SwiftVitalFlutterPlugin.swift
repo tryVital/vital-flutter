@@ -4,11 +4,15 @@ import Combine
 import VitalCore
 import VitalHealthKit
 
-public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin, FlutterApplicationLifeCycleDelegate {
 
   private let jsonEncoder = JSONEncoder()
   private var cancellable: Cancellable? = nil
   private let channel: FlutterMethodChannel
+  private let keyBackgroundSync = "vitalsdk_background_sync"
+  private let keyAutoSync = "vitalsdk_auto_sync"
+  private let keyDaysFetched = "vitalsdk_days_fetched"
+  private let keyLogging = "vitalsdk_logging"
  
   init(_ channel: FlutterMethodChannel){
     self.channel = channel;
@@ -20,10 +24,18 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "vital_flutter", binaryMessenger: registrar.messenger())
     let instance = SwiftVitalFlutterPlugin(channel)
     registrar.addMethodCallDelegate(instance, channel: channel)
+    registrar.addApplicationDelegate(instance)
   }
+    
+  public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+    debugPrint("application:didFinishLaunchingWithOptions")
+    autoConfigureHealthkit()
+    return true
+  }
+  
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    print("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
+    debugPrint("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
     
     switch call.method {
     case "configureClient":
@@ -91,10 +103,33 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
               daysFetched: daysFetched
               )
       )
+      UserDefaults.standard.set(autoSyncEnabled, forKey: keyAutoSync)
+      UserDefaults.standard.set(backgroundDeliveryEnabled, forKey: keyBackgroundSync)
+      UserDefaults.standard.set(daysFetched, forKey: keyDaysFetched)
+      UserDefaults.standard.set(logsEnabled, forKey: keyLogging)
       result(nil)
     } catch {
       result(encode(ErrorResult(code: "Unknown error")))
     }
+  }
+
+  private func autoConfigureHealthkit(){
+      if(UserDefaults.standard.object(forKey: keyBackgroundSync) == nil){
+        return
+      }
+      let autoSyncEnabled = UserDefaults.standard.bool(forKey: keyAutoSync)
+      let backgroundDeliveryEnabled = UserDefaults.standard.bool(forKey: keyBackgroundSync)
+      let daysFetched: Int = UserDefaults.standard.integer(forKey: keyDaysFetched)
+      let logsEnabled = UserDefaults.standard.bool(forKey: keyLogging)
+      
+      debugPrint("Healthkit auto configure - autoSyncEnabled: \(autoSyncEnabled) backgroundDeliveryEnabled: \(backgroundDeliveryEnabled) daysFetched: \(daysFetched) logsEnabled: \(logsEnabled)")
+      VitalHealthKitClient.configure(
+        .init(autoSyncEnabled: autoSyncEnabled,
+              backgroundDeliveryEnabled: backgroundDeliveryEnabled,
+              logsEnabled: logsEnabled,
+              daysFetched: daysFetched
+              )
+      )
   }
 
   private func askForResources(resources: [String], result: @escaping FlutterResult){
