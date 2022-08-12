@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
@@ -23,18 +24,24 @@ class HealthkitServices {
     _statusSubscribed = false;
     await _channel.invokeMethod('unsubscribeFromStatus');
   });
+
+  late final _statusStream = _streamController.stream.asBroadcastStream();
+
   final MethodChannel _channel;
   final String _apiKey;
   final Region _region;
   final Environment _environment;
+  final bool _automaticConfiguration;
 
   HealthkitServices(MethodChannel channel,
       {required String apiKey,
       required Region region,
-      required Environment environment})
+      required Environment environment,
+      required bool automaticConfiguration})
       : _apiKey = apiKey,
         _region = region,
         _environment = environment,
+        _automaticConfiguration = automaticConfiguration,
         _channel = channel {
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
@@ -52,20 +59,28 @@ class HealthkitServices {
   }
 
   Future<void> configureClient() async {
-    Fimber.d('Healthkit configure $_apiKey, $_region $_environment');
-    await _channel.invokeMethod(
-        'configureClient', [_apiKey, _region.name, _environment.name]);
+    Fimber.d(
+        'Healthkit configure $_apiKey, $_region $_environment $_automaticConfiguration');
+    await _channel.invokeMethod('configureClient',
+        [_apiKey, _region.name, _environment.name, _automaticConfiguration]);
   }
 
-  Future<void> configureHealthkit(
-      {bool autoSyncEnabled = false,
-      bool backgroundDeliveryEnabled = false,
-      bool logsEnabled = true,
-      int daysFetched = 90}) async {
+  Future<void> configureHealthkit({
+    bool backgroundDeliveryEnabled = false,
+    bool logsEnabled = true,
+    int numberOfDaysToBackFill = 90,
+    String dataPushMode = "automatic",
+    bool automaticConfiguration = false,
+  }) async {
     Fimber.d(
-        'Healthkit configureHealthkit $autoSyncEnabled, $backgroundDeliveryEnabled, $logsEnabled, $daysFetched');
-    await _channel.invokeMethod('configureHealthkit',
-        [autoSyncEnabled, backgroundDeliveryEnabled, logsEnabled, daysFetched]);
+        'Healthkit configureHealthkit $backgroundDeliveryEnabled, $logsEnabled, $numberOfDaysToBackFill, $dataPushMode, $automaticConfiguration');
+    await _channel.invokeMethod('configureHealthkit', [
+      backgroundDeliveryEnabled,
+      logsEnabled,
+      numberOfDaysToBackFill,
+      dataPushMode,
+      automaticConfiguration
+    ]);
     _healthKitConfigured = true;
     if (_statusSubscribed) {
       Fimber.d('Healthkit subscribeToStatus (configure)');
@@ -102,5 +117,10 @@ class HealthkitServices {
         'syncData', resources?.map((it) => it.name).toList());
   }
 
-  Stream<SyncStatus> get status => _streamController.stream;
+  Future<bool> hasAskedForPermission(HealthkitResource resource) async {
+    return await _channel.invokeMethod('hasAskedForPermission', resource.name)
+        as bool;
+  }
+
+  Stream<SyncStatus> get status => _statusStream;
 }

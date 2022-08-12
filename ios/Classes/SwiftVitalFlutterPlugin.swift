@@ -19,15 +19,23 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "vital_flutter", binaryMessenger: registrar.messenger())
     let instance = SwiftVitalFlutterPlugin(channel)
+
     registrar.addMethodCallDelegate(instance, channel: channel)
+    registrar.addApplicationDelegate(instance)
   }
+
+  public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+     VitalHealthKitClient.automaticConfiguration()
+     return true
+  }
+
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     print("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
     
     switch call.method {
     case "configureClient":
-      configureClient(call.arguments as! [String], result: result)
+      configureClient(call.arguments as! [AnyObject], result: result)
       return
     case "configureHealthkit":
       configureHealthkit(call.arguments as! [AnyObject], result: result)
@@ -36,6 +44,10 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
       result(nil)
       return
+    case "hasAskedForPermission":
+        let resource = call.arguments as! String
+        hasAskedForPermission(resource: resource, result: result)
+        return
     case "askForResources":
       askForResources(resources: call.arguments as! [String], result: result)
       return
@@ -59,14 +71,17 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
                                      details: nil))
   }
 
-  private func configureClient(_ arguments: [String], result: @escaping FlutterResult){
-    let apiKey = arguments[0]
-    let region = arguments[1]
-    let environment = arguments[2]
+  private func configureClient(_ arguments: [AnyObject], result: @escaping FlutterResult){
+    let apiKey: String = arguments[0] as! String
+    let region: String  = arguments[1] as! String
+    let environment: String = arguments[2] as! String
+    let automaticConfiguration: Bool = arguments[3] as! Bool
+
     do {
       VitalClient.configure(
         apiKey: apiKey,
-        environment: try resolveEnvironment(region: region, environment: environment)
+        environment: try resolveEnvironment(region: region, environment: environment),
+        configuration: .init(automaticConfiguration: automaticConfiguration)
       )
       result(nil)
     } catch VitalError.UnsupportedEnvironment(let errorMessage) {
@@ -79,19 +94,37 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   private func configureHealthkit(_ arguments: [AnyObject], result: @escaping FlutterResult){
-    let autoSyncEnabled = arguments[0] as! Bool
-    let backgroundDeliveryEnabled = arguments[1] as! Bool
-    let logsEnabled = arguments[2] as! Bool
-    let daysFetched: Int = arguments[3] as! Int
+    let backgroundDeliveryEnabled = arguments[0] as! Bool
+    let logsEnabled = arguments[1] as! Bool
+    let numberOfDaysToBackFill: Int = arguments[2] as! Int
+    let modeString: String = arguments[3] as! String
+    let automaticConfiguration: Bool = arguments[4] as! Bool
+
     do {
+      let mode = try mapToMode(modeString)
+
       VitalHealthKitClient.configure(
-        .init(autoSyncEnabled: autoSyncEnabled,
+        .init(
               backgroundDeliveryEnabled: backgroundDeliveryEnabled,
               logsEnabled: logsEnabled,
-              daysFetched: daysFetched
+              numberOfDaysToBackFill: numberOfDaysToBackFill,
+              mode: mode,
+              automaticConfiguration: automaticConfiguration
               )
       )
       result(nil)
+    } catch {
+      result(encode(ErrorResult(code: "Unknown error")))
+    }
+  }
+  
+  private func hasAskedForPermission(resource: String, result: @escaping FlutterResult) {
+    do {
+      let resource = try mapResourceToVitalResource(resource)
+      let value: Bool = VitalHealthKitClient.shared.hasAskedForPermission(resource: resource)
+      result(value)
+    } catch VitalError.UnsupportedResource(let errorMessage) {
+      result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
     } catch {
       result(encode(ErrorResult(code: "Unknown error")))
     }
@@ -139,7 +172,6 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     }
   }
 
-
   private func resolveEnvironment(region: String, environment: String) throws -> Environment {
     switch region {
     case "eu":
@@ -166,6 +198,17 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       }
     default:
       throw VitalError.UnsupportedRegion("\(region)") 
+    }
+  }
+
+  private func mapToMode(_ mode: String) throws -> VitalHealthKitClient.Configuration.DataPushMode {
+    switch mode {
+      case "manual":
+        return .manual
+      case "automatic":
+        return .automatic
+      default:
+        throw VitalError.UnsupportedDataPushMode("\(mode)")
     }
   }
 
@@ -314,4 +357,5 @@ enum VitalError: Error {
     case UnsupportedRegion(String)
     case UnsupportedEnvironment(String)
     case UnsupportedResource(String)
+    case UnsupportedDataPushMode(String)
 }

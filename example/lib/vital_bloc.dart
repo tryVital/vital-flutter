@@ -14,7 +14,12 @@ class VitalBloc {
   User? _selectedUser;
 
   VitalBloc(this.apiKey, this.region, this.environment) {
-    client.init(region: region, environment: environment, apiKey: apiKey);
+    client.init(
+        region: region,
+        environment: environment,
+        apiKey: apiKey,
+        automaticConfiguration: true);
+
     _connectHealthPlatform();
   }
 
@@ -47,8 +52,8 @@ class VitalBloc {
 
   void _connectHealthPlatform() async {
     await client.healthkitServices.configureClient();
-    await client.healthkitServices
-        .configureHealthkit(backgroundDeliveryEnabled: true);
+    await client.healthkitServices.configureHealthkit(
+        backgroundDeliveryEnabled: true, automaticConfiguration: true);
   }
 
   void askForHealthResources() {
@@ -63,9 +68,19 @@ class VitalBloc {
     ]);
   }
 
-  void selectUser(User user) {
+  Future<bool> hasPermissionForSleep() async {
+    return client.healthkitServices
+        .hasAskedForPermission(HealthkitResource.sleep);
+  }
+
+  void selectUser(User user) async {
     _selectedUser = user;
     selectedUserController.sink.add(user);
+
+    final userId = _selectedUser?.userId;
+    if (userId != null) {
+      await client.healthkitServices.setUserId(userId);
+    }
   }
 
   void syncHealthPlatform() async {

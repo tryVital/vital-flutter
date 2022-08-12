@@ -21,16 +21,22 @@ class VitalClient {
   late final String _apiKey;
   late final Region _region;
   late final Environment _environment;
+  late final bool _automaticConfiguration;
 
-  late final activityService = ActivityService.create(_httpClient, _baseUrl, _apiKey);
+  late final activityService =
+      ActivityService.create(_httpClient, _baseUrl, _apiKey);
   late final bodyService = BodyService.create(_httpClient, _baseUrl, _apiKey);
   late final linkService = LinkService.create(_httpClient, _baseUrl, _apiKey);
-  late final profileService = ProfileService.create(_httpClient, _baseUrl, _apiKey);
+  late final profileService =
+      ProfileService.create(_httpClient, _baseUrl, _apiKey);
   late final sleepService = SleepService.create(_httpClient, _baseUrl, _apiKey);
-  late final testkitsService = TestkitsService.create(_httpClient, _baseUrl, _apiKey);
+  late final testkitsService =
+      TestkitsService.create(_httpClient, _baseUrl, _apiKey);
   late final userService = UserService.create(_httpClient, _baseUrl, _apiKey);
-  late final vitalsService = VitalsService.create(_httpClient, _baseUrl, _apiKey);
-  late final workoutService = WorkoutService.create(_httpClient, _baseUrl, _apiKey);
+  late final vitalsService =
+      VitalsService.create(_httpClient, _baseUrl, _apiKey);
+  late final workoutService =
+      WorkoutService.create(_httpClient, _baseUrl, _apiKey);
 
   static const MethodChannel _channel = MethodChannel('vital_flutter');
 
@@ -39,18 +45,21 @@ class VitalClient {
     apiKey: _apiKey,
     region: _region,
     environment: _environment,
+    automaticConfiguration: _automaticConfiguration,
   );
 
   init({
     required Region region,
     required Environment environment,
     required String apiKey,
+    required bool automaticConfiguration,
   }) {
     _httpClient = http.Client();
     _baseUrl = _resolveUrl(region, environment);
     _apiKey = apiKey;
     _region = region;
     _environment = environment;
+    _automaticConfiguration = automaticConfiguration;
   }
 
   String _resolveUrl(Region region, Environment environment) {
@@ -76,7 +85,8 @@ class VitalClient {
               provider: provider,
               linkToken: tokenResponse.body!.linkToken!,
             ))
-        .then((oauthResponse) => launchUrlString(oauthResponse.body!.oauthUrl!, mode: LaunchMode.externalApplication))
+        .then((oauthResponse) => launchUrlString(oauthResponse.body!.oauthUrl!,
+            mode: LaunchMode.externalApplication))
         .catchError((e) {
       Fimber.e(e);
       return false;
