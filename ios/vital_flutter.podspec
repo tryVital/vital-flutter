@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'vital_flutter'
-  s.version          = '0.0.6'
+  s.version          = '0.0.7'
   s.summary          = 'The official Flutter Plugin for Vital HealthKit'
   s.homepage         = 'https://github.com/tryVital/vital-flutter'
   s.license          = { :file => '../LICENSE' }
