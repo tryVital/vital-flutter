@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
@@ -31,17 +30,14 @@ class HealthkitServices {
   final String _apiKey;
   final Region _region;
   final Environment _environment;
-  final bool _automaticConfiguration;
 
   HealthkitServices(MethodChannel channel,
       {required String apiKey,
       required Region region,
-      required Environment environment,
-      required bool automaticConfiguration})
+      required Environment environment})
       : _apiKey = apiKey,
         _region = region,
         _environment = environment,
-        _automaticConfiguration = automaticConfiguration,
         _channel = channel {
     channel.setMethodCallHandler((call) async {
       switch (call.method) {
@@ -59,27 +55,23 @@ class HealthkitServices {
   }
 
   Future<void> configureClient() async {
-    Fimber.d(
-        'Healthkit configure $_apiKey, $_region $_environment $_automaticConfiguration');
-    await _channel.invokeMethod('configureClient',
-        [_apiKey, _region.name, _environment.name, _automaticConfiguration]);
+    Fimber.d('Healthkit configure $_apiKey, $_region $_environment');
+    await _channel.invokeMethod(
+        'configureClient', [_apiKey, _region.name, _environment.name]);
   }
 
-  Future<void> configureHealthkit({
-    bool backgroundDeliveryEnabled = false,
-    bool logsEnabled = true,
-    int numberOfDaysToBackFill = 90,
-    String dataPushMode = "automatic",
-    bool automaticConfiguration = false,
-  }) async {
+  Future<void> configureHealthkit(
+      {bool backgroundDeliveryEnabled = false,
+      bool logsEnabled = true,
+      int numberOfDaysToBackFill = 90,
+      String dataPushMode = "automatic"}) async {
     Fimber.d(
-        'Healthkit configureHealthkit $backgroundDeliveryEnabled, $logsEnabled, $numberOfDaysToBackFill, $dataPushMode, $automaticConfiguration');
+        'Healthkit configureHealthkit $backgroundDeliveryEnabled, $logsEnabled, $numberOfDaysToBackFill, $dataPushMode');
     await _channel.invokeMethod('configureHealthkit', [
       backgroundDeliveryEnabled,
       logsEnabled,
       numberOfDaysToBackFill,
-      dataPushMode,
-      automaticConfiguration
+      dataPushMode
     ]);
     _healthKitConfigured = true;
     if (_statusSubscribed) {

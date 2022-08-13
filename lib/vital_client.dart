@@ -21,7 +21,6 @@ class VitalClient {
   late final String _apiKey;
   late final Region _region;
   late final Environment _environment;
-  late final bool _automaticConfiguration;
 
   late final activityService =
       ActivityService.create(_httpClient, _baseUrl, _apiKey);
@@ -40,26 +39,19 @@ class VitalClient {
 
   static const MethodChannel _channel = MethodChannel('vital_flutter');
 
-  late final healthkitServices = HealthkitServices(
-    _channel,
-    apiKey: _apiKey,
-    region: _region,
-    environment: _environment,
-    automaticConfiguration: _automaticConfiguration,
-  );
+  late final healthkitServices = HealthkitServices(_channel,
+      apiKey: _apiKey, region: _region, environment: _environment);
 
   init({
     required Region region,
     required Environment environment,
     required String apiKey,
-    required bool automaticConfiguration,
   }) {
     _httpClient = http.Client();
     _baseUrl = _resolveUrl(region, environment);
     _apiKey = apiKey;
     _region = region;
     _environment = environment;
-    _automaticConfiguration = automaticConfiguration;
   }
 
   String _resolveUrl(Region region, Environment environment) {

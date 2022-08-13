@@ -21,14 +21,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let instance = SwiftVitalFlutterPlugin(channel)
 
     registrar.addMethodCallDelegate(instance, channel: channel)
-    registrar.addApplicationDelegate(instance)
   }
-
-  public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
-     VitalHealthKitClient.automaticConfiguration()
-     return true
-  }
-
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     print("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
@@ -75,13 +68,11 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let apiKey: String = arguments[0] as! String
     let region: String  = arguments[1] as! String
     let environment: String = arguments[2] as! String
-    let automaticConfiguration: Bool = arguments[3] as! Bool
 
     do {
       VitalClient.configure(
         apiKey: apiKey,
-        environment: try resolveEnvironment(region: region, environment: environment),
-        configuration: .init(automaticConfiguration: automaticConfiguration)
+        environment: try resolveEnvironment(region: region, environment: environment)
       )
       result(nil)
     } catch VitalError.UnsupportedEnvironment(let errorMessage) {
@@ -98,7 +89,6 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let logsEnabled = arguments[1] as! Bool
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
-    let automaticConfiguration: Bool = arguments[4] as! Bool
 
     do {
       let mode = try mapToMode(modeString)
@@ -108,8 +98,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
               backgroundDeliveryEnabled: backgroundDeliveryEnabled,
               logsEnabled: logsEnabled,
               numberOfDaysToBackFill: numberOfDaysToBackFill,
-              mode: mode,
-              automaticConfiguration: automaticConfiguration
+              mode: mode
               )
       )
       result(nil)
