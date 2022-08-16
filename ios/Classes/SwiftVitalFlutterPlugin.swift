@@ -37,6 +37,12 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
       result(nil)
       return
+    case "cleanUp":
+      Task {
+        await VitalClient.shared.cleanUp()
+        result(nil)
+      }
+      return
     case "hasAskedForPermission":
         let resource = call.arguments as! String
         hasAskedForPermission(resource: resource, result: result)

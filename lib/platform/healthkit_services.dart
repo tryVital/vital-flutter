@@ -84,6 +84,10 @@ class HealthkitServices {
     await _channel.invokeMethod('setUserId', userId);
   }
 
+  Future<void> cleanUp() async {
+    await _channel.invokeMethod('cleanUp');
+  }
+
   Future<PermissionOutcome> askForResources(
       List<HealthkitResource> resources) async {
     final outcome = await _channel.invokeMethod(
