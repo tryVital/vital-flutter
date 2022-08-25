@@ -118,5 +118,9 @@ class HealthkitServices {
         as bool;
   }
 
+  Future<bool> isUserConnected(String provider) async {
+    return await _channel.invokeMethod('isUserConnected', provider) as bool;
+  }
+
   Stream<SyncStatus> get status => _statusStream;
 }
