@@ -7,4 +7,10 @@ enum HealthkitResource {
   glucose,
   bloodPressure,
   heartRate,
+  steps,
+  activeEnergyBurned,
+  basalEnergyBurned,
+  floorClimbed,
+  distanceWalkingRunning,
+  vo2Max,
 }
