@@ -10,7 +10,4 @@ enum HealthkitResource {
   steps,
   activeEnergyBurned,
   basalEnergyBurned,
-  floorClimbed,
-  distanceWalkingRunning,
-  vo2Max,
 }
