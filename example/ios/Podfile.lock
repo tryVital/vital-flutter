@@ -4,10 +4,10 @@ PODS:
     - Flutter
   - vital_flutter (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 0.5.7)
-  - VitalCore (0.5.7)
-  - VitalHealthKit (0.5.7):
-    - VitalCore (~> 0.5.7)
+    - VitalHealthKit (~> 0.6.0)
+  - VitalCore (0.6.0)
+  - VitalHealthKit (0.6.0):
+    - VitalCore (~> 0.6.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -30,9 +30,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
-  vital_flutter: 68e0eaf7e8098e02ada6abb0e0286a9bcfbf1312
-  VitalCore: 219aaea65e8ef5ebb174556e235e27fe18e855f5
-  VitalHealthKit: eabc7962f4d5c5a9a588b965190d18c9fe184597
+  vital_flutter: 149210eb25816dd38b7ce728e629107f701c9d72
+  VitalCore: a0515e1f3a32911e8e29140028b6d02d88d06e9a
+  VitalHealthKit: 71a4332205dbc9342280da85e96cac53fbd75dff
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 

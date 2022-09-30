@@ -34,8 +34,10 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         configureHealthkit(call.arguments as! [AnyObject], result: result)
         return
       case "setUserId":
-        VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
-        result(nil)
+        Task {
+          await VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
+          result(nil)
+        }
         return
       case "cleanUp":
         Task {
@@ -92,18 +94,12 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let region: String  = arguments[1] as! String
     let environment: String = arguments[2] as! String
     
-    do {
-      VitalClient.configure(
+    Task {
+      await VitalClient.configure(
         apiKey: apiKey,
         environment: try resolveEnvironment(region: region, environment: environment)
       )
       result(nil)
-    } catch VitalError.UnsupportedEnvironment(let errorMessage) {
-      result(encode(ErrorResult(code: "UnsupportedEnvironment", message: errorMessage)))
-    } catch VitalError.UnsupportedRegion(let errorMessage) {
-      result(encode(ErrorResult(code: "UnsupportedRegion", message: errorMessage)))
-    } catch {
-      result(encode(ErrorResult(code: "Unknown error")))
     }
   }
   
@@ -112,11 +108,11 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let logsEnabled = arguments[1] as! Bool
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
-    
-    do {
+          
+    Task {
       let mode = try mapToMode(modeString)
       
-      VitalHealthKitClient.configure(
+      await VitalHealthKitClient.configure(
         .init(
           backgroundDeliveryEnabled: backgroundDeliveryEnabled,
           logsEnabled: logsEnabled,
@@ -124,9 +120,8 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
           mode: mode
         )
       )
+      
       result(nil)
-    } catch {
-      result(encode(ErrorResult(code: "Unknown error")))
     }
   }
   
