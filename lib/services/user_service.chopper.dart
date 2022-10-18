@@ -17,10 +17,10 @@ class _$UserService extends UserService {
   final definitionType = UserService;
 
   @override
-  Future<Response<List<User>>> getAll() {
+  Future<Response<GetAllUsersResponse>> getAll() {
     final $url = 'user/';
     final $request = Request('GET', $url, client.baseUrl);
-    return client.send<List<User>, User>($request);
+    return client.send<GetAllUsersResponse, GetAllUsersResponse>($request);
   }
 
   @override

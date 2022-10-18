@@ -77,3 +77,11 @@ DeregisterProviderResponse _$DeregisterProviderResponseFromJson(
     DeregisterProviderResponse(
       success: json['success'] as bool? ?? false,
     );
+
+GetAllUsersResponse _$GetAllUsersResponseFromJson(Map<String, dynamic> json) =>
+    GetAllUsersResponse(
+      users: (json['users'] as List<dynamic>?)
+              ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );

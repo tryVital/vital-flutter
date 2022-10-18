@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/vital_flutter.dart';
 
@@ -27,7 +28,7 @@ class VitalBloc {
   void refresh() {
     unawaited(client.userService.getAll().then((response) {
       if (response.body != null) {
-        usersController.sink.add(response.body!);
+        usersController.sink.add(response.body!.users);
       }
     }));
   }

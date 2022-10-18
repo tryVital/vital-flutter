@@ -1,10 +1,11 @@
 library vital;
 
 import 'dart:async';
+
 import 'package:chopper/chopper.dart';
+import 'package:http/http.dart' as http;
 import 'package:vital_flutter/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_flutter/services/utils/http_logging_interceptor.dart';
-import 'package:http/http.dart' as http;
 
 import 'data/user.dart';
 import 'utils/json_serializable_converter.dart';
@@ -14,7 +15,7 @@ part 'user_service.chopper.dart';
 @ChopperApi()
 abstract class UserService extends ChopperService {
   @Get(path: 'user/')
-  Future<Response<List<User>>> getAll();
+  Future<Response<GetAllUsersResponse>> getAll();
 
   @Get(path: 'user/{user_id}')
   Future<Response<User>> getUser(@Path('user_id') String userId);
@@ -55,6 +56,7 @@ abstract class UserService extends ChopperService {
           CreateUserResponse: CreateUserResponse.fromJson,
           DeleteUserResponse: DeleteUserResponse.fromJson,
           DeregisterProviderResponse: DeregisterProviderResponse.fromJson,
+          GetAllUsersResponse: GetAllUsersResponse.fromJson,
         }));
 
     return _$UserService(client);
