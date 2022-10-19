@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_flutter/services/data/user.dart';
-import 'package:vital_flutter/services/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:vital_flutter/services/data/user.dart';
+import 'package:vital_flutter/services/user_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -26,11 +26,12 @@ void main() {
 
       final sut = UserService.create(httpClient, '', apiKey);
       final response = await sut.getAll();
-      expect(response.body!.length, 2);
-      final user = response.body![0];
+      final users = response.body!.users;
+      expect(users.length, 2);
+      final user = users[0];
       validateFirstUser(user);
 
-      expect(response.body![1].connectedSources.length, 0);
+      expect(users[1].connectedSources.length, 0);
     });
 
     test('Get user', () async {
@@ -177,47 +178,47 @@ const clientUserId = 'Test 1';
 const userName = 'User Name';
 const apiKey = 'API_KEY';
 
-const fakeUsersResponse = '''
-[
+const fakeUsersResponse = '''{
+  "users": [
     {
-        "user_id": "user_id_1",
-        "user_key": "user_key_1",
-        "team_id": "team_id_1",
-        "client_user_id": "Test 1",
-        "created_on": "2021-04-02T16:03:11.847830+00:00",
-        "connected_sources": [
-            {
-                "source": {
-                    "name": "Fitbit",
-                    "slug": "fitbit",
-                    "logo": "https://storage.googleapis.com/vital-assets/fitbit.png"
-                },
-                "created_on": "2022-06-15T13:44:34.770879+00:00"
-            },
-            {
-                "source": {
-                    "name": null,
-                    "slug": null,
-                    "logo": null
-                },
-                "created_on": "2022-03-01T12:25:15.558385+00:00"
-            },
-            {
-                "source": null,
-                "created_on": null
-            }
-        ]
+      "user_id": "user_id_1",
+      "user_key": "user_key_1",
+      "team_id": "team_id_1",
+      "client_user_id": "Test 1",
+      "created_on": "2021-04-02T16:03:11.847830+00:00",
+      "connected_sources": [
+        {
+          "source": {
+            "name": "Fitbit",
+            "slug": "fitbit",
+            "logo": "https://storage.googleapis.com/vital-assets/fitbit.png"
+          },
+          "created_on": "2022-06-15T13:44:34.770879+00:00"
+        },
+        {
+          "source": {
+            "name": null,
+            "slug": null,
+            "logo": null
+          },
+          "created_on": "2022-03-01T12:25:15.558385+00:00"
+        },
+        {
+          "source": null,
+          "created_on": null
+        }
+      ]
     },
     {
-        "user_id": "user_id_2",
-        "user_key": "user_key_2",
-        "team_id": "team_id_2",
-        "client_user_id": "Test 2",
-        "created_on": "2021-12-01T22:43:32.570793+00:00",
-        "connected_sources": null
+      "user_id": "user_id_2",
+      "user_key": "user_key_2",
+      "team_id": "team_id_2",
+      "client_user_id": "Test 2",
+      "created_on": "2021-12-01T22:43:32.570793+00:00",
+      "connected_sources": null
     }
-]
-''';
+  ]
+}''';
 
 const fakeUserResponse = '''
 {
@@ -282,6 +283,7 @@ const fakeProvidersResponse = '''{
     ]
 }''';
 
-const fakeCreateUserResponse = '''{"user_id":"user_id_1","user_key":"user_key_1","client_user_id":"Test 1"}''';
+const fakeCreateUserResponse =
+    '''{"user_id":"user_id_1","user_key":"user_key_1","client_user_id":"Test 1"}''';
 const fakeDeleteUserResponse = '''{"success":true}''';
 const fakeDeregisterProviderResponse = '''{"success":true}''';

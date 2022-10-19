@@ -132,3 +132,15 @@ class DeregisterProviderResponse {
 
   factory DeregisterProviderResponse.fromJson(Map<String, dynamic> json) => _$DeregisterProviderResponseFromJson(json);
 }
+
+@JsonSerializable(createToJson: false)
+class GetAllUsersResponse {
+  final List<User> users;
+
+  GetAllUsersResponse({
+    this.users = const [],
+  });
+
+  factory GetAllUsersResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetAllUsersResponseFromJson(json);
+}
