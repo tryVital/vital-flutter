@@ -22,6 +22,10 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
+
+  public func detachFromEngineForRegistrar(registrar: FlutterPluginRegistrar) {
+    cancellable?.cancel()
+  }
   
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     print("FlutterPlugin \(String(describing: call.method)) \(call.arguments ?? nil)")
