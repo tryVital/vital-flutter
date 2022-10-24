@@ -9,6 +9,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   private let jsonEncoder = JSONEncoder()
   private var cancellable: Cancellable? = nil
   private let channel: FlutterMethodChannel
+  private var flutterRunning = true
   
   init(_ channel: FlutterMethodChannel){
     self.channel = channel;
@@ -24,6 +25,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   public func detachFromEngineForRegistrar(registrar: FlutterPluginRegistrar) {
+    flutterRunning = false
     cancellable?.cancel()
   }
   
@@ -179,7 +181,11 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   private func subscribeToStatus(){
     cancellable?.cancel()
     cancellable = VitalHealthKitClient.shared.status.sink { value in
-      self.channel.invokeMethod("sendStatus", arguments: self.mapStatusToArguments(value))
+        guard self.flutterRunning else {
+            return
+        }
+
+        self.channel.invokeMethod("sendStatus", arguments: self.mapStatusToArguments(value))
     }
   }
   
