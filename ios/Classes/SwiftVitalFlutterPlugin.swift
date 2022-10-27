@@ -276,7 +276,7 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
   }
 }
 
-private func encodePostResourceData(_ data: PostResourceData) -> String? {
+private func encodePostResourceData(_ data: ProcessedResourceData) -> String? {
   let payload: String? = encode(data.payload)
   return payload
 }
