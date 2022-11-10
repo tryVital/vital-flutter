@@ -13,8 +13,4 @@
   [SwiftVitalFlutterPlugin registerWithRegistrar:registrar];
 }
 
-- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftVitalFlutterPlugin registerWithRegistrar:registrar];
-}
-
 @end
