@@ -200,7 +200,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         return
       }
 
-      //      self?.channel.invokeMethod("sendStatus", arguments: mapStatusToArguments(value))
+      self?.channel.invokeMethod("sendStatus", arguments: mapStatusToArguments(value))
     }
   }
 }
