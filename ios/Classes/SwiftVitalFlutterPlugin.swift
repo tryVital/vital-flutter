@@ -28,6 +28,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   // Because the Plugin inherits from FlutterPlugin and it is added via `addApplicationDelegate`
   // When the app terminates, the cancellable should be cancelled
   public func applicationWillTerminate(_ application: UIApplication) {
+    flutterRunning = false
     cancellable?.cancel()
   }
   
