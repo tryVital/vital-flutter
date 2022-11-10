@@ -12,37 +12,40 @@ private let jsonEncoder: JSONEncoder = {
 }()
 
 public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
-  
+  private let channel: FlutterMethodChannel
   private var cancellable: Cancellable? = nil
-  private var channel: FlutterMethodChannel? = nil
   private var flutterRunning = true
-  
+
+ init(_ channel: FlutterMethodChannel){
+    self.channel = channel;
+  }
+
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "vital_plugin_id", binaryMessenger: registrar.messenger())
-    let instance = SwiftVitalFlutterPlugin()
-    
+    let channel = FlutterMethodChannel(name: "vital_flutter", binaryMessenger: registrar.messenger())
+    let instance = SwiftVitalFlutterPlugin(channel)
+
     registrar.publish(instance)
-    
+
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
   }
-  
+
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     flutterRunning = false
     cancellable?.cancel()
   }
-  
+
   // Because the Plugin inherits from FlutterPlugin and it is added via `addApplicationDelegate`
   // When the app terminates, the cancellable should be cancelled
   public func applicationWillTerminate(_ application: UIApplication) {
     flutterRunning = false
     cancellable?.cancel()
   }
-  
+
   public static func detachFromEngineForRegistrar(registrar: FlutterPluginRegistrar) {
     print("detachFromEngineForRegistrar")
   }
-  
+
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
       case "configureClient":
@@ -67,12 +70,12 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
         let resource = call.arguments as! String
         hasAskedForPermission(resource: resource, result: result)
         return
-        
+
       case "isUserConnected":
         do {
           let providerString = call.arguments as! String
           let provider = try mapProviderToVitalProvider(providerString)
-          
+
           Task {
             let isConnected = try await VitalClient.shared.isUserConnected(to: provider)
             result(isConnected)
@@ -83,7 +86,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
           result(encode(ErrorResult(code: error.localizedDescription)))
         }
         return
-        
+
       case "askForResources":
         askForResources(resources: call.arguments as! [String], result: result)
         return
@@ -106,12 +109,12 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
                              message: "Method not supported \(call.method)",
                              details: nil))
   }
-  
+
   private func configureClient(_ arguments: [AnyObject], result: @escaping FlutterResult){
     let apiKey: String = arguments[0] as! String
     let region: String  = arguments[1] as! String
     let environment: String = arguments[2] as! String
-    
+
     Task {
       await VitalClient.configure(
         apiKey: apiKey,
@@ -120,16 +123,16 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       result(nil)
     }
   }
-  
+
   private func configureHealthkit(_ arguments: [AnyObject], result: @escaping FlutterResult){
     let backgroundDeliveryEnabled = arguments[0] as! Bool
     let logsEnabled = arguments[1] as! Bool
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
-    
+
     Task {
       let mode = try mapToMode(modeString)
-      
+
       await VitalHealthKitClient.configure(
         .init(
           backgroundDeliveryEnabled: backgroundDeliveryEnabled,
@@ -138,11 +141,11 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
           mode: mode
         )
       )
-      
+
       result(nil)
     }
   }
-  
+
   private func hasAskedForPermission(resource: String, result: @escaping FlutterResult) {
     do {
       let resource = try mapResourceToVitalResource(resource)
@@ -154,7 +157,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       result(encode(ErrorResult(code: "Unknown error")))
     }
   }
-  
+
   private func askForResources(resources: [String], result: @escaping FlutterResult){
     Task {
       do {
@@ -174,7 +177,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       }
     }
   }
-  
+
   private func syncData(resources: [String]?, result: @escaping FlutterResult){
     do {
       if let res = resources {
@@ -189,14 +192,14 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
       result(encode(ErrorResult(code: "Unknown error")))
     }
   }
-  
+
   private func subscribeToStatus(){
     cancellable?.cancel()
     cancellable = VitalHealthKitClient.shared.status.sink {[weak self] value in
       guard self?.flutterRunning ?? false else {
         return
       }
-      
+
       //      self?.channel.invokeMethod("sendStatus", arguments: mapStatusToArguments(value))
     }
   }
@@ -204,7 +207,7 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
 
 struct AnyEncodable: Encodable {
   let value: Encodable
-  
+
   func encode(to encoder: Encoder) throws {
     try value.encode(to: encoder)
   }
@@ -213,7 +216,7 @@ struct AnyEncodable: Encodable {
 struct ErrorResult: Encodable {
   let code: String
   let message: String?
-  
+
   init(code: String, message: String? = nil){
     self.code = code
     self.message = message
@@ -376,14 +379,14 @@ private func mapProviderToVitalProvider(_ provider: String) throws -> Provider {
   guard let provider = Provider(rawValue: provider) else {
     throw VitalError.UnsupportedProvider(provider)
   }
-  
+
   return provider
 }
 
 private func encode(_ encodable: Encodable) -> String? {
   let json: String?
   let jsonEncoder = JSONEncoder()
-  
+
   if let data = try? encode(encodable, encoder: jsonEncoder) {
     json = String(data: data, encoding: .utf8)
   } else {
