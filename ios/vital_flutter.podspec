@@ -5,14 +5,15 @@
 Pod::Spec.new do |s|
   s.name             = 'vital_flutter'
   s.version          = '0.0.10'
-  s.summary          = 'The official Flutter Plugin for Vital HealthKit'
+  s.summary          = 'The official Flutter Plugin for Vital'
   s.homepage         = 'https://github.com/tryVital/vital-flutter'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Vital' => 'developers@tryVital.io' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'VitalHealthKit', '~> 0.6.5'
+  s.dependency 'VitalHealthKit', '~> 0.6.7'
+  s.dependency 'VitalDevices', '~> 0.6.7'
   s.platform = :ios, '14.0'
 
   # Flutter.framework does not contain a i386 slice.

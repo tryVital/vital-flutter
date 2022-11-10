@@ -1,3 +1,7 @@
+## 0.4.0
+
+* Add the `DeviceManger` to manage the supported glucose and blood pressure devices.
+
 ## 0.3.0
 
 * **Breaking** - `UserService.getAll` return type change from

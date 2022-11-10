@@ -1,8 +1,9 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:vital_flutter/device_manager.dart';
 import 'package:vital_flutter/platform/healthkit_services.dart';
-import 'package:vital_flutter/vital_flutter.dart';
 import 'package:vital_flutter/services/activity_service.dart';
 import 'package:vital_flutter/services/body_service.dart';
 import 'package:vital_flutter/services/data/user.dart';
@@ -13,7 +14,10 @@ import 'package:vital_flutter/services/testkits_service.dart';
 import 'package:vital_flutter/services/user_service.dart';
 import 'package:vital_flutter/services/vitals_service.dart';
 import 'package:vital_flutter/services/workout_service.dart';
-import 'package:http/http.dart' as http;
+import 'package:vital_flutter/vital_flutter.dart';
+
+const MethodChannel _healthKitMethodChannel = MethodChannel('vital_health_kit');
+const MethodChannel _devicesMethodChannel = MethodChannel('vital_devices');
 
 class VitalClient {
   late final http.Client _httpClient;
@@ -37,12 +41,12 @@ class VitalClient {
   late final workoutService =
       WorkoutService.create(_httpClient, _baseUrl, _apiKey);
 
-  static const MethodChannel _channel = MethodChannel('vital_flutter');
-
-  late final healthkitServices = HealthkitServices(_channel,
+  late final healthkitServices = HealthkitServices(_healthKitMethodChannel,
       apiKey: _apiKey, region: _region, environment: _environment);
 
-  init({
+  late final deviceManager = DeviceManager(_devicesMethodChannel);
+
+  void init({
     required Region region,
     required Environment environment,
     required String apiKey,
