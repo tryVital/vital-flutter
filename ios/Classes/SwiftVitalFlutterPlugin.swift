@@ -21,8 +21,15 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "vital_plugin_id", binaryMessenger: registrar.messenger())
     let instance = SwiftVitalFlutterPlugin()
     
+    registrar.publish(instance)
+    
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
+  }
+  
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    flutterRunning = false
+    cancellable?.cancel()
   }
   
   // Because the Plugin inherits from FlutterPlugin and it is added via `addApplicationDelegate`
