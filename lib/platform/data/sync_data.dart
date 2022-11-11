@@ -24,14 +24,16 @@ class SyncStatusFailed extends SyncStatus {
   final HealthkitResource resource;
   final String? error;
 
-  SyncStatusFailed(this.resource, this.error) : super(SyncStatusType.failedSyncing);
+  SyncStatusFailed(this.resource, this.error)
+      : super(SyncStatusType.failedSyncing);
 }
 
 class SyncStatusSuccessSyncing<T> extends SyncStatus {
   final HealthkitResource resource;
   final T data;
 
-  SyncStatusSuccessSyncing(this.resource, this.data) : super(SyncStatusType.successSyncing);
+  SyncStatusSuccessSyncing(this.resource, this.data)
+      : super(SyncStatusType.successSyncing);
 }
 
 class SyncStatusNothingToSync extends SyncStatus {
@@ -57,17 +59,22 @@ class SyncStatusUnknown extends SyncStatus {
 SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
   switch (arguments[0] as String) {
     case 'failedSyncing':
-      return SyncStatusFailed(HealthkitResource.values.firstWhere((it) => it.name == arguments[1]), arguments[2]);
+      return SyncStatusFailed(
+          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]),
+          arguments[2]);
     case 'successSyncing':
-      final resource = HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
+      final resource =
+          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
       return SyncStatusSuccessSyncing(
         resource,
         fromArgument(resource, arguments[2]),
       );
     case 'nothingToSync':
-      return SyncStatusNothingToSync(HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
+      return SyncStatusNothingToSync(
+          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
     case 'syncing':
-      return SyncStatusSyncing(HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
+      return SyncStatusSyncing(
+          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
     case 'syncingCompleted':
       return SyncStatusCompleted();
     default:
@@ -90,21 +97,33 @@ enum PostResourceDataType {
 Object? fromArgument(HealthkitResource resource, String argument) {
   switch (resource) {
     case HealthkitResource.activity:
-      return (jsonDecode(argument) as List).map((e) => ActivitySummary.fromJson(e)).toList();
+      return (jsonDecode(argument) as List)
+          .map((e) => ActivitySummary.fromJson(e))
+          .toList();
     case HealthkitResource.profile:
       return ProfileSummary.fromJson(jsonDecode(argument));
     case HealthkitResource.body:
       return BodySummary.fromJson(jsonDecode(argument));
     case HealthkitResource.sleep:
-      return (jsonDecode(argument) as List).map((e) => SleepSummary.fromJson(e)).toList();
+      return (jsonDecode(argument) as List)
+          .map((e) => SleepSummary.fromJson(e))
+          .toList();
     case HealthkitResource.workout:
-      return (jsonDecode(argument) as List).map((e) => WorkoutSummary.fromJson(e)).toList();
+      return (jsonDecode(argument) as List)
+          .map((e) => WorkoutSummary.fromJson(e))
+          .toList();
     case HealthkitResource.glucose:
-      return (jsonDecode(argument) as List).map((e) => QuantitySample.fromJson(e)).toList();
+      return (jsonDecode(argument) as List)
+          .map((e) => QuantitySample.fromJson(e))
+          .toList();
     case HealthkitResource.bloodPressure:
-      return (jsonDecode(argument) as List).map((e) => BloodPressureSample.fromJson(e)).toList();
+      return (jsonDecode(argument) as List)
+          .map((e) => BloodPressureSample.fromJson(e))
+          .toList();
     case HealthkitResource.heartRate:
-      return (jsonDecode(argument) as List).map((e) => QuantitySample.fromJson(e)).toList();
+      return (jsonDecode(argument) as List)
+          .map((e) => QuantitySample.fromJson(e))
+          .toList();
     default:
       return null;
   }
@@ -130,7 +149,8 @@ class ActivitySummary {
     this.vo2Max = const [],
   });
 
-  factory ActivitySummary.fromJson(Map<String, dynamic> json) => _$ActivitySummaryFromJson(json);
+  factory ActivitySummary.fromJson(Map<String, dynamic> json) =>
+      _$ActivitySummaryFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -140,7 +160,8 @@ class BodySummary {
 
   BodySummary({this.bodyMass = const [], this.bodyFatPercentage = const []});
 
-  factory BodySummary.fromJson(Map<String, dynamic> json) => _$BodySummaryFromJson(json);
+  factory BodySummary.fromJson(Map<String, dynamic> json) =>
+      _$BodySummaryFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -163,7 +184,8 @@ class QuantitySample {
     required this.unit,
   });
 
-  factory QuantitySample.fromJson(Map<String, dynamic> json) => _$QuantitySampleFromJson(json);
+  factory QuantitySample.fromJson(Map<String, dynamic> json) =>
+      _$QuantitySampleFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -191,7 +213,8 @@ class SleepSummary {
     this.respiratoryRate = const [],
   });
 
-  factory SleepSummary.fromJson(Map<String, dynamic> json) => _$SleepSummaryFromJson(json);
+  factory SleepSummary.fromJson(Map<String, dynamic> json) =>
+      _$SleepSummaryFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -219,7 +242,8 @@ class WorkoutSummary {
     this.respiratoryRate = const [],
   });
 
-  factory WorkoutSummary.fromJson(Map<String, dynamic> json) => _$WorkoutSummaryFromJson(json);
+  factory WorkoutSummary.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutSummaryFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -234,7 +258,8 @@ class BloodPressureSample {
     this.pulse,
   });
 
-  factory BloodPressureSample.fromJson(Map<String, dynamic> json) => _$BloodPressureSampleFromJson(json);
+  factory BloodPressureSample.fromJson(Map<String, dynamic> json) =>
+      _$BloodPressureSampleFromJson(json);
 }
 
 enum BiologicalSex {
@@ -256,5 +281,6 @@ class ProfileSummary {
     this.height,
   });
 
-  factory ProfileSummary.fromJson(Map<String, dynamic> json) => _$ProfileSummaryFromJson(json);
+  factory ProfileSummary.fromJson(Map<String, dynamic> json) =>
+      _$ProfileSummaryFromJson(json);
 }

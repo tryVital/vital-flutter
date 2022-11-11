@@ -116,7 +116,8 @@ class DeviceScreen extends StatelessWidget {
                 children: bloc.bloodPressureMeterResults
                     .map((e) => ListTile(
                           title: Text(
-                              "${e.systolic}/${e.diastolic} mmHg  -  (${e.pulse} bpm)"),
+                              "${e.systolic.value}/${e.diastolic.value} mmHg  -"
+                              "  (${e.pulse?.value} bpm)"),
                           subtitle: Text(e.diastolic.startDate.toString()),
                         ))
                     .toList(),

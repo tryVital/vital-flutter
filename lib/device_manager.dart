@@ -20,7 +20,6 @@ class DeviceManager {
     this._channel,
   ) {
     _channel.setMethodCallHandler((call) async {
-      print(call.method);
       switch (call.method) {
         case 'sendScan':
           _scanSubject.sink
@@ -42,17 +41,17 @@ class DeviceManager {
         case "sendBloodPressureReading":
           try {
             final List<dynamic> samples = jsonDecode(call.arguments as String);
-            _glucoseReadSubject.sink.add(
+            print(samples);
+            _bloodPressureSubject.sink.add(
               samples
                   .map((e) => _bloodPressureSampleFromSwiftJson(e))
-                  .whereType<QuantitySample>()
+                  .whereType<BloodPressureSample>()
                   .toList(),
             );
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
           }
           break;
-
         default:
           break;
       }
