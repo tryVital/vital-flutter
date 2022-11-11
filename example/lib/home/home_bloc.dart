@@ -3,20 +3,15 @@ import 'dart:async';
 import 'package:vital_flutter/services/data/user.dart';
 import 'package:vital_flutter/vital_flutter.dart';
 
-class VitalBloc {
-  final client = VitalClient();
+class HomeBloc {
+  final VitalClient client;
 
   final StreamController<List<User>> usersController = StreamController();
   final StreamController<User?> selectedUserController = StreamController();
 
-  final String apiKey;
-  final Region region;
-  final Environment environment;
   User? _selectedUser;
 
-  VitalBloc(this.apiKey, this.region, this.environment) {
-    client.init(region: region, environment: environment, apiKey: apiKey);
-
+  HomeBloc(this.client) {
     _connectHealthPlatform();
   }
 

@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vital_flutter/services/data/user.dart';
-import 'package:vital_flutter_example/vital_bloc.dart';
+import 'package:vital_flutter_example/home/home_bloc.dart';
+import 'package:vital_flutter_example/routes.dart';
 
 class UsersScreen extends StatelessWidget {
-  const UsersScreen({Key? key}) : super(key: key);
+  const UsersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final VitalBloc bloc = Provider.of(context);
+    final HomeBloc bloc = Provider.of(context);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Vital SDK example app'),
           actions: [
             IconButton(
-              onPressed: () {
-                _displayCreateUserDialog(context);
-              },
+              onPressed: () => Navigator.of(context).pushNamed(Routes.devices),
+              icon: const Icon(Icons.bluetooth),
+            ),
+            IconButton(
+              onPressed: () => _displayCreateUserDialog(context),
               icon: const Icon(Icons.person_add),
             ),
             IconButton(
-              onPressed: () {
-                bloc.refresh();
-              },
+              onPressed: () => bloc.refresh(),
               icon: const Icon(Icons.refresh),
             ),
           ],
@@ -32,11 +33,11 @@ class UsersScreen extends StatelessWidget {
 }
 
 class UsersPage extends StatelessWidget {
-  const UsersPage({Key? key}) : super(key: key);
+  const UsersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final VitalBloc bloc = Provider.of(context);
+    final HomeBloc bloc = Provider.of(context);
     return StreamBuilder(
       stream: bloc.getUsers(),
       builder: (context, AsyncSnapshot<List<User>?> snapshot) {
@@ -65,19 +66,12 @@ class UsersPage extends StatelessWidget {
   }
 }
 
-class HealthKitWidget extends StatefulWidget {
-  const HealthKitWidget({
-    Key? key,
-  }) : super(key: key);
+class HealthKitWidget extends StatelessWidget {
+  const HealthKitWidget({super.key});
 
-  @override
-  State<HealthKitWidget> createState() => _HealthKitWidgetState();
-}
-
-class _HealthKitWidgetState extends State<HealthKitWidget> {
   @override
   Widget build(BuildContext context) {
-    final VitalBloc bloc = Provider.of(context);
+    final HomeBloc bloc = Provider.of(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -99,7 +93,8 @@ class _HealthKitWidgetState extends State<HealthKitWidget> {
               ),
               StreamBuilder(
                 stream: bloc.selectedUser,
-                builder: (context, AsyncSnapshot<User?> snapshot) => MaterialButton(
+                builder: (context, AsyncSnapshot<User?> snapshot) =>
+                    MaterialButton(
                   color: Colors.blueGrey.shade100,
                   onPressed: snapshot.data != null
                       ? () {
@@ -186,7 +181,7 @@ class UserWidget extends StatelessWidget {
 }
 
 Future<void> _displayCreateUserDialog(BuildContext context) async {
-  final VitalBloc bloc = Provider.of(context, listen: false);
+  final HomeBloc bloc = Provider.of(context, listen: false);
   final textFieldController = TextEditingController();
   return showDialog(
       context: context,

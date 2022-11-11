@@ -1,39 +1,54 @@
 PODS:
+  - CombineCoreBluetooth (0.3.1)
   - Flutter (1.0.0)
+  - permission_handler_apple (9.0.4):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - vital_flutter (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 0.6.5)
-  - VitalCore (0.6.5)
-  - VitalHealthKit (0.6.5):
-    - VitalCore (~> 0.6.5)
+    - VitalDevices (~> 0.6.9)
+    - VitalHealthKit (~> 0.6.9)
+  - VitalCore (0.6.9)
+  - VitalDevices (0.6.9):
+    - CombineCoreBluetooth (~> 0.3.1)
+    - VitalCore (~> 0.6.9)
+  - VitalHealthKit (0.6.9):
+    - VitalCore (~> 0.6.9)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vital_flutter (from `.symlinks/plugins/vital_flutter/ios`)
 
 SPEC REPOS:
   trunk:
+    - CombineCoreBluetooth
     - VitalCore
+    - VitalDevices
     - VitalHealthKit
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   vital_flutter:
     :path: ".symlinks/plugins/vital_flutter/ios"
 
 SPEC CHECKSUMS:
+  CombineCoreBluetooth: 87fc830440fa8b1e1024c35eaa5e116e743c2660
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
-  vital_flutter: 9743324e97ded165ddbbac31bc36796725487d5a
-  VitalCore: 6920b711050b16814e839cac08f470b020e295aa
-  VitalHealthKit: 0ed2488945c327e03ebd02dfb59df113e5afa1d7
+  vital_flutter: 97ead0ef18778b953ffe525308f069555065f46f
+  VitalCore: 1febb22c3f0dd609b4c8119194e87e2608297c81
+  VitalDevices: 9c079ccfa32296b2fdb221eac17c6e091c14b849
+  VitalHealthKit: a7fe29579c86826016c9597efab7219d530fcf74
 
-PODFILE CHECKSUM: fe5e039928e08cc3aa55730590fe5577354d32d2
+PODFILE CHECKSUM: c5ce1ad99de58717946d57721065d9b56b35f342
 
 COCOAPODS: 1.11.3

@@ -10,6 +10,7 @@
 
 @implementation VitalFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftVitalFlutterPlugin registerWithRegistrar:registrar];
+  [SwiftVitalHealthKitPlugin registerWithRegistrar:registrar];
+  [SwiftVitalDevicesPlugin registerWithRegistrar:registrar];
 }
 @end

@@ -6,23 +6,26 @@ import 'package:flutter/services.dart';
 import 'package:vital_flutter/environment.dart';
 import 'package:vital_flutter/platform/data/permission_outcome.dart';
 import 'package:vital_flutter/platform/data/sync_data.dart';
-import 'package:vital_flutter/region.dart';
 import 'package:vital_flutter/platform/healthkit_resource.dart';
+import 'package:vital_flutter/region.dart';
 
 class HealthkitServices {
   var _statusSubscribed = false;
   var _healthKitConfigured = false;
-  late final StreamController<SyncStatus> _streamController =
-      StreamController(onListen: () async {
-    _statusSubscribed = true;
-    if (_healthKitConfigured) {
-      Fimber.d('Healthkit subscribeToStatus (stream)');
-      await _channel.invokeMethod('subscribeToStatus');
-    }
-  }, onCancel: () async {
-    _statusSubscribed = false;
-    await _channel.invokeMethod('unsubscribeFromStatus');
-  });
+
+  late final StreamController<SyncStatus> _streamController = StreamController(
+    onListen: () async {
+      _statusSubscribed = true;
+      if (_healthKitConfigured) {
+        Fimber.d('Healthkit subscribeToStatus (stream)');
+        await _channel.invokeMethod('subscribeToStatus');
+      }
+    },
+    onCancel: () async {
+      _statusSubscribed = false;
+      await _channel.invokeMethod('unsubscribeFromStatus');
+    },
+  );
 
   late final _statusStream = _streamController.stream.asBroadcastStream();
 
@@ -31,11 +34,12 @@ class HealthkitServices {
   final Region _region;
   final Environment _environment;
 
-  HealthkitServices(MethodChannel channel,
-      {required String apiKey,
-      required Region region,
-      required Environment environment})
-      : _apiKey = apiKey,
+  HealthkitServices(
+    MethodChannel channel, {
+    required String apiKey,
+    required Region region,
+    required Environment environment,
+  })  : _apiKey = apiKey,
         _region = region,
         _environment = environment,
         _channel = channel {
