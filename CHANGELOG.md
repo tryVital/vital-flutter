@@ -1,4 +1,4 @@
-## 0.3.1
+## 0.3.4
 
 * Correctly dispose the ios health kit plugin when the app is in the background
 
