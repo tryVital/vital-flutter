@@ -11,26 +11,39 @@ private let jsonEncoder: JSONEncoder = {
   return jsonEncoder
 }()
 
-public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
-
-  private var cancellable: Cancellable? = nil
+public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   private let channel: FlutterMethodChannel
+  private var cancellable: Cancellable? = nil
   private var flutterRunning = true
 
-  init(_ channel: FlutterMethodChannel){
+ init(_ channel: FlutterMethodChannel){
     self.channel = channel;
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "vital_health_kit", binaryMessenger: registrar.messenger())
-    let instance = SwiftVitalHealthKitPlugin(channel)
+    let channel = FlutterMethodChannel(name: "vital_flutter", binaryMessenger: registrar.messenger())
+    let instance = SwiftVitalFlutterPlugin(channel)
+
+    registrar.publish(instance)
 
     registrar.addMethodCallDelegate(instance, channel: channel)
+    registrar.addApplicationDelegate(instance)
   }
 
-  public func detachFromEngineForRegistrar(registrar: FlutterPluginRegistrar) {
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     flutterRunning = false
     cancellable?.cancel()
+  }
+
+  // Because the Plugin inherits from FlutterPlugin and it is added via `addApplicationDelegate`
+  // When the app terminates, the cancellable should be cancelled
+  public func applicationWillTerminate(_ application: UIApplication) {
+    flutterRunning = false
+    cancellable?.cancel()
+  }
+
+  public static func detachFromEngineForRegistrar(registrar: FlutterPluginRegistrar) {
+    print("detachFromEngineForRegistrar")
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -216,8 +229,6 @@ enum VitalError: Error {
   case UnsupportedResource(String)
   case UnsupportedDataPushMode(String)
   case UnsupportedProvider(String)
-  case UnsupportedBrand(String)
-  case UnsupportedKind(String)
 }
 
 private func mapStatusToArguments(_ status: VitalHealthKitClient.Status) -> [Any?]{
