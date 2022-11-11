@@ -1,5 +1,5 @@
-import 'package:vital_flutter/brand.dart';
-import 'package:vital_flutter/kind.dart';
+import 'package:vital_flutter/devices/brand.dart';
+import 'package:vital_flutter/devices/kind.dart';
 
 class DeviceModel {
   final String id;

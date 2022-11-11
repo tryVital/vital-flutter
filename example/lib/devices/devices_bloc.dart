@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vital_flutter/device.dart';
-import 'package:vital_flutter/kind.dart';
+import 'package:vital_flutter/devices/device.dart';
+import 'package:vital_flutter/devices/kind.dart';
 import 'package:vital_flutter/vital_flutter.dart';
 
 class DevicesBloc extends ChangeNotifier {

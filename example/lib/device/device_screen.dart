@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vital_flutter/kind.dart';
+import 'package:vital_flutter/devices/kind.dart';
 import 'package:vital_flutter_example/device/device_bloc.dart';
 import 'package:vital_flutter_example/devices/devices_screen.dart';
 

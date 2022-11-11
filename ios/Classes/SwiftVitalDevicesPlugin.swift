@@ -18,6 +18,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private var scannerResultCancellable: Cancellable? = nil
     private var scannedDevices: [ScannedDevice] = []
 
+    private var flutterRunning = true
 
     init(_ channel: FlutterMethodChannel){
         self.channel = channel
@@ -29,8 +30,21 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         let channel = FlutterMethodChannel(name: "vital_devices", binaryMessenger: registrar.messenger())
         let instance = SwiftVitalDevicesPlugin(channel)
 
+        registrar.publish(instance)
+
         registrar.addMethodCallDelegate(instance, channel: channel)
+        registrar.addApplicationDelegate(instance)
     }
+
+      public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+        flutterRunning = false
+        cleanUp()
+      }
+
+      public func applicationWillTerminate(_ application: UIApplication) {
+        flutterRunning = false
+        cleanUp()
+      }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
@@ -53,7 +67,8 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             startReadingBloodPressure(call.arguments as! [AnyObject], result: result)
             return
         case "cleanUp":
-            cleanUp(result: result)
+            cleanUp()
+            result(nil)
             return
         default:
             break
@@ -88,12 +103,13 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             )
 
             if(centralManager.state == .poweredOn){
-                    scannerResultCancellable?.cancel()
-                    scannerResultCancellable = deviceManager.search(for:deviceModel).sink {[weak self] value in
-                    self?.scannedDevices.append(value)
-                    self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
-                }
-                result(nil)
+                scannerResultCancellable?.cancel()
+                scannerResultCancellable = deviceManager.search(for:deviceModel).sink {[weak self] value in
+                self?.scannedDevices.append(value)
+                self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
+            }
+
+            result(nil)
             }else{
                 result(encode(ErrorResult(code: "BluetoothDisabled", message: "Bluetooth is disabled")))
             }
@@ -124,8 +140,16 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         glucoseMeterCancellable =  deviceManager.glucoseMeter(for :scannedDevice!)
             .read(device: scannedDevice!)
             .sink (receiveCompletion: {[weak self] value in
+                guard self?.flutterRunning ?? false else {
+                    return
+                }
+
                 self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: "error reading data from device")
             }, receiveValue:{[weak self] value in
+                guard self?.flutterRunning ?? false else {
+                    return
+                }
+
                 self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: encode(value))
             })
         result(nil)
@@ -144,19 +168,26 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         bloodPressureCancellable = deviceManager.bloodPressureReader(for :scannedDevice!)
             .read(device: scannedDevice!)
             .sink (receiveCompletion: {[weak self] value in
+                guard self?.flutterRunning ?? false else {
+                    return
+                }
+
                 self?.channel.invokeMethod("sendBloodPressureReading", arguments: "error reading data from device")
             }, receiveValue:{[weak self] value in
+                guard self?.flutterRunning ?? false else {
+                    return
+                }
+
                 self?.channel.invokeMethod("sendBloodPressureReading", arguments: encode(value))
             })
         result(nil)
     }
 
-    private func cleanUp(result: @escaping FlutterResult){
+    private func cleanUp(){
         glucoseMeterCancellable?.cancel()
         bloodPressureCancellable?.cancel()
         scannerResultCancellable?.cancel()
         scannedDevices = []
-        result(nil)
     }
 }
 

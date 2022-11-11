@@ -11,7 +11,7 @@ private let jsonEncoder: JSONEncoder = {
   return jsonEncoder
 }()
 
-public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   private let channel: FlutterMethodChannel
   private var cancellable: Cancellable? = nil
   private var flutterRunning = true
@@ -21,8 +21,8 @@ public class SwiftVitalFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "vital_flutter", binaryMessenger: registrar.messenger())
-    let instance = SwiftVitalFlutterPlugin(channel)
+    let channel = FlutterMethodChannel(name: "vital_health_kit", binaryMessenger: registrar.messenger())
+    let instance = SwiftVitalHealthKitPlugin(channel)
 
     registrar.publish(instance)
 
@@ -229,6 +229,8 @@ enum VitalError: Error {
   case UnsupportedResource(String)
   case UnsupportedDataPushMode(String)
   case UnsupportedProvider(String)
+  case UnsupportedBrand(String)
+  case UnsupportedKind(String)
 }
 
 private func mapStatusToArguments(_ status: VitalHealthKitClient.Status) -> [Any?]{

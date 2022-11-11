@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vital_flutter/device.dart';
+import 'package:vital_flutter/devices/device.dart';
 import 'package:vital_flutter/vital_flutter.dart';
 import 'package:vital_flutter_example/device/device_bloc.dart';
 import 'package:vital_flutter_example/device/device_screen.dart';

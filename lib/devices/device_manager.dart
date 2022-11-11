@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:vital_flutter/brand.dart';
-import 'package:vital_flutter/device.dart';
-import 'package:vital_flutter/kind.dart';
+import 'package:vital_flutter/devices/brand.dart';
+import 'package:vital_flutter/devices/device.dart';
+import 'package:vital_flutter/devices/kind.dart';
 import 'package:vital_flutter/platform/data/sync_data.dart';
 
 class DeviceManager {
