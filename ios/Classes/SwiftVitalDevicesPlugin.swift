@@ -36,15 +36,15 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         registrar.addApplicationDelegate(instance)
     }
 
-      public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
         flutterRunning = false
         cleanUp()
-      }
+    }
 
-      public func applicationWillTerminate(_ application: UIApplication) {
+    public func applicationWillTerminate(_ application: UIApplication) {
         flutterRunning = false
         cleanUp()
-      }
+    }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
@@ -88,7 +88,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             result(encode(DevicesManager.devices(for: try mapStringToBrand(deviceBrand))))
         } catch VitalError.UnsupportedBrand(let errorMessage) {
             result(encode(ErrorResult(code: "UnsupportedBrand", message: errorMessage)))
-        }catch {
+        } catch {
             result(encode(ErrorResult(code: "Unknown error")))
         }
     }
@@ -102,22 +102,23 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                 kind: try mapStringToKind(arguments[3] as! String)
             )
 
-            if(centralManager.state == .poweredOn){
+            if centralManager.state == .poweredOn {
                 scannerResultCancellable?.cancel()
                 scannerResultCancellable = deviceManager.search(for:deviceModel).sink {[weak self] value in
-                self?.scannedDevices.append(value)
-                self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
+                    self?.scannedDevices.append(value)
+                    self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel))
+                )
             }
 
             result(nil)
-            }else{
+            } else {
                 result(encode(ErrorResult(code: "BluetoothDisabled", message: "Bluetooth is disabled")))
             }
         } catch VitalError.UnsupportedBrand(let errorMessage) {
             result(encode(ErrorResult(code: "UnsupportedBrand", message: errorMessage)))
-        }catch VitalError.UnsupportedKind(let errorMessage) {
+        } catch VitalError.UnsupportedKind(let errorMessage) {
             result(encode(ErrorResult(code: "UnsupportedKind", message: errorMessage)))
-        }catch {
+        } catch {
             result(encode(ErrorResult(code: "Unknown error")))
         }
     }
@@ -131,7 +132,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
 
-        if(scannedDevice == nil){
+        guard scannedDevice != nil else {
             result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
             return
         }
@@ -159,7 +160,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
 
-        if(scannedDevice == nil){
+        guard scannedDevice != nil else {
             result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
             return
         }
