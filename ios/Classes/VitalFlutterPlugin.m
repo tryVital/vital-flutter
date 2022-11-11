@@ -12,5 +12,4 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [SwiftVitalFlutterPlugin registerWithRegistrar:registrar];
 }
-
 @end

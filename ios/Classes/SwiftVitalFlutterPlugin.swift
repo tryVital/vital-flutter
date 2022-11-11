@@ -229,8 +229,6 @@ enum VitalError: Error {
   case UnsupportedResource(String)
   case UnsupportedDataPushMode(String)
   case UnsupportedProvider(String)
-  case UnsupportedBrand(String)
-  case UnsupportedKind(String)
 }
 
 private func mapStatusToArguments(_ status: VitalHealthKitClient.Status) -> [Any?]{
