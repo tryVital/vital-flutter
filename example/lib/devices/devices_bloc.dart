@@ -10,6 +10,8 @@ class DevicesBloc extends ChangeNotifier {
   List<DeviceModel> glucoseMeterDevices = [];
 
   DevicesBloc(this._client) {
+    _client.deviceManager.configure();
+
     for (final device in _client.deviceManager.devices) {
       if (device.kind == DeviceKind.bloodPressure) {
         bloodPressureDevices.add(device);
