@@ -62,13 +62,18 @@ class DeviceScreen extends StatelessWidget {
                       .map((e) => ListTile(
                             title: Text(e.name),
                             subtitle: Text(e.id),
-                            trailing: bloc.selectedDevice == null
-                                ? const Text("Connect")
-                                : bloc.selectedDevice == e
-                                    ? const CircularProgressIndicator.adaptive()
-                                    : null,
-                            onTap: () =>
-                                bloc.scanning ? bloc.readData(e) : null,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton(
+                                  onPressed: () => bloc.pair(context, e),
+                                  child: const Text("Pair"),
+                                ),
+                                TextButton(
+                                    onPressed: () => bloc.readData(e),
+                                    child: const Text("Connect")),
+                              ],
+                            ),
                           ))
                       .toList(),
                 ),
