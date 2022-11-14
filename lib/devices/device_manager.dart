@@ -15,6 +15,7 @@ class DeviceManager {
   final _scanSubject = PublishSubject<ScannedDevice>();
   final _glucoseReadSubject = PublishSubject<List<QuantitySample>>();
   final _bloodPressureSubject = PublishSubject<List<BloodPressureSample>>();
+  final _pairSubject = PublishSubject<bool>();
 
   DeviceManager(
     this._channel,
@@ -24,6 +25,14 @@ class DeviceManager {
         case 'sendScan':
           _scanSubject.sink
               .add(ScannedDevice.fromMap(jsonDecode(call.arguments as String)));
+          break;
+        case "sendPair":
+          try {
+            _pairSubject.sink
+                .add((call.arguments as String).toLowerCase() == "true");
+          } catch (exception, stackTrace) {
+            Fimber.i(exception.toString(), stacktrace: stackTrace);
+          }
           break;
         case "sendGlucoseMeterReading":
           try {
@@ -41,7 +50,6 @@ class DeviceManager {
         case "sendBloodPressureReading":
           try {
             final List<dynamic> samples = jsonDecode(call.arguments as String);
-            print(samples);
             _bloodPressureSubject.sink.add(
               samples
                   .map((e) => _bloodPressureSampleFromSwiftJson(e))
@@ -80,6 +88,18 @@ class DeviceManager {
 
   Future<void> stopScan() async {
     return _channel.invokeMethod('stopScanForDevice');
+  }
+
+  Stream<bool> pair(ScannedDevice scannedDevice) {
+    return Stream.fromFuture(_channel.invokeMethod('pair', [
+      scannedDevice.id,
+    ])).flatMap((outcome) {
+      if (outcome == null) {
+        return _pairSubject;
+      } else {
+        throw Exception("Couldn't pair device: $outcome");
+      }
+    });
   }
 
   Stream<List<QuantitySample>> readGlucoseMeterData(
