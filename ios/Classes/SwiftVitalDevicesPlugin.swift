@@ -135,12 +135,12 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private func pair(_ arguments: [AnyObject], result: @escaping FlutterResult){
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
-
+        
         guard scannedDevice != nil else {
             result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
             return
         }
-
+        
         pairCancellable?.cancel()
         switch scannedDevice!.deviceModel.kind{
         case .glucoseMeter:
@@ -151,19 +151,16 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                     guard self?.flutterRunning ?? false else {
                         return
                     }
-
-
-                    switch value {
-                        case .failure(let error):  self?.channel.invokeMethod("sendPair", arguments: encode(false))
-                        case .finished:  self?.channel.invokeMethod("sendPair", arguments: encode(true))
-                    }
+                    
+                    self?.handlePairCompletion(value: value, channel: self?.channel)
                 },
-                      receiveValue:{[weak self] value in
+                receiveValue:{[weak self] value in
                     guard self?.flutterRunning ?? false else {
                         return
                     }
-
-                    self?.channel.invokeMethod("sendPair", arguments: encode(true))
+                    
+                    self?.handlePairValue(channel: self?.channel)
+                    
                 })
             break
         case .bloodPressure:
@@ -174,23 +171,30 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                     guard self?.flutterRunning ?? false else {
                         return
                     }
-
-
-                    switch value {
-                        case .failure(let error):  self?.channel.invokeMethod("sendPair", arguments: encode(false))
-                        case .finished:  self?.channel.invokeMethod("sendPair", arguments: encode(true))
-                    }
+                    
+                    self?.handlePairCompletion(value: value, channel: self?.channel)
                 },
-                      receiveValue:{[weak self] value in
+                receiveValue:{[weak self] value in
                     guard self?.flutterRunning ?? false else {
                         return
                     }
-
-                    self?.channel.invokeMethod("sendPair", arguments: encode(true))
+                    
+                    self?.handlePairValue(channel: self?.channel)
                 })
             break
         }
         result(nil)
+    }
+
+    private func handlePairCompletion(value: Subscribers.Completion<any Error>, channel: FlutterMethodChannel?){
+        switch value {
+        case .failure(let error):  channel?.invokeMethod("sendPair", arguments: ErrorResult(code: "PairError", message: error.localizedDescription))
+        case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
+        }
+    }
+
+    private func handlePairValue(channel: FlutterMethodChannel?) {
+        channel?.invokeMethod("sendPair", arguments: encode(true))
     }
 
     private func startReadingGlucoseMeter(_ arguments: [AnyObject], result: @escaping FlutterResult){
