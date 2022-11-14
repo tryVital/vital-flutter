@@ -9,7 +9,30 @@ import 'package:vital_flutter/platform/data/sync_data.dart';
 import 'package:vital_flutter/platform/healthkit_resource.dart';
 import 'package:vital_flutter/region.dart';
 
-class HealthkitServices {
+abstract class HealthkitServices {
+  Stream<SyncStatus> get status;
+
+  Future<void> configureClient();
+
+  Future<void> configureHealthkit({
+    bool backgroundDeliveryEnabled = false,
+    bool logsEnabled = true,
+    int numberOfDaysToBackFill = 90,
+    String dataPushMode = "automatic",
+  });
+
+  Future<void> setUserId(String userId);
+
+  Future<PermissionOutcome> askForResources(List<HealthkitResource> resources);
+
+  Future<bool> hasAskedForPermission(HealthkitResource resource);
+
+  Future<void> syncData({List<HealthkitResource>? resources});
+
+  Future<void> cleanUp();
+}
+
+class HealthkitServicesImpl extends HealthkitServices {
   var _statusSubscribed = false;
   var _healthKitConfigured = false;
 
@@ -34,7 +57,7 @@ class HealthkitServices {
   final Region _region;
   final Environment _environment;
 
-  HealthkitServices(
+  HealthkitServicesImpl(
     MethodChannel channel, {
     required String apiKey,
     required Region region,
@@ -58,17 +81,20 @@ class HealthkitServices {
     });
   }
 
+  @override
   Future<void> configureClient() async {
     Fimber.d('Healthkit configure $_apiKey, $_region $_environment');
     await _channel.invokeMethod(
         'configureClient', [_apiKey, _region.name, _environment.name]);
   }
 
-  Future<void> configureHealthkit(
-      {bool backgroundDeliveryEnabled = false,
-      bool logsEnabled = true,
-      int numberOfDaysToBackFill = 90,
-      String dataPushMode = "automatic"}) async {
+  @override
+  Future<void> configureHealthkit({
+    bool backgroundDeliveryEnabled = false,
+    bool logsEnabled = true,
+    int numberOfDaysToBackFill = 90,
+    String dataPushMode = "automatic",
+  }) async {
     Fimber.d(
         'Healthkit configureHealthkit $backgroundDeliveryEnabled, $logsEnabled, $numberOfDaysToBackFill, $dataPushMode');
     await _channel.invokeMethod('configureHealthkit', [
@@ -84,14 +110,17 @@ class HealthkitServices {
     }
   }
 
+  @override
   Future<void> setUserId(String userId) async {
     await _channel.invokeMethod('setUserId', userId);
   }
 
+  @override
   Future<void> cleanUp() async {
     await _channel.invokeMethod('cleanUp');
   }
 
+  @override
   Future<PermissionOutcome> askForResources(
       List<HealthkitResource> resources) async {
     final outcome = await _channel.invokeMethod(
@@ -112,11 +141,13 @@ class HealthkitServices {
     }
   }
 
+  @override
   Future<void> syncData({List<HealthkitResource>? resources}) async {
     await _channel.invokeMethod(
         'syncData', resources?.map((it) => it.name).toList());
   }
 
+  @override
   Future<bool> hasAskedForPermission(HealthkitResource resource) async {
     return await _channel.invokeMethod('hasAskedForPermission', resource.name)
         as bool;
@@ -126,5 +157,42 @@ class HealthkitServices {
     return await _channel.invokeMethod('isUserConnected', provider) as bool;
   }
 
+  @override
   Stream<SyncStatus> get status => _statusStream;
+}
+
+class HealthkitServicesNoop extends HealthkitServices {
+  @override
+  Future<PermissionOutcome> askForResources(
+      List<HealthkitResource> resources) async {
+    return PermissionOutcome.failure("No Op Healthkit");
+  }
+
+  @override
+  Future<void> cleanUp() async {}
+
+  @override
+  Future<void> configureClient() async {}
+
+  @override
+  Future<void> configureHealthkit({
+    bool backgroundDeliveryEnabled = false,
+    bool logsEnabled = true,
+    int numberOfDaysToBackFill = 90,
+    String dataPushMode = "automatic",
+  }) async {}
+
+  @override
+  Future<bool> hasAskedForPermission(HealthkitResource resource) async {
+    return false;
+  }
+
+  @override
+  Future<void> setUserId(String userId) async {}
+
+  @override
+  Stream<SyncStatus> get status => const Stream.empty();
+
+  @override
+  Future<void> syncData({List<HealthkitResource>? resources}) async {}
 }
