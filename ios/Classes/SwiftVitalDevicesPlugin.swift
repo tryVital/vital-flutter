@@ -14,6 +14,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
     private var glucoseMeterCancellable: Cancellable? = nil
     private var bloodPressureCancellable: Cancellable? = nil
+    private var pairCancellable: Cancellable? = nil
 
     private var scannerResultCancellable: Cancellable? = nil
     private var scannedDevices: [ScannedDevice] = []
@@ -59,6 +60,9 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             return
         case "stopScanForDevice":
             stopScanForDevice(result: result)
+            return
+        case "pair":
+            pair(call.arguments as! [AnyObject], result: result)
             return
         case "startReadingGlucoseMeter":
             startReadingGlucoseMeter(call.arguments as! [AnyObject], result: result)
@@ -128,6 +132,68 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         result(nil)
     }
 
+    private func pair(_ arguments: [AnyObject], result: @escaping FlutterResult){
+        let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
+        let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
+        
+        guard scannedDevice != nil else {
+            result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
+            return
+        }
+        
+        pairCancellable?.cancel()
+        switch scannedDevice!.deviceModel.kind{
+            case .glucoseMeter:
+                pairCancellable = deviceManager
+                    .glucoseMeter(for: scannedDevice!)
+                    .pair(device: scannedDevice!)
+                    .sink(receiveCompletion: {[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairCompletion(value: value, channel: self?.channel)
+                    },
+                    receiveValue:{[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairValue(channel: self?.channel)
+                    })
+            case .bloodPressure:
+                pairCancellable = deviceManager
+                    .bloodPressureReader(for: scannedDevice!)
+                    .pair(device: scannedDevice!)
+                    .sink(receiveCompletion: {[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairCompletion(value: value, channel: self?.channel)
+                    },
+                    receiveValue:{[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairValue(channel: self?.channel)
+                    })
+        }
+        result(nil)
+    }
+
+    private func handlePairCompletion(value: Subscribers.Completion<any Error>, channel: FlutterMethodChannel?){
+        switch value {
+            case .failure(let error):  channel?.invokeMethod("sendPair", arguments: ErrorResult(code: "PairError", message: error.localizedDescription))
+            case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
+        }
+    }
+
+    private func handlePairValue(channel: FlutterMethodChannel?) {
+        channel?.invokeMethod("sendPair", arguments: encode(true))
+    }
+
     private func startReadingGlucoseMeter(_ arguments: [AnyObject], result: @escaping FlutterResult){
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
@@ -145,7 +211,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                     return
                 }
 
-                self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: "error reading data from device")
+                self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: "error reading data from device \(value)")
             }, receiveValue:{[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
@@ -173,7 +239,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                     return
                 }
 
-                self?.channel.invokeMethod("sendBloodPressureReading", arguments: "error reading data from device")
+                self?.channel.invokeMethod("sendBloodPressureReading", arguments: "error reading data from device \(value)")
             }, receiveValue:{[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
@@ -188,6 +254,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         glucoseMeterCancellable?.cancel()
         bloodPressureCancellable?.cancel()
         scannerResultCancellable?.cancel()
+        pairCancellable?.cancel()
         scannedDevices = []
     }
 }

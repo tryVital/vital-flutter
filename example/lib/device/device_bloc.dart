@@ -51,6 +51,20 @@ class DeviceBloc extends ChangeNotifier with Disposer {
     notifyListeners();
   }
 
+  void pair(BuildContext context, ScannedDevice scannedDevice) {
+    _client.deviceManager.stopScan();
+    scanning = false;
+    selectedDevice = scannedDevice;
+
+    _client.deviceManager.pair(scannedDevice).listen((event) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Successfully paired")));
+    }, onError: (error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Failed to pair e: $error")));
+    }).disposedBy(disposeBag);
+  }
+
   readData(ScannedDevice scannedDevice) {
     _client.deviceManager.stopScan();
     scanning = false;
