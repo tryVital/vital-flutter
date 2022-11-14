@@ -143,53 +143,50 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         
         pairCancellable?.cancel()
         switch scannedDevice!.deviceModel.kind{
-        case .glucoseMeter:
-            pairCancellable = deviceManager
-                .glucoseMeter(for: scannedDevice!)
-                .pair(device: scannedDevice!)
-                .sink(receiveCompletion: {[weak self] value in
-                    guard self?.flutterRunning ?? false else {
-                        return
-                    }
-                    
-                    self?.handlePairCompletion(value: value, channel: self?.channel)
-                },
-                receiveValue:{[weak self] value in
-                    guard self?.flutterRunning ?? false else {
-                        return
-                    }
-                    
-                    self?.handlePairValue(channel: self?.channel)
-                    
-                })
-            break
-        case .bloodPressure:
-            pairCancellable = deviceManager
-                .bloodPressureReader(for: scannedDevice!)
-                .pair(device: scannedDevice!)
-                .sink(receiveCompletion: {[weak self] value in
-                    guard self?.flutterRunning ?? false else {
-                        return
-                    }
-                    
-                    self?.handlePairCompletion(value: value, channel: self?.channel)
-                },
-                receiveValue:{[weak self] value in
-                    guard self?.flutterRunning ?? false else {
-                        return
-                    }
-                    
-                    self?.handlePairValue(channel: self?.channel)
-                })
-            break
+            case .glucoseMeter:
+                pairCancellable = deviceManager
+                    .glucoseMeter(for: scannedDevice!)
+                    .pair(device: scannedDevice!)
+                    .sink(receiveCompletion: {[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairCompletion(value: value, channel: self?.channel)
+                    },
+                    receiveValue:{[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairValue(channel: self?.channel)
+                    })
+            case .bloodPressure:
+                pairCancellable = deviceManager
+                    .bloodPressureReader(for: scannedDevice!)
+                    .pair(device: scannedDevice!)
+                    .sink(receiveCompletion: {[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairCompletion(value: value, channel: self?.channel)
+                    },
+                    receiveValue:{[weak self] value in
+                        guard self?.flutterRunning ?? false else {
+                            return
+                        }
+
+                        self?.handlePairValue(channel: self?.channel)
+                    })
         }
         result(nil)
     }
 
     private func handlePairCompletion(value: Subscribers.Completion<any Error>, channel: FlutterMethodChannel?){
         switch value {
-        case .failure(let error):  channel?.invokeMethod("sendPair", arguments: ErrorResult(code: "PairError", message: error.localizedDescription))
-        case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
+            case .failure(let error):  channel?.invokeMethod("sendPair", arguments: ErrorResult(code: "PairError", message: error.localizedDescription))
+            case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
         }
     }
 

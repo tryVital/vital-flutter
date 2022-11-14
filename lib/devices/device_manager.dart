@@ -28,7 +28,6 @@ class DeviceManager {
           break;
         case "sendPair":
           try {
-            print("sendPair ${call.arguments}");
             _pairSubject.sink
                 .add((call.arguments as String).toLowerCase() == "true");
           } catch (exception, stackTrace) {
@@ -37,7 +36,6 @@ class DeviceManager {
           break;
         case "sendGlucoseMeterReading":
           try {
-            print(call.arguments);
             final List<dynamic> samples = jsonDecode(call.arguments as String);
             _glucoseReadSubject.sink.add(
               samples
