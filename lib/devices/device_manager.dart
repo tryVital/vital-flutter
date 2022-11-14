@@ -29,7 +29,8 @@ class DeviceManager {
         case "sendPair":
           try {
             print("sendPair ${call.arguments}");
-            _pairSubject.sink.add(true);
+            _pairSubject.sink
+                .add((call.arguments as String).toLowerCase() == "true");
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
           }
