@@ -67,10 +67,6 @@ class DeviceManager {
     });
   }
 
-  void configure() {
-    _channel.invokeMethod('configure');
-  }
-
   List<DeviceModel> getDevices(Brand brand) {
     return devices.where((element) => element.brand == brand).toList();
   }

@@ -10,8 +10,8 @@ import VitalDevices
 public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private let channel: FlutterMethodChannel
 
-    private var deviceManager: DevicesManager?
-    private var centralManager: CentralManager?
+    private lazy var deviceManager = DevicesManager()
+    private lazy var centralManager:CentralManager = .live()
 
     private var glucoseMeterCancellable: Cancellable? = nil
     private var bloodPressureCancellable: Cancellable? = nil
@@ -24,11 +24,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
     init(_ channel: FlutterMethodChannel){
         self.channel = channel
-    }
-
-    public func configure(){
-        if deviceManager == nil { deviceManager = DevicesManager() }
-        if centralManager == nil { centralManager = .live() }
     }
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -53,10 +48,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
-        case "configure":
-            configure()
-            result(nil)
-            return
         case "brands":
             getBrands(result: result)
             return
@@ -106,12 +97,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func scanForDevice(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        guard deviceManager != nil && centralManager != nil else {
-        print("Device manager or central manager not initialized")
-            result(encode(ErrorResult(code: "ConfigureNotCalled", message: "configure() must be called before calling this method")))
-            return
-        }
-
         do {
             let deviceModel = DeviceModel(
                 id: arguments[0] as! String,
@@ -121,17 +106,20 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             )
 
             scannerResultCancellable?.cancel()
-            if centralManager!.state == .poweredOn {
-                scannerResultCancellable?.cancel()
-                scannerResultCancellable = deviceManager!.search(for:deviceModel).sink {[weak self] value in
-                    self?.scannedDevices.append(value)
-                    self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
-                }
+            scannerResultCancellable =  centralManager.didUpdateState
+                 .flatMapLatest{state -> AnyPublisher<ScannedDevice, Never> in
+                       print("State: \(state)")
+                       if state == .poweredOn {
+                         return self.deviceManager.search(for:deviceModel)
+                       } else {
+                            return .empty
+                       }
+                   }.sink {[weak self] value in
+                       self?.scannedDevices.append(value)
+                       self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
+                   }
 
-                result(nil)
-            } else {
-                result(encode(ErrorResult(code: "BluetoothDisabled", message: "Bluetooth is disabled")))
-            }
+            result(nil)
         } catch VitalError.UnsupportedBrand(let errorMessage) {
             result(encode(ErrorResult(code: "UnsupportedBrand", message: errorMessage)))
         } catch VitalError.UnsupportedKind(let errorMessage) {
@@ -147,11 +135,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func pair(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        guard deviceManager != nil && centralManager != nil else {
-            result(encode(ErrorResult(code: "ConfigureNotCalled", message: "configure() must be called before calling this method")))
-            return
-        }
-
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
 
@@ -163,7 +146,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         pairCancellable?.cancel()
         switch scannedDevice!.deviceModel.kind{
             case .glucoseMeter:
-                pairCancellable = deviceManager!
+                pairCancellable = deviceManager
                     .glucoseMeter(for: scannedDevice!)
                     .pair(device: scannedDevice!)
                     .sink(receiveCompletion: {[weak self] value in
@@ -181,7 +164,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                         self?.handlePairValue(channel: self?.channel)
                     })
             case .bloodPressure:
-                pairCancellable = deviceManager!
+                pairCancellable = deviceManager
                     .bloodPressureReader(for: scannedDevice!)
                     .pair(device: scannedDevice!)
                     .sink(receiveCompletion: {[weak self] value in
@@ -214,11 +197,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func startReadingGlucoseMeter(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        guard deviceManager != nil && centralManager != nil else {
-            result(encode(ErrorResult(code: "ConfigureNotCalled", message: "configure() must be called before calling this method")))
-            return
-        }
-
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
 
@@ -228,7 +206,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         }
 
         glucoseMeterCancellable?.cancel()
-        glucoseMeterCancellable =  deviceManager!.glucoseMeter(for :scannedDevice!)
+        glucoseMeterCancellable =  deviceManager.glucoseMeter(for :scannedDevice!)
             .read(device: scannedDevice!)
             .sink (receiveCompletion: {[weak self] value in
                 guard self?.flutterRunning ?? false else {
@@ -247,11 +225,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func startReadingBloodPressure(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        guard deviceManager != nil && centralManager != nil else {
-            result(encode(ErrorResult(code: "ConfigureNotCalled", message: "configure() must be called before calling this method")))
-            return
-        }
-
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
 
@@ -261,7 +234,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         }
 
         bloodPressureCancellable?.cancel()
-        bloodPressureCancellable = deviceManager!.bloodPressureReader(for :scannedDevice!)
+        bloodPressureCancellable = deviceManager.bloodPressureReader(for :scannedDevice!)
             .read(device: scannedDevice!)
             .sink (receiveCompletion: {[weak self] value in
                 guard self?.flutterRunning ?? false else {
