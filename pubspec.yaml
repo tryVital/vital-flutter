@@ -39,7 +39,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.vital_flutter
+        package: io.vital
         pluginClass: VitalFlutterPlugin
       ios:
         pluginClass: VitalFlutterPlugin

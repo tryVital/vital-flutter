@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.vital_flutter_example"
-        minSdkVersion 21
+        minSdkVersion 26
         compileSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

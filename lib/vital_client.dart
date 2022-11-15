@@ -45,7 +45,7 @@ class VitalClient {
 
   late final healthkitServices = Platform.isIOS
       ? HealthkitServicesImpl(_healthKitMethodChannel,
-          apiKey: _apiKey, region: _region, environment: _environment)
+      apiKey: _apiKey, region: _region, environment: _environment)
       : HealthkitServicesNoop();
 
   late final deviceManager = DeviceManager(_devicesMethodChannel);

@@ -27,15 +27,10 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   requestPermissions() {
-    if (Platform.isAndroid) {
-      Permission.bluetoothScan.request().then((value) {
-        permissionsGranted = value.isGranted;
-        notifyListeners();
-      });
-    } else {
-      permissionsGranted = true;
+    Permission.bluetoothConnect.request().then((value) {
+      permissionsGranted = value.isGranted;
       notifyListeners();
-    }
+    });
   }
 
   void scan() {
