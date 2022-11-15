@@ -107,6 +107,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
     private func scanForDevice(_ arguments: [AnyObject], result: @escaping FlutterResult){
         guard deviceManager != nil && centralManager != nil else {
+        print("Device manager or central manager not initialized")
             result(encode(ErrorResult(code: "ConfigureNotCalled", message: "configure() must be called before calling this method")))
             return
         }
