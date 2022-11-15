@@ -11,7 +11,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private let channel: FlutterMethodChannel
 
     private lazy var deviceManager = DevicesManager()
-    private lazy var centralManager:CentralManager = .live()
 
     private var glucoseMeterCancellable: Cancellable? = nil
     private var bloodPressureCancellable: Cancellable? = nil
@@ -106,18 +105,11 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             )
 
             scannerResultCancellable?.cancel()
-            scannerResultCancellable =  centralManager.didUpdateState
-                 .flatMapLatest{state -> AnyPublisher<ScannedDevice, Never> in
-                       print("State: \(state)")
-                       if state == .poweredOn {
-                         return self.deviceManager.search(for:deviceModel)
-                       } else {
-                            return .empty
-                       }
-                   }.sink {[weak self] value in
+            scannerResultCancellable =  deviceManager.search(for:deviceModel)
+                .sink {[weak self] value in
                        self?.scannedDevices.append(value)
                        self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
-                   }
+                }
 
             result(nil)
         } catch VitalError.UnsupportedBrand(let errorMessage) {
