@@ -1,7 +1,6 @@
 package io.vital
 
 import android.content.Context
-import android.util.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -14,8 +13,7 @@ import io.tryvital.vitaldevices.Kind
 import io.tryvital.vitaldevices.VitalDeviceManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import org.json.JSONObject
 
 /** VitalFlutterPlugin */
 class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
@@ -79,8 +77,37 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
         vitalDeviceManager.search(deviceModel)
             .flowOn(Dispatchers.IO)
             .collect {
-                channel.invokeMethod("sendScan", Json.encodeToString(it))
+                withContext(Dispatchers.Main) {
+                    val function = mapOf(
+                        "id" to it.address,
+                        "name" to it.name,
+                        "deviceModel" to mapOf(
+                            "id" to it.deviceModel.id,
+                            "name" to it.deviceModel.name,
+                            "brand" to brandToString(it.deviceModel.brand),
+                            "kind" to kindToString(it.deviceModel.kind)
+                        )
+                    )
+                    channel.invokeMethod("sendScan", JSONObject(function).toString())
+                }
             }
+    }
+
+    private fun kindToString(kind: Kind): String {
+        return when (kind) {
+            Kind.GlucoseMeter -> "glucoseMeter"
+            Kind.BloodPressure -> "bloodPressure"
+        }
+    }
+
+    private fun brandToString(brand: Brand): String {
+        return when (brand) {
+            Brand.Omron -> "omron"
+            Brand.AccuChek -> "accuChek"
+            Brand.Contour -> "contour"
+            Brand.Beurer -> "beurer"
+            Brand.Libre -> "libre"
+        }
     }
 
     private fun stringToBrand(string: String): Brand {
