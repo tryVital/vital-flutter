@@ -9,8 +9,8 @@ import VitalDevices
 
 public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private let channel: FlutterMethodChannel
-    private let deviceManager: DevicesManager
-    private let centralManager:CentralManager
+
+    private lazy var deviceManager = DevicesManager()
 
     private var glucoseMeterCancellable: Cancellable? = nil
     private var bloodPressureCancellable: Cancellable? = nil
@@ -23,8 +23,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
     init(_ channel: FlutterMethodChannel){
         self.channel = channel
-        self.deviceManager = DevicesManager()
-        self.centralManager = .live()
     }
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -106,18 +104,14 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                 kind: try mapStringToKind(arguments[3] as! String)
             )
 
-            if centralManager.state == .poweredOn {
-                scannerResultCancellable?.cancel()
-                scannerResultCancellable = deviceManager.search(for:deviceModel).sink {[weak self] value in
-                    self?.scannedDevices.append(value)
-                    self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel))
-                )
-            }
+            scannerResultCancellable?.cancel()
+            scannerResultCancellable =  deviceManager.search(for:deviceModel)
+                .sink {[weak self] value in
+                       self?.scannedDevices.append(value)
+                       self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
+                }
 
             result(nil)
-            } else {
-                result(encode(ErrorResult(code: "BluetoothDisabled", message: "Bluetooth is disabled")))
-            }
         } catch VitalError.UnsupportedBrand(let errorMessage) {
             result(encode(ErrorResult(code: "UnsupportedBrand", message: errorMessage)))
         } catch VitalError.UnsupportedKind(let errorMessage) {
@@ -135,12 +129,12 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private func pair(_ arguments: [AnyObject], result: @escaping FlutterResult){
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
-        
+
         guard scannedDevice != nil else {
             result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
             return
         }
-        
+
         pairCancellable?.cancel()
         switch scannedDevice!.deviceModel.kind{
             case .glucoseMeter:

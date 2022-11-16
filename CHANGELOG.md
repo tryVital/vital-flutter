@@ -1,3 +1,7 @@
+## 0.4.0-alpha.2
+* Added pairing 
+* Only request permission when the it is required
+
 ## 0.4.0-alpha.1
 * Add the `DeviceManger` to manage the supported glucose and blood pressure devices.
 
