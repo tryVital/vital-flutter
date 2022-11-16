@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
@@ -36,10 +37,14 @@ class DeviceManager {
           break;
         case "sendGlucoseMeterReading":
           try {
+            print("aaaaaaaa");
+            print(call.arguments);
             final List<dynamic> samples = jsonDecode(call.arguments as String);
             _glucoseReadSubject.sink.add(
               samples
-                  .map((e) => _sampleFromSwiftJson(e))
+                  .map((e) => Platform.isIOS
+                      ? _sampleFromSwiftJson(e)
+                      : _sampleFromJson(e))
                   .whereType<QuantitySample>()
                   .toList(),
             );
@@ -52,7 +57,9 @@ class DeviceManager {
             final List<dynamic> samples = jsonDecode(call.arguments as String);
             _bloodPressureSubject.sink.add(
               samples
-                  .map((e) => _bloodPressureSampleFromSwiftJson(e))
+                  .map((e) => Platform.isIOS
+                      ? _bloodPressureSampleFromSwiftJson(e)
+                      : _bloodPressureSampleFromJson(e))
                   .whereType<BloodPressureSample>()
                   .toList(),
             );
@@ -199,6 +206,38 @@ BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
       systolic: _sampleFromSwiftJson(e["systolic"])!,
       diastolic: _sampleFromSwiftJson(e["diastolic"])!,
       pulse: _sampleFromSwiftJson(e["pulse"]),
+    );
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+BloodPressureSample? _bloodPressureSampleFromJson(e) {
+  try {
+    return BloodPressureSample(
+      systolic: _sampleFromJson(e["systolic"])!,
+      diastolic: _sampleFromJson(e["diastolic"])!,
+      pulse: _sampleFromJson(e["pulse"]),
+    );
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
+  try {
+    print(json);
+    return QuantitySample(
+      id: json['id'] as String?,
+      value: double.parse(json['value'].toString()),
+      unit: json['unit'] as String,
+      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int,
+          isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int,
+          isUtc: true),
+      type: json['type'] as String,
     );
   } catch (e) {
     print(e);

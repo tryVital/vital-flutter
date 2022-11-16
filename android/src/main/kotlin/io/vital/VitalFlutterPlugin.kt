@@ -6,13 +6,12 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.tryvital.client.services.data.QuantitySample
 import io.tryvital.client.utils.VitalLogger
-import io.tryvital.vitaldevices.Brand
-import io.tryvital.vitaldevices.DeviceModel
-import io.tryvital.vitaldevices.Kind
-import io.tryvital.vitaldevices.VitalDeviceManager
+import io.tryvital.vitaldevices.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flowOn
+import org.json.JSONArray
 import org.json.JSONObject
 
 /** VitalFlutterPlugin */
@@ -20,6 +19,8 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
     private lateinit var channel: MethodChannel
     private lateinit var vitalDeviceManager: VitalDeviceManager
+
+    private val scannedDevices: MutableList<ScannedDevice> = mutableListOf()
 
     private var mainScope: CoroutineScope? = null
 
@@ -31,6 +32,9 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(this)
     }
 
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
@@ -48,22 +52,105 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(null)
             }
             "stopScanForDevice" -> {
-                throw Exception("Not implemented")
+                mainScope?.cancel()
+                result.success(null)
             }
             "pair" -> {
-                throw Exception("Not implemented")
+                pair(call.arguments<List<String>>()!!.first(), result)
             }
             "startReadingGlucoseMeter" -> {
-                throw Exception("Not implemented")
+                startReadingGlucoseMeter(call.arguments<List<String>>()!!.first(), result)
             }
             "startReadingBloodPressure" -> {
-                throw Exception("Not implemented")
+                startReadingBloodPressure(call.arguments<List<String>>()!!.first(), result)
             }
             "cleanUp" -> {
-                throw Exception("Not implemented")
+                mainScope?.cancel()
+                scannedDevices.clear()
+                result.success(null)
             }
-            else -> throw  Exception("Unsupported method")
+            else -> throw  Exception("Unsupported method ${call.method}")
         }
+    }
+
+    private fun pair(scannedDeviceId: String, result: Result) {
+        val scannedDevice = scannedDevices.firstOrNull { it.address == scannedDeviceId }
+
+        if (scannedDevice == null) {
+            result.error("DeviceNotFound", "Device $scannedDeviceId not found", null)
+        } else {
+            mainScope?.cancel()
+            mainScope = MainScope()
+            mainScope?.launch {
+                withContext(Dispatchers.Default) {
+                    vitalDeviceManager.pair(scannedDevice).collect {
+                        withContext(Dispatchers.Main) {
+                            channel.invokeMethod("sendPair", it.toString())
+                        }
+                    }
+                }
+            }
+            result.success(null)
+        }
+    }
+
+    private fun startReadingGlucoseMeter(scannedDeviceId: String, result: Result) {
+        val scannedDevice = scannedDevices.firstOrNull { it.address == scannedDeviceId }
+
+        if (scannedDevice == null) {
+            result.error("DeviceNotFound", "Device $scannedDeviceId not found", null)
+        } else {
+            mainScope?.cancel()
+            mainScope = MainScope()
+            mainScope?.launch {
+                withContext(Dispatchers.Default) {
+                    vitalDeviceManager.glucoseMeter(context, scannedDevice).flowOn(Dispatchers.IO)
+                        .collect { samples ->
+                            withContext(Dispatchers.Main) {
+                                channel.invokeMethod(
+                                    "sendGlucoseMeterReading",
+                                    JSONArray(samples.map { mapSample(it) }).toString()
+                                )
+                            }
+                        }
+                }
+            }
+
+            result.success(null)
+        }
+    }
+
+    private fun startReadingBloodPressure(scannedDeviceId: String, result: Result) {
+        val scannedDevice = scannedDevices.firstOrNull { it.address == scannedDeviceId }
+
+        if (scannedDevice == null) {
+            result.error("DeviceNotFound", "Device $scannedDeviceId not found", null)
+        } else {
+            mainScope?.cancel()
+            mainScope = MainScope()
+            mainScope?.launch {
+                withContext(Dispatchers.Default) {
+                    vitalDeviceManager.bloodPressure(context, scannedDevice).flowOn(Dispatchers.IO)
+                        .collect { samples ->
+                            withContext(Dispatchers.Main) {
+                                channel.invokeMethod(
+                                    "sendBloodPressureReading",
+                                    JSONArray(samples.map {
+                                        JSONObject().apply {
+                                            put("systolic", mapSample(it.systolic))
+                                            put("diastolic", mapSample(it.diastolic))
+                                            put("pulse", mapSample(it.pulse))
+                                        }
+                                    }).toString()
+                                )
+                            }
+                        }
+                }
+            }
+
+            result.success(null)
+        }
+
     }
 
     private suspend fun startScanForDevice(arguments: List<String>) {
@@ -74,23 +161,23 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
             kind = stringToKind(arguments[3]),
         )
 
-        vitalDeviceManager.search(deviceModel)
-            .flowOn(Dispatchers.IO)
-            .collect {
-                withContext(Dispatchers.Main) {
-                    val function = mapOf(
-                        "id" to it.address,
-                        "name" to it.name,
-                        "deviceModel" to mapOf(
-                            "id" to it.deviceModel.id,
-                            "name" to it.deviceModel.name,
-                            "brand" to brandToString(it.deviceModel.brand),
-                            "kind" to kindToString(it.deviceModel.kind)
+        vitalDeviceManager.search(deviceModel).flowOn(Dispatchers.IO).collect {
+            withContext(Dispatchers.Main) {
+                scannedDevices.add(it)
+                channel.invokeMethod(
+                    "sendScan", JSONObject(
+                        mapOf(
+                            "id" to it.address, "name" to it.name, "deviceModel" to mapOf(
+                                "id" to it.deviceModel.id,
+                                "name" to it.deviceModel.name,
+                                "brand" to brandToString(it.deviceModel.brand),
+                                "kind" to kindToString(it.deviceModel.kind)
+                            )
                         )
-                    )
-                    channel.invokeMethod("sendScan", JSONObject(function).toString())
-                }
+                    ).toString()
+                )
             }
+        }
     }
 
     private fun kindToString(kind: Kind): String {
@@ -129,7 +216,14 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+    private fun mapSample(it: QuantitySample) {
+        JSONObject().apply {
+            put("id", it.id)
+            put("value", it.value)
+            put("unit", it.unit)
+            put("startDate", it.startDate.time)
+            put("endDate", it.endDate.time)
+            put("type", it.type)
+        }
     }
 }
