@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vital_flutter/devices/brand.dart';
 import 'package:vital_flutter/devices/device.dart';
+import 'package:vital_flutter/devices/exception.dart';
 import 'package:vital_flutter/devices/kind.dart';
 import 'package:vital_flutter/platform/data/sync_data.dart';
 
@@ -79,12 +81,16 @@ class DeviceManager {
   }
 
   Stream<ScannedDevice> scanForDevice(DeviceModel deviceModel) {
-    return Stream.fromFuture(_channel.invokeMethod('startScanForDevice', [
-      deviceModel.id,
-      deviceModel.name,
-      deviceModel.brand.name,
-      deviceModel.kind.name
-    ])).flatMap((outcome) {
+    return Stream.fromFuture(
+      _checkPermissions().then(
+        (value) => _channel.invokeMethod('startScanForDevice', [
+          deviceModel.id,
+          deviceModel.name,
+          deviceModel.brand.name,
+          deviceModel.kind.name
+        ]),
+      ),
+    ).flatMap((outcome) {
       if (outcome == null) {
         return _scanSubject;
       } else {
@@ -98,9 +104,11 @@ class DeviceManager {
   }
 
   Stream<bool> pair(ScannedDevice scannedDevice) {
-    return Stream.fromFuture(_channel.invokeMethod('pair', [
-      scannedDevice.id,
-    ])).flatMap((outcome) {
+    return Stream.fromFuture(
+      _checkPermissions().then(
+        (value) => _channel.invokeMethod('pair', [scannedDevice.id]),
+      ),
+    ).flatMap((outcome) {
       if (outcome == null) {
         return _pairSubject;
       } else {
@@ -111,9 +119,12 @@ class DeviceManager {
 
   Stream<List<QuantitySample>> readGlucoseMeterData(
       ScannedDevice scannedDevice) {
-    return Stream.fromFuture(_channel.invokeMethod('startReadingGlucoseMeter', [
-      scannedDevice.id,
-    ])).flatMap((outcome) {
+    return Stream.fromFuture(
+      _checkPermissions().then(
+        (value) => _channel
+            .invokeMethod('startReadingGlucoseMeter', [scannedDevice.id]),
+      ),
+    ).flatMap((outcome) {
       if (outcome == null) {
         return _glucoseReadSubject;
       } else {
@@ -125,9 +136,11 @@ class DeviceManager {
   Stream<List<BloodPressureSample>> readBloodPressureData(
       ScannedDevice scannedDevice) {
     return Stream.fromFuture(
-        _channel.invokeMethod('startReadingBloodPressure', [
-      scannedDevice.id,
-    ])).flatMap((outcome) {
+      _checkPermissions().then(
+        (value) => _channel
+            .invokeMethod('startReadingBloodPressure', [scannedDevice.id]),
+      ),
+    ).flatMap((outcome) {
       if (outcome == null) {
         return _bloodPressureSubject;
       } else {
@@ -198,6 +211,32 @@ class DeviceManager {
       kind: DeviceKind.glucoseMeter,
     ),
   ];
+
+  Future<void> _checkPermissions() async {
+    if (Platform.isIOS) {
+      final permissionGranted =
+          await Permission.bluetooth.status == PermissionStatus.granted;
+      if (!permissionGranted) {
+        throw MissingPermissionException("Bluetooth permission not granted");
+      }
+    } else if (Platform.isAndroid) {
+      final scanPermissionGranted =
+          await Permission.bluetoothScan.status == PermissionStatus.granted;
+
+      if (!scanPermissionGranted) {
+        throw MissingPermissionException(
+            "Bluetooth Scan permission not granted");
+      }
+
+      final bluetoothConnectPermissionGranted =
+          await Permission.bluetoothConnect.status == PermissionStatus.granted;
+
+      if (!bluetoothConnectPermissionGranted) {
+        throw MissingPermissionException(
+            "Bluetooth Connect permission not granted");
+      }
+    }
+  }
 }
 
 BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {

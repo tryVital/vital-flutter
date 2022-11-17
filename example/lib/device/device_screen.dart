@@ -45,7 +45,7 @@ class DeviceScreen extends StatelessWidget {
                 trailing: bloc.scanning
                     ? const CircularProgressIndicator.adaptive()
                     : const Text("Scan"),
-                onTap: bloc.scanning ? null : () => bloc.scan(),
+                onTap: bloc.scanning ? null : () => bloc.scan(context),
               ),
               if (bloc.scanning || bloc.selectedDevice != null) ...[
                 const SizedBox(height: 12),
@@ -59,18 +59,20 @@ class DeviceScreen extends StatelessWidget {
                   shrinkWrap: true,
                   primary: false,
                   children: bloc.scannedDevices
-                      .map((e) => ListTile(
-                            title: Text(e.name),
-                            subtitle: Text(e.id),
+                      .map((scannedDevice) => ListTile(
+                            title: Text(scannedDevice.name),
+                            subtitle: Text(scannedDevice.id),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 TextButton(
-                                  onPressed: () => bloc.pair(context, e),
+                                  onPressed: () =>
+                                      bloc.pair(context, scannedDevice),
                                   child: const Text("Pair"),
                                 ),
                                 TextButton(
-                                    onPressed: () => bloc.readData(e),
+                                    onPressed: () =>
+                                        bloc.readData(context, scannedDevice),
                                     child: const Text("Connect")),
                               ],
                             ),
