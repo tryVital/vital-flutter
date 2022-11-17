@@ -1,3 +1,7 @@
+## 0.3.5
+
+* Update iOS SDK to use StatisticalQuery
+
 ## 0.3.4
 
 * Correctly dispose the ios health kit plugin when the app is in the background
