@@ -39,8 +39,6 @@ class DeviceManager {
           break;
         case "sendGlucoseMeterReading":
           try {
-            print("aaaaaaaa");
-            print(call.arguments);
             final List<dynamic> samples = jsonDecode(call.arguments as String);
             _glucoseReadSubject.sink.add(
               samples
@@ -247,7 +245,7 @@ BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
       pulse: _sampleFromSwiftJson(e["pulse"]),
     );
   } catch (e) {
-    print(e);
+    Fimber.i("Error parsing sample: $e");
     return null;
   }
 }
@@ -260,14 +258,13 @@ BloodPressureSample? _bloodPressureSampleFromJson(e) {
       pulse: _sampleFromJson(e["pulse"]),
     );
   } catch (e) {
-    print(e);
+    Fimber.i("Error parsing sample: $e");
     return null;
   }
 }
 
 QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   try {
-    print(json);
     return QuantitySample(
       id: json['id'] as String?,
       value: double.parse(json['value'].toString()),
@@ -279,7 +276,7 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
       type: json['type'] as String,
     );
   } catch (e) {
-    print(e);
+    Fimber.i("Error parsing sample: $e");
     return null;
   }
 }
