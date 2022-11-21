@@ -1,3 +1,7 @@
+## 0.4.0-alpha.5
+
+* All errors should now be properly handled and reported to the user
+
 ## 0.4.0-alpha.4
 
 * Add the android implementation `DeviceManger` to manage the supported glucose and blood pressure devices.

@@ -26,45 +26,78 @@ class DeviceManager {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'sendScan':
-          _scanSubject.sink
-              .add(ScannedDevice.fromMap(jsonDecode(call.arguments as String)));
+          try {
+            final decodedArguments = jsonDecode(call.arguments as String);
+            final error = _mapError(decodedArguments);
+
+            if (error != null) {
+              _scanSubject.addError(error);
+            } else {
+              _scanSubject.sink.add(ScannedDevice.fromMap(decodedArguments));
+            }
+          } catch (exception, stackTrace) {
+            Fimber.i(exception.toString(), stacktrace: stackTrace);
+            _scanSubject.addError(UnknownException("$exception $stackTrace"));
+          }
           break;
         case "sendPair":
           try {
-            _pairSubject.sink
-                .add((call.arguments as String).toLowerCase() == "true");
+            final decodedArguments = jsonDecode(call.arguments as String);
+            final error = _mapError(decodedArguments);
+
+            if (error != null) {
+              _scanSubject.addError(error);
+            } else {
+              _pairSubject.sink
+                  .add((call.arguments as String).toLowerCase() == "true");
+            }
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
+            _scanSubject.addError(UnknownException("$exception $stackTrace"));
           }
           break;
         case "sendGlucoseMeterReading":
           try {
-            final List<dynamic> samples = jsonDecode(call.arguments as String);
-            _glucoseReadSubject.sink.add(
-              samples
-                  .map((e) => Platform.isIOS
-                      ? _sampleFromSwiftJson(e)
-                      : _sampleFromJson(e))
-                  .whereType<QuantitySample>()
-                  .toList(),
-            );
+            final decodedArguments = jsonDecode(call.arguments as String);
+            final error = _mapError(decodedArguments);
+
+            if (error != null) {
+              _scanSubject.addError(error);
+            } else {
+              _glucoseReadSubject.sink.add(
+                decodedArguments
+                    .map((e) => Platform.isIOS
+                        ? _sampleFromSwiftJson(e)
+                        : _sampleFromJson(e))
+                    .whereType<QuantitySample>()
+                    .toList(),
+              );
+            }
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
+            _scanSubject.addError(UnknownException("$exception $stackTrace"));
           }
           break;
         case "sendBloodPressureReading":
           try {
-            final List<dynamic> samples = jsonDecode(call.arguments as String);
-            _bloodPressureSubject.sink.add(
-              samples
-                  .map((e) => Platform.isIOS
-                      ? _bloodPressureSampleFromSwiftJson(e)
-                      : _bloodPressureSampleFromJson(e))
-                  .whereType<BloodPressureSample>()
-                  .toList(),
-            );
+            final decodedArguments = jsonDecode(call.arguments as String);
+            final error = _mapError(decodedArguments);
+
+            if (error != null) {
+              _scanSubject.addError(error);
+            } else {
+              _bloodPressureSubject.sink.add(
+                decodedArguments
+                    .map((e) => Platform.isIOS
+                        ? _bloodPressureSampleFromSwiftJson(e)
+                        : _bloodPressureSampleFromJson(e))
+                    .whereType<BloodPressureSample>()
+                    .toList(),
+              );
+            }
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
+            _scanSubject.addError(UnknownException("$exception $stackTrace"));
           }
           break;
         default:
@@ -92,7 +125,7 @@ class DeviceManager {
       if (outcome == null) {
         return _scanSubject;
       } else {
-        throw Exception("Could not start scan: $outcome");
+        throw UnknownException("Could not start scan: $outcome");
       }
     });
   }
@@ -110,7 +143,7 @@ class DeviceManager {
       if (outcome == null) {
         return _pairSubject;
       } else {
-        throw Exception("Couldn't pair device: $outcome");
+        throw UnknownException("Couldn't pair device: $outcome");
       }
     });
   }
@@ -126,7 +159,7 @@ class DeviceManager {
       if (outcome == null) {
         return _glucoseReadSubject;
       } else {
-        throw Exception("Could not start scan: $outcome");
+        throw UnknownException("Could not start scan: $outcome");
       }
     });
   }
@@ -233,6 +266,35 @@ class DeviceManager {
         throw MissingPermissionException(
             "Bluetooth Connect permission not granted");
       }
+    }
+  }
+
+  DeviceManagerExceptions? _mapError(dynamic arguments) {
+    if (arguments is! Map) return null;
+
+    final code = arguments.containsKey("code") ? arguments["code"] : null;
+    final message =
+        arguments.containsKey("message") ? arguments["message"] : null;
+
+    if (code == null || message == null) {
+      return null;
+    } else {
+      switch (code) {
+        case "PairError":
+          return PairErrorException(message);
+        case "DeviceNotFound":
+          return DeviceNotFoundException(message);
+        case "UnsupportedRegion":
+          return UnsupportedRegionException(message);
+        case "UnsupportedEnvironment":
+          return UnsupportedEnvironmentException(message);
+        case "UnsupportedBrand":
+          return UnsupportedBrandException(message);
+        case "UnsupportedKind":
+          return UnsupportedKindException(message);
+      }
+
+      return UnknownException(code + " " + message);
     }
   }
 }

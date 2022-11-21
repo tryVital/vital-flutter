@@ -51,25 +51,31 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
                 result.success(null)
             }
+
             "stopScanForDevice" -> {
                 mainScope?.cancel()
                 result.success(null)
             }
+
             "pair" -> {
                 pair(call.arguments<List<String>>()!!.first(), result)
             }
+
             "startReadingGlucoseMeter" -> {
                 startReadingGlucoseMeter(call.arguments<List<String>>()!!.first(), result)
             }
+
             "startReadingBloodPressure" -> {
                 startReadingBloodPressure(call.arguments<List<String>>()!!.first(), result)
             }
+
             "cleanUp" -> {
                 mainScope?.cancel()
                 scannedDevices.clear()
                 result.success(null)
             }
-            else -> throw  Exception("Unsupported method ${call.method}")
+
+            else -> throw Exception("Unsupported method ${call.method}")
         }
     }
 
@@ -82,12 +88,26 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
             mainScope?.cancel()
             mainScope = MainScope()
             mainScope?.launch {
-                withContext(Dispatchers.Default) {
-                    vitalDeviceManager.pair(scannedDevice).collect {
-                        withContext(Dispatchers.Main) {
-                            channel.invokeMethod("sendPair", it.toString())
+                try {
+                    withContext(Dispatchers.Default) {
+                        vitalDeviceManager.pair(scannedDevice).collect {
+                            withContext(Dispatchers.Main) {
+                                channel.invokeMethod("sendPair", it.toString())
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        channel.invokeMethod(
+                            "sendPair", JSONObject(
+                                mapOf(
+                                    "code" to "PairError",
+                                    "message" to e.message,
+                                )
+                            ).toString()
+                        )
+                    }
+
                 }
             }
             result.success(null)
@@ -103,16 +123,31 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
             mainScope?.cancel()
             mainScope = MainScope()
             mainScope?.launch {
-                withContext(Dispatchers.Default) {
-                    vitalDeviceManager.glucoseMeter(context, scannedDevice).flowOn(Dispatchers.IO)
-                        .collect { samples ->
-                            withContext(Dispatchers.Main) {
-                                channel.invokeMethod(
-                                    "sendGlucoseMeterReading",
-                                    JSONArray(samples.map { mapSample(it) }).toString()
-                                )
+                try {
+                    withContext(Dispatchers.Default) {
+                        vitalDeviceManager.glucoseMeter(context, scannedDevice)
+                            .flowOn(Dispatchers.IO)
+                            .collect { samples ->
+                                withContext(Dispatchers.Main) {
+                                    channel.invokeMethod(
+                                        "sendGlucoseMeterReading",
+                                        JSONArray(samples.map { mapSample(it) }).toString()
+                                    )
+                                }
                             }
-                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        channel.invokeMethod(
+                            "sendGlucoseMeterReading", JSONObject(
+                                mapOf(
+                                    "code" to "UnknownError",
+                                    "message" to e.message,
+                                )
+                            ).toString()
+                        )
+                    }
+
                 }
             }
 
@@ -129,22 +164,37 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
             mainScope?.cancel()
             mainScope = MainScope()
             mainScope?.launch {
-                withContext(Dispatchers.Default) {
-                    vitalDeviceManager.bloodPressure(context, scannedDevice).flowOn(Dispatchers.IO)
-                        .collect { samples ->
-                            withContext(Dispatchers.Main) {
-                                channel.invokeMethod(
-                                    "sendBloodPressureReading",
-                                    JSONArray(samples.map {
-                                        JSONObject().apply {
-                                            put("systolic", mapSample(it.systolic))
-                                            put("diastolic", mapSample(it.diastolic))
-                                            put("pulse", mapSample(it.pulse))
-                                        }
-                                    }).toString()
-                                )
+                try {
+                    withContext(Dispatchers.Default) {
+                        vitalDeviceManager.bloodPressure(context, scannedDevice)
+                            .flowOn(Dispatchers.IO)
+                            .collect { samples ->
+                                withContext(Dispatchers.Main) {
+                                    channel.invokeMethod(
+                                        "sendBloodPressureReading",
+                                        JSONArray(samples.map {
+                                            JSONObject().apply {
+                                                put("systolic", mapSample(it.systolic))
+                                                put("diastolic", mapSample(it.diastolic))
+                                                put("pulse", mapSample(it.pulse))
+                                            }
+                                        }).toString()
+                                    )
+                                }
                             }
-                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        channel.invokeMethod(
+                            "sendBloodPressureReading", JSONObject(
+                                mapOf(
+                                    "code" to "UnknownError",
+                                    "message" to e.message,
+                                )
+                            ).toString()
+                        )
+                    }
+
                 }
             }
 
@@ -161,18 +211,31 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
             kind = stringToKind(arguments[3]),
         )
 
-        vitalDeviceManager.search(deviceModel).flowOn(Dispatchers.IO).collect {
+        try {
+            vitalDeviceManager.search(deviceModel).flowOn(Dispatchers.IO).collect {
+                withContext(Dispatchers.Main) {
+                    scannedDevices.add(it)
+                    channel.invokeMethod(
+                        "sendScan", JSONObject(
+                            mapOf(
+                                "id" to it.address, "name" to it.name, "deviceModel" to mapOf(
+                                    "id" to it.deviceModel.id,
+                                    "name" to it.deviceModel.name,
+                                    "brand" to brandToString(it.deviceModel.brand),
+                                    "kind" to kindToString(it.deviceModel.kind)
+                                )
+                            )
+                        ).toString()
+                    )
+                }
+            }
+        } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                scannedDevices.add(it)
                 channel.invokeMethod(
                     "sendScan", JSONObject(
                         mapOf(
-                            "id" to it.address, "name" to it.name, "deviceModel" to mapOf(
-                                "id" to it.deviceModel.id,
-                                "name" to it.deviceModel.name,
-                                "brand" to brandToString(it.deviceModel.brand),
-                                "kind" to kindToString(it.deviceModel.kind)
-                            )
+                            "code" to "UnknownError",
+                            "message" to e.message,
                         )
                     ).toString()
                 )
@@ -216,8 +279,8 @@ class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun mapSample(it: QuantitySample) {
-        JSONObject().apply {
+    private fun mapSample(it: QuantitySample): JSONObject {
+        return JSONObject().apply {
             put("id", it.id)
             put("value", it.value)
             put("unit", it.unit)
