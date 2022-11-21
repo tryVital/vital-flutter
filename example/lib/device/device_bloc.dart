@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:disposebag/disposebag.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vital_flutter/devices/device.dart';
@@ -22,28 +23,27 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   List<QuantitySample> glucoseMeterResults = [];
   List<BloodPressureSample> bloodPressureMeterResults = [];
 
-  DeviceBloc(this._client, this.device) {
-    requestPermissions();
-  }
+  DeviceBloc(this._client, this.device);
 
-  requestPermissions() {
-    if (Platform.isAndroid) {
-      Permission.bluetoothScan.request().then((value) {
-        permissionsGranted = value.isGranted;
-        notifyListeners();
-      });
+  void requestPermissions() async {
+    if (Platform.isIOS) {
+      await Permission.bluetooth.request();
     } else {
-      permissionsGranted = true;
-      notifyListeners();
+      await Permission.bluetoothScan.request();
+      await Permission.bluetoothConnect.request();
     }
   }
 
-  void scan() {
+  void scan(BuildContext context) {
     scanning = true;
     _client.deviceManager.scanForDevice(device).listen((event) {
       scannedDevices.add(event);
       notifyListeners();
-    }, onError: (error) {
+    }, onError: (error, stackTrace) {
+      Fimber.i(error.toString(), stacktrace: stackTrace);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error scanning: $error")));
+
       scanning = false;
       notifyListeners();
     }).disposedBy(disposeBag);
@@ -64,32 +64,39 @@ class DeviceBloc extends ChangeNotifier with Disposer {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Failed to pair")));
       }
-    }, onError: (error) {
+    }, onError: (error, stackTrace) {
+      Fimber.i(error.toString(), stacktrace: stackTrace);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Failed to pair e: $error")));
     }).disposedBy(disposeBag);
   }
 
-  readData(ScannedDevice scannedDevice) {
+  void readData(BuildContext context, ScannedDevice scannedDevice) {
     _client.deviceManager.stopScan();
     scanning = false;
     selectedDevice = scannedDevice;
 
     switch (scannedDevice.deviceModel.kind) {
       case DeviceKind.bloodPressure:
-        _client.deviceManager
-            .readBloodPressureData(scannedDevice)
-            .listen((event) {
+        _client.deviceManager.readBloodPressureData(scannedDevice).listen(
+            (event) {
           bloodPressureMeterResults.addAll(event);
           notifyListeners();
+        }, onError: (error, stackTrace) {
+          Fimber.i(error.toString(), stacktrace: stackTrace);
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to read data e: $error")));
         }).disposedBy(disposeBag);
         break;
       case DeviceKind.glucoseMeter:
-        _client.deviceManager
-            .readGlucoseMeterData(scannedDevice)
-            .listen((event) {
+        _client.deviceManager.readGlucoseMeterData(scannedDevice).listen(
+            (event) {
           glucoseMeterResults.addAll(event);
           notifyListeners();
+        }, onError: (error, stackTrace) {
+          Fimber.i(error.toString(), stacktrace: stackTrace);
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to read data e: $error")));
         }).disposedBy(disposeBag);
         break;
     }

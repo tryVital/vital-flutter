@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -41,8 +43,10 @@ class VitalClient {
   late final workoutService =
       WorkoutService.create(_httpClient, _baseUrl, _apiKey);
 
-  late final healthkitServices = HealthkitServices(_healthKitMethodChannel,
-      apiKey: _apiKey, region: _region, environment: _environment);
+  late final healthkitServices = Platform.isIOS
+      ? HealthkitServicesImpl(_healthKitMethodChannel,
+      apiKey: _apiKey, region: _region, environment: _environment)
+      : HealthkitServicesNoop();
 
   late final deviceManager = DeviceManager(_devicesMethodChannel);
 
