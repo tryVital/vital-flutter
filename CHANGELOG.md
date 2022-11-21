@@ -1,3 +1,7 @@
+## 0.4.0-alpha.4
+
+* Add the android implementation `DeviceManger` to manage the supported glucose and blood pressure devices.
+
 ## 0.4.0-alpha.3
 
 * Update iOS SDK to use StatisticalQuery

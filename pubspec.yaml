@@ -1,6 +1,6 @@
 name: vital_flutter
 description: The official Flutter package for Vital APIs allowing fitness apps linking with tryvital.io and with support for HealthKit.
-version: 0.4.0-alpha.3
+version: 0.4.0-alpha.4
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
@@ -17,6 +17,7 @@ dependencies:
   url_launcher: ^6.1.5
   fimber: ^0.6.6
   rxdart: ^0.27.3
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
@@ -39,7 +40,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.vital_flutter
+        package: io.vital
         pluginClass: VitalFlutterPlugin
       ios:
         pluginClass: VitalFlutterPlugin
