@@ -57,8 +57,13 @@ class DeviceBloc extends ChangeNotifier with Disposer {
     selectedDevice = scannedDevice;
 
     _client.deviceManager.pair(scannedDevice).listen((event) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Successfully paired")));
+      if (event) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Successfully paired")));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Failed to pair")));
+      }
     }, onError: (error, stackTrace) {
       Fimber.i(error.toString(), stacktrace: stackTrace);
       ScaffoldMessenger.of(context)

@@ -179,7 +179,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
     private func handlePairCompletion(value: Subscribers.Completion<any Error>, channel: FlutterMethodChannel?){
         switch value {
-            case .failure(let error):  channel?.invokeMethod("sendPair", arguments: ErrorResult(code: "PairError", message: error.localizedDescription))
+            case .failure(let error):  channel?.invokeMethod("sendPair", arguments: encode(ErrorResult(code: "PairError", message: error.localizedDescription)))
             case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
         }
     }
