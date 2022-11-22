@@ -53,6 +53,7 @@ class VitalSampleApp extends StatelessWidget {
               ),
           Routes.device: (context) => ChangeNotifierProvider(
                 create: (_) => DeviceBloc(
+                  context,
                   vitalClient,
                   ModalRoute.of(context)!.settings.arguments as DeviceModel,
                 ),
