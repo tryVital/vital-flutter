@@ -15,6 +15,20 @@ class DeviceModel {
   });
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DeviceModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          brand == other.brand &&
+          kind == other.kind;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ brand.hashCode ^ kind.hashCode;
+
+  @override
   String toString() {
     return 'DeviceModel{id: $id, name: $name, brand: $brand, kind: $kind}';
   }

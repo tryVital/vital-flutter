@@ -14,16 +14,16 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   final VitalClient _client;
   final DeviceModel device;
 
-  bool? permissionsGranted;
+  DeviceState state = DeviceState.searching;
+  ScannedDevice? scannedDevice;
 
-  bool scanning = false;
-  ScannedDevice? selectedDevice;
-
-  List<ScannedDevice> scannedDevices = [];
   List<QuantitySample> glucoseMeterResults = [];
   List<BloodPressureSample> bloodPressureMeterResults = [];
 
-  DeviceBloc(this._client, this.device);
+  DeviceBloc(BuildContext context, this._client, this.device) {
+    requestPermissions();
+    scan(context);
+  }
 
   void requestPermissions() async {
     if (Platform.isIOS) {
@@ -35,16 +35,18 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void scan(BuildContext context) {
-    scanning = true;
     _client.deviceManager.scanForDevice(device).listen((event) {
-      scannedDevices.add(event);
+      if (event.deviceModel == device) {
+        Fimber.i('Found device: ${event.deviceModel.name}');
+        state = DeviceState.pairing;
+        scannedDevice = event;
+        readData(context, event);
+      }
       notifyListeners();
     }, onError: (error, stackTrace) {
       Fimber.i(error.toString(), stacktrace: stackTrace);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Error scanning: $error")));
-
-      scanning = false;
       notifyListeners();
     }).disposedBy(disposeBag);
 
@@ -52,18 +54,18 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void pair(BuildContext context, ScannedDevice scannedDevice) {
-    _client.deviceManager.stopScan();
-    scanning = false;
-    selectedDevice = scannedDevice;
-
     _client.deviceManager.pair(scannedDevice).listen((event) {
       if (event) {
+        state = DeviceState.paired;
+
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Successfully paired")));
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Failed to pair")));
       }
+
+      notifyListeners();
     }, onError: (error, stackTrace) {
       Fimber.i(error.toString(), stacktrace: stackTrace);
       ScaffoldMessenger.of(context)
@@ -72,41 +74,81 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void readData(BuildContext context, ScannedDevice scannedDevice) {
-    _client.deviceManager.stopScan();
-    scanning = false;
-    selectedDevice = scannedDevice;
-
     switch (scannedDevice.deviceModel.kind) {
       case DeviceKind.bloodPressure:
         _client.deviceManager.readBloodPressureData(scannedDevice).listen(
-            (event) {
-          bloodPressureMeterResults.addAll(event);
+            (List<BloodPressureSample> newReadings) {
+          state = DeviceState.paired;
+
+          for (var newReading in newReadings) {
+            if (!bloodPressureMeterResults.any((e) =>
+                e.diastolic.startDate == newReading.diastolic.startDate)) {
+              bloodPressureMeterResults.add(newReading);
+            }
+
+            bloodPressureMeterResults.sort((a, b) =>
+                b.diastolic.startDate.compareTo(a.diastolic.startDate));
+          }
           notifyListeners();
-        }, onError: (error, stackTrace) {
-          Fimber.i(error.toString(), stacktrace: stackTrace);
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to read data e: $error")));
-        }).disposedBy(disposeBag);
+        },
+            onError: (error, stackTrace) => _showReadingError(
+                error, stackTrace, context)).disposedBy(disposeBag);
         break;
       case DeviceKind.glucoseMeter:
         _client.deviceManager.readGlucoseMeterData(scannedDevice).listen(
-            (event) {
-          glucoseMeterResults.addAll(event);
+            (List<QuantitySample> newReadings) {
+          state = DeviceState.paired;
+
+          for (var newReading in newReadings) {
+            if (!glucoseMeterResults
+                .any((e) => e.startDate == newReading.startDate)) {
+              glucoseMeterResults.add(newReading);
+            }
+          }
+
+          glucoseMeterResults
+              .sort((a, b) => b.startDate.compareTo(a.startDate));
+
+          //We restart scanning to wait for new data
+          scan(context);
           notifyListeners();
-        }, onError: (error, stackTrace) {
-          Fimber.i(error.toString(), stacktrace: stackTrace);
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to read data e: $error")));
-        }).disposedBy(disposeBag);
+        },
+            onError: (error, stackTrace) => _showReadingError(
+                error, stackTrace, context)).disposedBy(disposeBag);
         break;
     }
 
     notifyListeners();
   }
 
+  void _showReadingError(error, stackTrace, BuildContext context) {
+    Fimber.i(error.toString(), stacktrace: stackTrace);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Failed to read data e: $error")));
+  }
+
   @override
   void dispose() {
     _client.deviceManager.cleanUp();
     super.dispose();
+  }
+}
+
+enum DeviceState {
+  searching,
+  pairing,
+  paired,
+}
+
+extension DeviceStateExtension on DeviceState {
+  String get name {
+    switch (this) {
+      case DeviceState.searching:
+        return "Searching";
+      case DeviceState.pairing:
+        return "Pairing";
+      case DeviceState.paired:
+        return "Paired";
+    }
   }
 }

@@ -32,54 +32,12 @@ class DeviceScreen extends StatelessWidget {
               Text(device.brand.name,
                   style: Theme.of(context).textTheme.caption),
               const Divider(),
-              ListTile(
-                title: const Text('Permissions granted'),
-                trailing: bloc.permissionsGranted == true
-                    ? const Text("Done")
-                    : const Text("Request"),
-                onTap: () => bloc.requestPermissions(),
+              Text(
+                bloc.state.name,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-              const Divider(),
-              ListTile(
-                title: const Text('Scan for devices'),
-                trailing: bloc.scanning
-                    ? const CircularProgressIndicator.adaptive()
-                    : const Text("Scan"),
-                onTap: bloc.scanning ? null : () => bloc.scan(context),
-              ),
-              if (bloc.scanning || bloc.selectedDevice != null) ...[
-                const SizedBox(height: 12),
-                Text(
-                  "Found devices: ${bloc.scannedDevices.length}",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                if (bloc.scannedDevices.isEmpty)
-                  const CircularProgressIndicator.adaptive(),
-                ListView(
-                  shrinkWrap: true,
-                  primary: false,
-                  children: bloc.scannedDevices
-                      .map((scannedDevice) => ListTile(
-                            title: Text(scannedDevice.name),
-                            subtitle: Text(scannedDevice.id),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextButton(
-                                  onPressed: () =>
-                                      bloc.pair(context, scannedDevice),
-                                  child: const Text("Pair"),
-                                ),
-                                TextButton(
-                                    onPressed: () =>
-                                        bloc.readData(context, scannedDevice),
-                                    child: const Text("Connect")),
-                              ],
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ],
               showResults(context, bloc),
             ],
           ),
@@ -89,53 +47,115 @@ class DeviceScreen extends StatelessWidget {
   }
 
   Widget showResults(BuildContext context, DeviceBloc bloc) {
-    if (bloc.selectedDevice != null) {
-      switch (bloc.selectedDevice!.deviceModel.kind) {
-        case DeviceKind.glucoseMeter:
-          return Column(
-            children: [
-              Text(
-                "Glucose meter results: ${bloc.glucoseMeterResults.length}",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              ListView(
-                shrinkWrap: true,
-                primary: false,
-                children: bloc.glucoseMeterResults
-                    .map((e) => ListTile(
-                          title: Text(e.value.toString()),
-                          subtitle: Text(e.startDate.toString()),
-                        ))
-                    .toList(),
-              ),
-            ],
-          );
-        case DeviceKind.bloodPressure:
-          return Column(
-            children: [
-              Text(
-                "Blood pressure results: ${bloc.bloodPressureMeterResults.length}",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              ListView(
-                shrinkWrap: true,
-                primary: false,
-                children: bloc.bloodPressureMeterResults
-                    .map((e) => ListTile(
-                          title: Text(
-                              "${e.systolic.value}/${e.diastolic.value} mmHg  -"
-                              "  (${e.pulse?.value} bpm)"),
-                          subtitle: Text(e.diastolic.startDate.toString()),
-                        ))
-                    .toList(),
-              ),
-            ],
-          );
-        default:
-          return const SizedBox.shrink();
-      }
-    } else {
-      return const SizedBox.shrink();
+    final textTheme = Theme.of(context).textTheme;
+    final unitTextStyle = textTheme.bodyLarge?.copyWith(color: Colors.grey);
+    final valueTextStyle = textTheme.titleLarge;
+    final timeTextStyle =
+        textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold);
+    final dateTextStyle = textTheme.bodyLarge;
+
+    switch (bloc.scannedDevice?.deviceModel.kind) {
+      case DeviceKind.glucoseMeter:
+        return Column(
+          children: [
+            Text(
+              "Glucose meter results: ${bloc.glucoseMeterResults.length}",
+              style: textTheme.titleMedium,
+            ),
+            ListView(
+              shrinkWrap: true,
+              primary: false,
+              children: bloc.glucoseMeterResults.map((e) {
+                final measurementTime = e.startDate;
+
+                return ListTile(
+                  title: RichText(
+                      text: TextSpan(
+                          text: e.value.toString(),
+                          style: valueTextStyle,
+                          children: [
+                        TextSpan(text: " mg/dL", style: unitTextStyle)
+                      ])),
+                  subtitle: const Divider(),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                          "${measurementTime.hour.twoDigits}:${measurementTime.minute.twoDigits}:${measurementTime.second.twoDigits}",
+                          style: timeTextStyle),
+                      Text("${measurementTime.month}/${measurementTime.day}",
+                          style: dateTextStyle),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        );
+      case DeviceKind.bloodPressure:
+        return Column(
+          children: [
+            const SizedBox(height: 32),
+            Text(
+              "Blood pressure results: ${bloc.bloodPressureMeterResults.length}",
+              style: textTheme.titleLarge,
+            ),
+            const SizedBox(height: 12),
+            ListView(
+              shrinkWrap: true,
+              primary: false,
+              children: bloc.bloodPressureMeterResults.map((e) {
+                final measurementTime = e.systolic.startDate;
+
+                return ListTile(
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                          text: TextSpan(
+                              text: e.systolic.value.toString(),
+                              style: valueTextStyle,
+                              children: [
+                            TextSpan(text: " mmHg", style: unitTextStyle)
+                          ])),
+                      RichText(
+                          text: TextSpan(
+                              text: e.diastolic.value.toString(),
+                              style: valueTextStyle,
+                              children: [
+                            TextSpan(text: " mmHg", style: unitTextStyle)
+                          ])),
+                      RichText(
+                          text: TextSpan(
+                              text: e.pulse?.value.toString(),
+                              style: valueTextStyle,
+                              children: [
+                            TextSpan(text: " bpm", style: unitTextStyle)
+                          ])),
+                    ],
+                  ),
+                  subtitle: const Divider(),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                          "${measurementTime.hour.twoDigits}:${measurementTime.minute.twoDigits}:${measurementTime.second.twoDigits}",
+                          style: timeTextStyle),
+                      Text("${measurementTime.month}/${measurementTime.day}",
+                          style: dateTextStyle),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        );
+      default:
+        return const SizedBox.shrink();
     }
   }
+}
+
+extension on int {
+  String get twoDigits => toString().padLeft(2, '0');
 }
