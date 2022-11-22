@@ -1,3 +1,7 @@
+## 0.4.0-alpha.6
+
+* Fix the issue when the  blood pressure sample type was null
+
 ## 0.4.0-alpha.5
 
 * All errors should now be properly handled and reported to the user
