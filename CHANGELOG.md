@@ -1,6 +1,10 @@
+## 0.4.0-alpha.7
+
+* Modified the sample to show how to listen continuously for incoming data
+
 ## 0.4.0-alpha.6
 
-* Fix the issue when the  blood pressure sample type was null
+* Fix the issue when the blood pressure sample type was null
 
 ## 0.4.0-alpha.5
 
