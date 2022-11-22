@@ -306,8 +306,8 @@ BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
       diastolic: _sampleFromSwiftJson(e["diastolic"])!,
       pulse: _sampleFromSwiftJson(e["pulse"]),
     );
-  } catch (e) {
-    Fimber.i("Error parsing sample: $e");
+  } catch (e, stacktrace) {
+    Fimber.i("Error parsing sample: $e $stacktrace");
     return null;
   }
 }
@@ -319,8 +319,8 @@ BloodPressureSample? _bloodPressureSampleFromJson(e) {
       diastolic: _sampleFromJson(e["diastolic"])!,
       pulse: _sampleFromJson(e["pulse"]),
     );
-  } catch (e) {
-    Fimber.i("Error parsing sample: $e");
+  } catch (e, stacktrace) {
+    Fimber.i("Error parsing sample: $e $stacktrace");
     return null;
   }
 }
@@ -335,10 +335,10 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
           isUtc: true),
       endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int,
           isUtc: true),
-      type: json['type'] as String,
+      type: json['type'] as String?,
     );
-  } catch (e) {
-    Fimber.i("Error parsing sample: $e");
+  } catch (e, stacktrace) {
+    Fimber.i("Error parsing sample: $e $stacktrace");
     return null;
   }
 }
@@ -360,7 +360,8 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic> json) {
           _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
       type: json['type'] as String,
     );
-  } catch (e) {
+  } catch (e, stacktrace) {
+    Fimber.i("Error parsing sample: $e $stacktrace");
     return null;
   }
 }
