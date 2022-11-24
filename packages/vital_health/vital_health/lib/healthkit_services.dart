@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:vital_client/vital_client.dart';
-import 'package:vital_health_platform_interface/src/healthkit_resource.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 class HealthkitServices {

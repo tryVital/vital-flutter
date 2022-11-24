@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vital_devices/device.dart';
-import 'package:vital_devices/device_manager.dart';
-import 'package:vital_devices/kind.dart';
+import 'package:vital_devices/vital_devices.dart';
 
 class DevicesBloc extends ChangeNotifier {
   final DeviceManager _deviceManager;

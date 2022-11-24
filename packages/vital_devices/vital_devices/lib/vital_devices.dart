@@ -1,7 +1,4 @@
-library vital_devices;
+export 'package:vital_devices_platform_interface/vital_devices_platform_interface.dart'
+    show DeviceModel, Brand, DeviceKind, ScannedDevice;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'device_manager.dart';

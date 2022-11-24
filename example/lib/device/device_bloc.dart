@@ -5,9 +5,7 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vital_client/samples.dart';
-import 'package:vital_devices/device.dart';
-import 'package:vital_devices/device_manager.dart';
-import 'package:vital_devices/kind.dart';
+import 'package:vital_devices/vital_devices.dart';
 import 'package:vital_flutter_example/utils/disposer.dart';
 
 class DeviceBloc extends ChangeNotifier with Disposer {
@@ -21,6 +19,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   List<BloodPressureSample> bloodPressureMeterResults = [];
 
   DeviceBloc(BuildContext context, this._deviceManager, this.device) {
+    _deviceManager.init();
     requestPermissions();
     scan(context);
   }
@@ -89,6 +88,9 @@ class DeviceBloc extends ChangeNotifier with Disposer {
             bloodPressureMeterResults.sort((a, b) =>
                 b.diastolic.startDate.compareTo(a.diastolic.startDate));
           }
+
+          //We restart scanning to wait for new data
+          scan(context);
           notifyListeners();
         },
             onError: (error, stackTrace) => _showReadingError(

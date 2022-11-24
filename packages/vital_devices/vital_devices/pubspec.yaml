@@ -1,7 +1,6 @@
 name: vital_devices
-#TODO update
-description: The official Flutter package for Vital APIs allowing fitness apps linking with tryvital.io and with support for HealthKit.
-version: 0.4.0-alpha.7
+description: The Vital Devices package allowing health devices to connect to the phone.
+version: 0.0.1
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
@@ -9,15 +8,27 @@ environment:
   sdk: '>=2.18.4 <3.0.0'
   flutter: ">=1.17.0"
 
+flutter:
+  plugin:
+    platforms:
+      ios:
+        default_package: vital_devices_ios
+      android:
+        default_package: vital_devices_android
+
 dependencies:
   flutter:
     sdk: flutter
   fimber: ^0.6.6
   rxdart: ^0.27.3
-  permission_handler: ^10.2.0
-  #  TODO replace
   vital_client:
     path: ../../vital_client
+  vital_devices_platform_interface:
+    path: ../vital_devices_platform_interface
+  vital_devices_android:
+    path: ../vital_devices_android
+  vital_devices_ios:
+    path: ../vital_devices_ios
 
 dev_dependencies:
   flutter_test:

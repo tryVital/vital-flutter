@@ -319,3 +319,31 @@ public struct InternalScannedDevice: Equatable, Encodable {
     self.deviceModel = deviceModel
   }
 }
+
+struct AnyEncodable: Encodable {
+  let value: Encodable
+
+  func encode(to encoder: Encoder) throws {
+    try value.encode(to: encoder)
+  }
+}
+
+struct ErrorResult: Encodable {
+  let code: String
+  let message: String?
+
+  init(code: String, message: String? = nil){
+    self.code = code
+    self.message = message
+  }
+}
+
+enum VitalError: Error {
+  case UnsupportedRegion(String)
+  case UnsupportedEnvironment(String)
+  case UnsupportedResource(String)
+  case UnsupportedDataPushMode(String)
+  case UnsupportedProvider(String)
+  case UnsupportedBrand(String)
+  case UnsupportedKind(String)
+}

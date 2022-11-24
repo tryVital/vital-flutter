@@ -2,6 +2,11 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vital_client/vital_client.dart';
+import 'package:vital_devices/vital_devices.dart';
+import 'package:vital_flutter_example/device/device_bloc.dart';
+import 'package:vital_flutter_example/device/device_screen.dart';
+import 'package:vital_flutter_example/devices/devices_bloc.dart';
+import 'package:vital_flutter_example/devices/devices_screen.dart';
 import 'package:vital_flutter_example/home/home_bloc.dart';
 import 'package:vital_flutter_example/home/home_screen.dart';
 import 'package:vital_flutter_example/routes.dart';
@@ -20,7 +25,7 @@ void main() {
       apiKey: apiKey,
     );
 
-  // final DeviceManager deviceManager = DeviceManager();
+  final DeviceManager deviceManager = DeviceManager();
   final HealthkitServices healthkitServices = HealthkitServices(
     apiKey: apiKey,
     region: region,
@@ -28,20 +33,20 @@ void main() {
   );
   runApp(VitalSampleApp(
       vitalClient: vitalClient,
-      // deviceManager: deviceManager,
+      deviceManager: deviceManager,
       healthkitServices: healthkitServices));
 }
 
 class VitalSampleApp extends StatelessWidget {
   final VitalClient vitalClient;
 
-  // final DeviceManager deviceManager;
+  final DeviceManager deviceManager;
   final HealthkitServices healthkitServices;
 
   const VitalSampleApp({
     super.key,
     required this.vitalClient,
-    // required this.deviceManager,
+    required this.deviceManager,
     required this.healthkitServices,
   });
 
@@ -58,18 +63,18 @@ class VitalSampleApp extends StatelessWidget {
                 create: (_) => HomeBloc(vitalClient, healthkitServices),
                 child: const UsersScreen(),
               ),
-          // Routes.devices: (_) => ChangeNotifierProvider(
-          //       create: (_) => DevicesBloc(deviceManager),
-          //       child: const DevicesScreen(),
-          //     ),
-          // Routes.device: (context) => ChangeNotifierProvider(
-          //       create: (_) => DeviceBloc(
-          //         context,
-          //         deviceManager,
-          //         ModalRoute.of(context)!.settings.arguments as DeviceModel,
-          //       ),
-          //       child: const DeviceScreen(),
-          //     )
+          Routes.devices: (_) => ChangeNotifierProvider(
+                create: (_) => DevicesBloc(deviceManager),
+                child: const DevicesScreen(),
+              ),
+          Routes.device: (context) => ChangeNotifierProvider(
+                create: (_) => DeviceBloc(
+                  context,
+                  deviceManager,
+                  ModalRoute.of(context)!.settings.arguments as DeviceModel,
+                ),
+                child: const DeviceScreen(),
+              )
         });
   }
 }

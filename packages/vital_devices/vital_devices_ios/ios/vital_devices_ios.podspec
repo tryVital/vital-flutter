@@ -3,7 +3,7 @@
 # Run `pod lib lint vital_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'vital_flutter'
+  s.name             = 'vital_devices_ios'
   s.version          = '0.0.10'
   s.summary          = 'The official Flutter Plugin for Vital'
   s.homepage         = 'https://github.com/tryVital/vital-flutter'

@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.flowOn
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** VitalFlutterPlugin */
-class VitalFlutterPlugin : FlutterPlugin, MethodCallHandler {
+/** VitalDevicesPlugin */
+class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
     private lateinit var channel: MethodChannel
     private lateinit var vitalDeviceManager: VitalDeviceManager

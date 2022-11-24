@@ -1,0 +1,30 @@
+name: vital_devices_ios
+description: The ios implementation of Vital Devices.
+version: 0.0.1
+homepage: https://tryvital.io/
+repository: https://github.com/tryVital/vital-flutter
+
+environment:
+  sdk: '>=2.18.4 <3.0.0'
+  flutter: ">=1.17.0"
+
+flutter:
+  plugin:
+    implements: vital_devices
+    platforms:
+      ios:
+        pluginClass: VitalDevicesPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  fimber: ^0.6.6
+  vital_client:
+    path: ../../vital_client
+  vital_devices_platform_interface:
+    path: ../vital_devices_platform_interface
