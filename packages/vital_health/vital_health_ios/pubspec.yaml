@@ -1,0 +1,29 @@
+name: vital_health_ios
+description: A new Flutter package project.
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: '>=2.18.4 <3.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.1.0
+  fimber: ^0.6.6
+  vital_client:
+    path: ../../vital_client
+  vital_health_platform_interface:
+    path: ../vital_health_platform_interface
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: VitalHealthPlugin

@@ -1,17 +1,19 @@
 import 'dart:async';
 
-import 'package:vital_flutter/services/data/user.dart';
-import 'package:vital_flutter/vital_flutter.dart';
+import 'package:vital_client/services/data/user.dart';
+import 'package:vital_client/vital_client.dart';
+import 'package:vital_health/vital_health.dart';
 
 class HomeBloc {
   final VitalClient client;
+  final HealthkitServices healthkitServices;
 
   final StreamController<List<User>> usersController = StreamController();
   final StreamController<User?> selectedUserController = StreamController();
 
   User? _selectedUser;
 
-  HomeBloc(this.client) {
+  HomeBloc(this.client, this.healthkitServices) {
     _connectHealthPlatform();
   }
 
@@ -43,13 +45,12 @@ class HomeBloc {
   }
 
   void _connectHealthPlatform() async {
-    await client.healthkitServices.configureClient();
-    await client.healthkitServices
-        .configureHealthkit(backgroundDeliveryEnabled: true);
+    await healthkitServices.configureClient();
+    await healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
   }
 
   void askForHealthResources() {
-    client.healthkitServices.askForResources([
+    healthkitServices.askForResources([
       HealthkitResource.profile,
       HealthkitResource.body,
       HealthkitResource.activity,
@@ -61,8 +62,7 @@ class HomeBloc {
   }
 
   Future<bool> hasPermissionForSleep() async {
-    return client.healthkitServices
-        .hasAskedForPermission(HealthkitResource.sleep);
+    return healthkitServices.hasAskedForPermission(HealthkitResource.sleep);
   }
 
   void selectUser(User user) async {
@@ -71,21 +71,19 @@ class HomeBloc {
 
     final userId = _selectedUser?.userId;
     if (userId != null) {
-      await client.healthkitServices
-          .setUserId("71639293-968e-4aa6-a41a-a5c7548f47e5");
+      await healthkitServices.setUserId("71639293-968e-4aa6-a41a-a5c7548f47e5");
     }
   }
 
   void syncHealthPlatform() async {
     final userId = _selectedUser?.userId;
     if (userId != null) {
-      await client.healthkitServices
-          .setUserId("71639293-968e-4aa6-a41a-a5c7548f47e5");
-      client.healthkitServices.syncData();
+      await healthkitServices.setUserId("71639293-968e-4aa6-a41a-a5c7548f47e5");
+      healthkitServices.syncData();
     }
   }
 
-  Stream<String> get status => client.healthkitServices.status.map((event) {
+  Stream<String> get status => healthkitServices.status.map((event) {
         return event.status.name;
       });
 

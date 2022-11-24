@@ -4,14 +4,14 @@ import 'package:disposebag/disposebag.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vital_flutter/devices/device.dart';
-import 'package:vital_flutter/devices/kind.dart';
-import 'package:vital_flutter/platform/data/sync_data.dart';
-import 'package:vital_flutter/vital_flutter.dart';
+import 'package:vital_client/samples.dart';
+import 'package:vital_devices/device.dart';
+import 'package:vital_devices/device_manager.dart';
+import 'package:vital_devices/kind.dart';
 import 'package:vital_flutter_example/utils/disposer.dart';
 
 class DeviceBloc extends ChangeNotifier with Disposer {
-  final VitalClient _client;
+  final DeviceManager _deviceManager;
   final DeviceModel device;
 
   DeviceState state = DeviceState.searching;
@@ -20,7 +20,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   List<QuantitySample> glucoseMeterResults = [];
   List<BloodPressureSample> bloodPressureMeterResults = [];
 
-  DeviceBloc(BuildContext context, this._client, this.device) {
+  DeviceBloc(BuildContext context, this._deviceManager, this.device) {
     requestPermissions();
     scan(context);
   }
@@ -35,7 +35,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void scan(BuildContext context) {
-    _client.deviceManager.scanForDevice(device).listen((event) {
+    _deviceManager.scanForDevice(device).listen((event) {
       if (event.deviceModel == device) {
         Fimber.i('Found device: ${event.deviceModel.name}');
         state = DeviceState.pairing;
@@ -54,7 +54,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void pair(BuildContext context, ScannedDevice scannedDevice) {
-    _client.deviceManager.pair(scannedDevice).listen((event) {
+    _deviceManager.pair(scannedDevice).listen((event) {
       if (event) {
         state = DeviceState.paired;
 
@@ -76,7 +76,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   void readData(BuildContext context, ScannedDevice scannedDevice) {
     switch (scannedDevice.deviceModel.kind) {
       case DeviceKind.bloodPressure:
-        _client.deviceManager.readBloodPressureData(scannedDevice).listen(
+        _deviceManager.readBloodPressureData(scannedDevice).listen(
             (List<BloodPressureSample> newReadings) {
           state = DeviceState.paired;
 
@@ -95,7 +95,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
                 error, stackTrace, context)).disposedBy(disposeBag);
         break;
       case DeviceKind.glucoseMeter:
-        _client.deviceManager.readGlucoseMeterData(scannedDevice).listen(
+        _deviceManager.readGlucoseMeterData(scannedDevice).listen(
             (List<QuantitySample> newReadings) {
           state = DeviceState.paired;
 
@@ -129,7 +129,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
 
   @override
   void dispose() {
-    _client.deviceManager.cleanUp();
+    _deviceManager.cleanUp();
     super.dispose();
   }
 }

@@ -1,4 +1,4 @@
-#import "VitalFlutterPlugin.h"
+#import "VitalHealthPlugin.h"
 #if __has_include(<vital_flutter/vital_flutter-Swift.h>)
 #import <vital_flutter/vital_flutter-Swift.h>
 #else

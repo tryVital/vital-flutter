@@ -14,10 +14,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   permission_handler: ^10.2.0
   disposebag: ^1.5.0
-  vital_flutter:
-    # When depending on this package from a real application you should use:
-    #   vital_flutter: ^x.y.z
-    path: ../
+  vital_client:
+    path: ../packages/vital_client
+  vital_health:
+    path: ../packages/vital_health/vital_health
+  vital_devices:
+    path: ../packages/vital_devices/vital_devices
 
 dev_dependencies:
   flutter_test:
