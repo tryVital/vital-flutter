@@ -9,6 +9,10 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 const _channel = MethodChannel('vital_health_kit');
 
 class VitalHealthIos extends VitalHealthPlatform {
+  static void registerWith() {
+    VitalHealthPlatform.instance = VitalHealthIos();
+  }
+
   late final StreamController<SyncStatus> _streamController = StreamController(
     onListen: () async {
       _statusSubscribed = true;
@@ -28,7 +32,11 @@ class VitalHealthIos extends VitalHealthPlatform {
   var _statusSubscribed = false;
   var _healthKitConfigured = false;
 
-  VitalHealthIos() {
+  @override
+  Future<void> configureClient(
+      String apiKey, Region region, Environment environment) async {
+    Fimber.d('Healthkit configure $apiKey, $region $environment');
+
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'sendStatus':
@@ -42,12 +50,7 @@ class VitalHealthIos extends VitalHealthPlatform {
       }
       return null;
     });
-  }
 
-  @override
-  Future<void> configureClient(
-      String apiKey, Region region, Environment environment) async {
-    Fimber.d('Healthkit configure $apiKey, $region $environment');
     await _channel.invokeMethod(
         'configureClient', [apiKey, region.name, environment.name]);
   }
