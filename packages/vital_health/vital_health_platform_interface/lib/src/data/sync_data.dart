@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vital_client/samples.dart';
+import 'package:vital_core/samples.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 part 'sync_data.g.dart';

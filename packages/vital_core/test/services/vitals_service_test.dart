@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:vital_client/services/data/vitals.dart';
-import 'package:vital_client/services/vitals_service.dart';
+import 'package:vital_core/services/data/vitals.dart';
+import 'package:vital_core/services/vitals_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

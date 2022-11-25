@@ -5,7 +5,7 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:vital_client/samples.dart';
+import 'package:vital_core/samples.dart';
 import 'package:vital_devices_platform_interface/src/brand.dart';
 import 'package:vital_devices_platform_interface/src/device.dart';
 import 'package:vital_devices_platform_interface/src/exception.dart';
@@ -22,7 +22,6 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   @override
   void init() {
     _channel.setMethodCallHandler((call) async {
-      print(call.method);
       switch (call.method) {
         case 'sendScan':
           try {

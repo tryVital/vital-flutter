@@ -1,4 +1,4 @@
-name: vital_client
+name: vital_core
 description: The official Flutter package for Vital APIs allowing fitness apps linking with tryvital.io and with support for HealthKit.
 version: 0.5.0-alpha.1
 homepage: https://tryvital.io/

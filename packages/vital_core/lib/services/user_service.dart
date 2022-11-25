@@ -4,8 +4,8 @@ import 'dart:async';
 
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
-import 'package:vital_client/services/utils/http_api_key_interceptor.dart';
-import 'package:vital_client/services/utils/http_logging_interceptor.dart';
+import 'package:vital_core/services/utils/http_api_key_interceptor.dart';
+import 'package:vital_core/services/utils/http_logging_interceptor.dart';
 
 import 'data/user.dart';
 import 'utils/json_serializable_converter.dart';

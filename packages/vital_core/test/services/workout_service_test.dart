@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_client/services/workout_service.dart';
+import 'package:vital_core/services/workout_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 

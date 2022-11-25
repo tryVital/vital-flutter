@@ -14,12 +14,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   permission_handler: ^10.2.0
   disposebag: ^1.5.0
-  vital_client:
-    path: ../packages/vital_client
-  vital_health:
-    path: ../packages/vital_health/vital_health
-  vital_devices:
-    path: ../packages/vital_devices/vital_devices
+  vital_core: ^0.5.0-alpha.1
+  vital_health: ^0.5.0-alpha.1
+  vital_devices: ^0.5.0-alpha.1
 
 dev_dependencies:
   flutter_test:

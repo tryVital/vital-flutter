@@ -4,7 +4,7 @@ import 'package:disposebag/disposebag.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vital_client/samples.dart';
+import 'package:vital_core/samples.dart';
 import 'package:vital_devices/vital_devices.dart';
 import 'package:vital_flutter_example/utils/disposer.dart';
 

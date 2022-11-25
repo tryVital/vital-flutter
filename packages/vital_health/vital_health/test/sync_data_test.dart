@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_client/samples.dart';
+import 'package:vital_core/samples.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 void main() {

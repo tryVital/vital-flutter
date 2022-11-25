@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vital_client/services/data/testkits.dart';
-import 'package:vital_client/services/testkits_service.dart';
+import 'package:vital_core/services/data/testkits.dart';
+import 'package:vital_core/services/testkits_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 

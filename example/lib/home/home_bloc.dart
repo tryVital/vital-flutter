@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:vital_client/services/data/user.dart';
-import 'package:vital_client/vital_client.dart';
+import 'package:vital_core/services/data/user.dart';
+import 'package:vital_core/vital_core.dart';
 import 'package:vital_health/vital_health.dart';
 
 class HomeBloc {

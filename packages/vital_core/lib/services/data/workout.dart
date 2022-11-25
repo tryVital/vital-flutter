@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vital_client/services/data/user.dart';
+import 'package:vital_core/services/data/user.dart';
 part 'workout.g.dart';
 
 @JsonSerializable(createToJson: false)

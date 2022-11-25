@@ -1,3 +1,7 @@
+## 0.5.0-alpha.1
+
+* Federate the vital offering. There are now 3 packages: `vital_core`, `vital_devices` and `vital_health`.
+
 ## 0.4.0-alpha.7
 
 * Modified the sample to show how to listen continuously for incoming data

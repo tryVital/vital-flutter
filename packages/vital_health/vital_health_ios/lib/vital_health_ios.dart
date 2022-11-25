@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
-import 'package:vital_client/vital_client.dart';
+import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 const _channel = MethodChannel('vital_health_kit');

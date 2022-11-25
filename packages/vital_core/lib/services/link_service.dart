@@ -4,11 +4,11 @@ import 'dart:async';
 
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
-import 'package:vital_client/region.dart';
-import 'package:vital_client/services/data/link.dart';
-import 'package:vital_client/services/utils/http_api_key_interceptor.dart';
-import 'package:vital_client/services/utils/http_logging_interceptor.dart';
-import 'package:vital_client/services/utils/json_serializable_converter.dart';
+import 'package:vital_core/region.dart';
+import 'package:vital_core/services/data/link.dart';
+import 'package:vital_core/services/utils/http_api_key_interceptor.dart';
+import 'package:vital_core/services/utils/http_logging_interceptor.dart';
+import 'package:vital_core/services/utils/json_serializable_converter.dart';
 
 part 'link_service.chopper.dart';
 

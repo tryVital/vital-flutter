@@ -1,5 +1,5 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:vital_client/samples.dart';
+import 'package:vital_core/samples.dart';
 import 'package:vital_devices_platform_interface/src/brand.dart';
 import 'package:vital_devices_platform_interface/src/device.dart';
 import 'package:vital_devices_platform_interface/src/kind.dart';

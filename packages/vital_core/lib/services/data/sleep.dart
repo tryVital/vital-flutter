@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vital_client/services/data/vitals.dart';
+import 'package:vital_core/services/data/vitals.dart';
 import 'user.dart';
 
 part 'sleep.g.dart';
