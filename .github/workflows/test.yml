@@ -29,4 +29,3 @@ jobs:
       - run: flutter pub get packages/vital_health/vital_health
       - run: flutter pub get packages/vital_health/vital_health_platform_interface
       - run: flutter pub get packages/vital_health/vital_health_ios
-      - run: flutter pub get packages/vital_health/vital_health_android
