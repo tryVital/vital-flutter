@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vital_flutter/services/data/user.dart';
+import 'package:vital_core/services/data/user.dart';
 import 'package:vital_flutter_example/home/home_bloc.dart';
 import 'package:vital_flutter_example/routes.dart';
 

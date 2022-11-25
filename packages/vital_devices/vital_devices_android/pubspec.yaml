@@ -1,0 +1,30 @@
+name: vital_devices_android
+description: The Android implementation of Vital Devices.
+version: 0.5.0-alpha.1
+homepage: https://tryvital.io/
+repository: https://github.com/tryVital/vital-flutter
+
+environment:
+  sdk: '>=2.18.4 <3.0.0'
+  flutter: ">=1.20.0"
+
+flutter:
+  plugin:
+    implements: vital_devices
+    platforms:
+      android:
+        package: io.vital
+        pluginClass: VitalDevicesPlugin
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  vital_core: ^0.5.0-alpha.1
+  vital_devices_platform_interface: ^0.5.0-alpha.1
