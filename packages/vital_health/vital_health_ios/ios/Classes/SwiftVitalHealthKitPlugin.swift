@@ -62,7 +62,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         return
       case "cleanUp":
         Task {
-          await VitalClient.shared.cleanUp()
+          await VitalHealthKitClient.shared.cleanUp()
           result(nil)
         }
         return
