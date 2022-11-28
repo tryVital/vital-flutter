@@ -52,7 +52,6 @@ client.healthkitServices.syncData();
 6. Observe sync status using status stream
 
 ```dart
-
 Stream<SyncStatus> status = client.healthkitServices.status
 ```
 

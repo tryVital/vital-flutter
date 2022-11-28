@@ -34,7 +34,7 @@ Add the following to your `AndroidManifest.xml`:
 <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
-        <!-- Request legacy Bluetooth permissions on older devices. -->
+<!-- Request legacy Bluetooth permissions on older devices. -->
 <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
 <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30"/>
@@ -48,9 +48,9 @@ First you have to scan for one of the supported devices. You can find the list o
 calling `DeviceManager().devices`.
 
 ```dart
- vitalDevices.scanForDevices(deviceModel).listen((device) {
-    // now you have the device you were looking for
-  });
+vitalDevices.scanForDevices(deviceModel).listen((device) {
+  // now you have the device you were looking for
+});
 ```
 
 Depending on the type of device you are connecting to, you will have to call different methods to connect to it.
@@ -58,17 +58,17 @@ Depending on the type of device you are connecting to, you will have to call dif
 ### Blood pressure monitor
 
 ```dart
-  vitalDevices.readBloodPressureData(scannedDevice).listen((bloodPressureSamples) {
-    // you will receive a list of blood pressure samples
-  });
+vitalDevices.readBloodPressureData(scannedDevice).listen((bloodPressureSamples) {
+  // you will receive a list of blood pressure samples
+});
 ```
 
 ### Glucose meter
 
 ```dart
-  vitalDevices.readGlucoseMeterData(scannedDevice).listen((glucoseSamples) {
-    // you will receive a list of glucose samples
-  });
+vitalDevices.readGlucoseMeterData(scannedDevice).listen((glucoseSamples) {
+  // you will receive a list of glucose samples
+});
 ```
 
 After you have received samples depending on the type of device you might need to star scanning again to receive the

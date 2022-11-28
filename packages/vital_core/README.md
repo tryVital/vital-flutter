@@ -19,7 +19,6 @@ The Vital SDK is split into three main components: `vital_core`, `vital_health` 
 Initialise client with region, environment and api key
 
 ```dart
-
 final client = VitalClient()
   ..init(region: Region.eu, environment: Environment.sandbox, apiKey: 'sk_eu_...');
 ```
@@ -27,7 +26,6 @@ final client = VitalClient()
 Query users:
 
 ```dart
-
 final Response<List<User>> usersResponse = client.userService.getAll();
 ```
 
