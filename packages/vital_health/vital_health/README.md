@@ -55,6 +55,11 @@ client.healthkitServices.syncData();
 Stream<SyncStatus> status = client.healthkitServices.status
 ```
 
+7. When your user logs out you need to call cleanup on the health service 
+    
+```dart
+client.healthkitServices.cleanUp();
+```
 ## Documentation
 
 For more example usage run the sample app with your API key and Region set in `main.dart`.

@@ -1,6 +1,6 @@
 name: vital_devices
 description: The Vital Devices package allowing health devices to connect to the phone.
-version: 0.5.0-alpha.1
+version: 0.5.0-alpha.2
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
@@ -24,7 +24,7 @@ dependencies:
   vital_core: ^0.5.0-alpha.1
   vital_devices_platform_interface: ^0.5.0-alpha.1
   vital_devices_android: ^0.5.0-alpha.1
-  vital_devices_ios: ^0.5.0-alpha.1
+  vital_devices_ios: ^0.5.0-alpha.2
 
 dev_dependencies:
   flutter_test:
