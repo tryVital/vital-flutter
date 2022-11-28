@@ -14,8 +14,6 @@ The Vital SDK is split into three main components: `vital_core`, `vital_health` 
 
 ## Getting Started
 
-To use Vital Devices you need to request the following permissions:
-
 ### iOS
 
 Add the following to your `Info.plist` file:
