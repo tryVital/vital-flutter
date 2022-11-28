@@ -30,7 +30,6 @@ You will have to request the bluetooth permission in your app before using the S
 Add the following to your `AndroidManifest.xml`:
 
 ```xml
-
 <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
