@@ -21,28 +21,25 @@ The Vital SDK is split into three main components: `vital_core`, `vital_health` 
 2. To use HealthKit client you need to call configure first:
 
 ```dart
-await
-client.healthkitServices.configureClient();
-await
-client.healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true
-);
+await client.healthkitServices.configureClient();
+await client.healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
 ```
 
 3. Set User ID
 
 ```dart
-client.healthkitServices.setUserId('
-eba7c0a2-dc01-49
-f5-a361-...
-);
+client.healthkitServices.setUserId('eba7c0a2-dc01-49f5-a361-...);
 ```
 
 4. Ask user for permissions to collect HealthKit data.
 
 ```dart
-client.healthkitServices.askForResources([
-HealthkitResource.profile,HealthkitResource.body,...
-]
+client.healthkitServices.askForResources(
+  [
+    HealthkitResource.profile,
+    HealthkitResource.body,
+    ...
+  ]
 );
 ```
 
