@@ -1,3 +1,7 @@
+## 0.5.0-alpha.3
+
+* Update `VitalHealthKit` ios dependency to 0.7.5
+
 ## 0.5.0-alpha.2
 
 * Remove `VitalDevices` ios dependency as it is not used anymore
