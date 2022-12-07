@@ -1,16 +1,19 @@
 PODS:
   - Flutter (1.0.0)
+  - permission_handler_apple (9.0.4):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - vital_flutter (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 0.7.3)
-  - VitalCore (0.7.3)
-  - VitalHealthKit (0.7.3):
-    - VitalCore (~> 0.7.3)
+    - VitalHealthKit (~> 0.7.5)
+  - VitalCore (0.7.5)
+  - VitalHealthKit (0.7.5):
+    - VitalCore (~> 0.7.5)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vital_flutter (from `.symlinks/plugins/vital_flutter/ios`)
 
@@ -22,17 +25,20 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   vital_flutter:
     :path: ".symlinks/plugins/vital_flutter/ios"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
-  vital_flutter: a32dc8d7227cdb00697902bb42fd4f6b8986d744
-  VitalCore: 77d860d930c5d402d4c30faf484790e37d4eb325
-  VitalHealthKit: 01ed90f372116b83a2e1b821e2828e03936a7729
+  vital_flutter: 6d0721e4ccbb639fa8c56e5eedb87210ff59d8f8
+  VitalCore: a9f1490db1e5490d3aa166c4fc67fdead78103bf
+  VitalHealthKit: 84e816b86705a084d5bb2c16b1fe1316644202fa
 
 PODFILE CHECKSUM: fe5e039928e08cc3aa55730590fe5577354d32d2
 
