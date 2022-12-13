@@ -84,4 +84,14 @@ class VitalClient {
       return false;
     });
   }
+
+  Future<bool> deregisterProvider(User user, String provider, String callback) {
+    return userService
+        .deregisterProvider(user.userId!, provider)
+        .then((value) => true)
+        .catchError((e) {
+      Fimber.e(e);
+      return false;
+    });
+  }
 }
