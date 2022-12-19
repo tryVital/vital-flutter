@@ -1,3 +1,8 @@
+## 0.5.0-alpha.2
+
+* Expose all the available resources in `VitalService` class.
+
+
 ## 0.5.0-alpha.1
 
 * Federate the vital offering. There are now 3 packages: `vital_core`, `vital_devices` and `vital_health`.

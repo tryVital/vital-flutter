@@ -38,4 +38,29 @@ class _$VitalsService extends VitalsService {
     );
     return client.send<List<Measurement>, Measurement>($request);
   }
+
+  @override
+  Future<Response<List<BloodPressureMeasurement>>>
+      _bloodPressureTimeseriesRequest(
+    String userId,
+    String resource,
+    String startDate, {
+    String? endDate,
+    String? provider,
+  }) {
+    final $url = 'timeseries/${userId}/${resource}';
+    final $params = <String, dynamic>{
+      'start_date': startDate,
+      'end_date': endDate,
+      'provider': provider,
+    };
+    final $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<BloodPressureMeasurement>,
+        BloodPressureMeasurement>($request);
+  }
 }
