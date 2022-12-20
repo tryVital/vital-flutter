@@ -35,6 +35,9 @@ void main() {
       vitalClient: vitalClient,
       deviceManager: deviceManager,
       healthkitServices: healthkitServices));
+
+  healthkitServices.writeHealthKitData(
+      HealthkitResourceWrite.water, DateTime.now(), DateTime.now(), 1000);
 }
 
 class VitalSampleApp extends StatelessWidget {

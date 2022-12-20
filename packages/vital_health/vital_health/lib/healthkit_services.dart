@@ -57,6 +57,12 @@ class HealthkitServices {
     await VitalHealthPlatform.instance.syncData(resources: resources);
   }
 
+  Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
+      DateTime startDate, DateTime endDate, double value) async {
+    await VitalHealthPlatform.instance
+        .writeHealthKitData(writeResource, startDate, endDate, value);
+  }
+
   Future<void> cleanUp() async {
     await VitalHealthPlatform.instance.cleanUp();
   }
