@@ -16,7 +16,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   private var cancellable: Cancellable? = nil
   private var flutterRunning = true
 
- init(_ channel: FlutterMethodChannel){
+  init(_ channel: FlutterMethodChannel){
     self.channel = channel;
   }
 
@@ -115,27 +115,27 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
 
   private func writeHealthKitData(_ arguments: [AnyObject], result: @escaping FlutterResult){
     do {
-    let resourceString: String = arguments[0] as! String
-    let resource = try mapResourceToVitalResource(resourceString)
+      let resourceString: String = arguments[0] as! String
+      let resource = try mapResourceToVitalResource(resourceString)
 
-    let value: Double = arguments[1] as! Double
+      let value: Double = arguments[1] as! Double
 
-    let startDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int))
-    let endDate = Date(timeIntervalSince1970: Double(arguments[3] as! Int))
+      let startDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int) / 1000)
+      let endDate = Date(timeIntervalSince1970: Double(arguments[3] as! Int) / 1000)
 
-    let dataInput: DataInput 
+      let dataInput: DataInput
 
-    switch resource {
-      case .nutrition(.water):
-        dataInput = .water(milliliters: Int(value))
-      default: 
-        fatalError("\(resource) not supported for writing to HealthKit")
-    }
+      switch resource {
+        case .nutrition(.water):
+          dataInput = .water(milliliters: Int(value))
+        default:
+          fatalError("\(resource) not supported for writing to HealthKit")
+      }
 
-    Task {
-      try await VitalHealthKitClient.shared.write(input: dataInput, startDate: startDate, endDate: endDate)
-      result(nil)
-    }
+      Task {
+        try await VitalHealthKitClient.shared.write(input: dataInput, startDate: startDate, endDate: endDate)
+        result(nil)
+      }
     } catch VitalError.UnsupportedResource(let errorMessage) {
       result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
     } catch {
@@ -197,18 +197,18 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let writeResourcesString: [String] = arguments[1] as! [String]
 
     Task {
-        let readResources = readResourcesString.map { try! mapResourceToVitalResource($0) }
-        let writeResources = writeResourcesString.map { try! mapResourceToWritableVitalResource($0) }
+      let readResources = readResourcesString.map { try! mapResourceToVitalResource($0) }
+      let writeResources = writeResourcesString.map { try! mapResourceToWritableVitalResource($0) }
 
-        let outcome = await VitalHealthKitClient.shared.ask(readPermissions: readResources, writePermissions: writeResources)
-        switch outcome {
-          case .success:
-            result(nil)
-          case .failure(let message):
-            result(encode(ErrorResult(code: "failure", message: message)))
-          case .healthKitNotAvailable:
-            result(encode(ErrorResult(code: "healthKitNotAvailable", message: "healthKitNotAvailable")))
-        }
+      let outcome = await VitalHealthKitClient.shared.ask(readPermissions: readResources, writePermissions: writeResources)
+      switch outcome {
+        case .success:
+          result(nil)
+        case .failure(let message):
+          result(encode(ErrorResult(code: "failure", message: message)))
+        case .healthKitNotAvailable:
+          result(encode(ErrorResult(code: "healthKitNotAvailable", message: "healthKitNotAvailable")))
+      }
     }
   }
 
