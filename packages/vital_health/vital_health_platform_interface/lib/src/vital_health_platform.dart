@@ -52,5 +52,5 @@ class VitalHealthPlatform extends PlatformInterface {
   Future<void> cleanUp() async {}
 
   Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
-      double value, DateTime startDate, DateTime endDate) async {}
+      DateTime startDate, DateTime endDate, double value) async {}
 }

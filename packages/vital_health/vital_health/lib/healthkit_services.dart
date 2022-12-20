@@ -44,6 +44,11 @@ class HealthkitServices {
     return VitalHealthPlatform.instance.askForResources(resources);
   }
 
+  Future<PermissionOutcome> ask(List<HealthkitResource> readResources,
+      List<HealthkitResourceWrite> writeResources) async {
+    return VitalHealthPlatform.instance.ask(readResources, writeResources);
+  }
+
   Future<bool> hasAskedForPermission(HealthkitResource resource) async {
     return VitalHealthPlatform.instance.hasAskedForPermission(resource);
   }
