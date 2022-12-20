@@ -1,3 +1,7 @@
+## 0.5.0-alpha.4
+
+* You can call `writeHealthKitData` to write data to Apple HealthKit. Only `water` for now.
+
 ## 0.5.0-alpha.3
 
 * Update `VitalHealthKit` ios dependency to 0.7.5

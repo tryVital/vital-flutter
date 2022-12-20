@@ -1,6 +1,6 @@
 name: vital_health_ios
 description: The ios implementation of Vital Health.
-version: 0.5.0-alpha.3
+version: 0.5.0-alpha.4
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
@@ -22,8 +22,7 @@ dependencies:
   plugin_platform_interface: ^2.1.0
   fimber: ^0.6.6
   vital_core: ^0.5.0-alpha.1
-  vital_health_platform_interface:
-    path: ../vital_health_platform_interface
+  vital_health_platform_interface: ^0.5.0-alpha.2
 
 dev_dependencies:
   flutter_test:
