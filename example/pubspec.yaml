@@ -1,10 +1,10 @@
 name: vital_flutter_example
 description: Demonstrates how to use the vital_flutter plugin.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -15,7 +15,8 @@ dependencies:
   permission_handler: ^10.2.0
   disposebag: ^1.5.0
   vital_core: ^0.5.0-alpha.1
-  vital_health: ^0.5.0-alpha.2
+  vital_health:
+    path: ../packages/vital_health/vital_health
   vital_devices: ^0.5.0-alpha.2
 
 dev_dependencies:

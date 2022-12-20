@@ -10,4 +10,7 @@ enum HealthkitResource {
   steps,
   activeEnergyBurned,
   basalEnergyBurned,
+  water,
 }
+
+enum HealthkitResourceWrite { water }
