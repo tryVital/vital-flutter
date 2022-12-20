@@ -24,5 +24,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
   fimber: ^0.6.6
-  vital_core: ^0.5.0-alpha.1
-  vital_devices_platform_interface: ^0.5.0-alpha.1
+  vital_core:
+    path: ../../../packages/vital_core
+  vital_devices_platform_interface:
+    path: ../vital_devices_platform_interface
