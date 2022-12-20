@@ -24,10 +24,10 @@ class Measurement {
 
 @JsonSerializable(createToJson: false)
 class BloodPressureMeasurement {
-  int id;
+  int? id;
   DateTime timestamp;
-  int systolic;
-  int diastolic;
+  double systolic;
+  double diastolic;
   String? type;
   String? unit;
 

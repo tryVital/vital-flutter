@@ -1,7 +1,10 @@
+## 0.5.0-alpha.3
+
+* Fix `BloodPressureMeasurement` type
+* 
 ## 0.5.0-alpha.2
 
 * Expose all the available resources in `VitalService` class.
-
 
 ## 0.5.0-alpha.1
 
