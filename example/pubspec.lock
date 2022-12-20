@@ -23,7 +23,7 @@ packages:
     source: hosted
     version: "1.2.1"
   chopper:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: chopper
       url: "https://pub.dartlang.org"
@@ -218,7 +218,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.5"
+    version: "6.0.4"
   rxdart:
     dependency: transitive
     description:
@@ -281,7 +281,7 @@ packages:
     source: hosted
     version: "1.3.1"
   url_launcher:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: url_launcher
       url: "https://pub.dartlang.org"
@@ -346,59 +346,59 @@ packages:
   vital_core:
     dependency: "direct main"
     description:
-      path: "../packages/vital_core"
-      relative: true
-    source: path
-    version: "0.5.0-alpha.2"
+      name: vital_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0-alpha.1"
   vital_devices:
     dependency: "direct main"
     description:
-      path: "../packages/vital_devices/vital_devices"
-      relative: true
-    source: path
-    version: "0.5.0-alpha.3"
+      name: vital_devices
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0-alpha.2"
   vital_devices_android:
     dependency: transitive
     description:
-      path: "../packages/vital_devices/vital_devices_android"
-      relative: true
-    source: path
-    version: "0.5.0-alpha.2"
+      name: vital_devices_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0-alpha.1"
   vital_devices_ios:
     dependency: transitive
     description:
-      path: "../packages/vital_devices/vital_devices_ios"
-      relative: true
-    source: path
+      name: vital_devices_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.5.0-alpha.2"
   vital_devices_platform_interface:
     dependency: transitive
     description:
-      path: "../packages/vital_devices/vital_devices_platform_interface"
-      relative: true
-    source: path
+      name: vital_devices_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.5.0-alpha.1"
   vital_health:
     dependency: "direct main"
     description:
-      path: "../packages/vital_health/vital_health"
-      relative: true
-    source: path
-    version: "0.5.0-alpha.3"
+      name: vital_health
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0-alpha.2"
   vital_health_ios:
     dependency: transitive
     description:
-      path: "../packages/vital_health/vital_health_ios"
-      relative: true
-    source: path
-    version: "0.5.0-alpha.3"
+      name: vital_health_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0-alpha.2"
   vital_health_platform_interface:
     dependency: transitive
     description:
-      path: "../packages/vital_health/vital_health_platform_interface"
-      relative: true
-    source: path
+      name: vital_health_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.5.0-alpha.1"
 sdks:
-  dart: ">=2.17.0 <3.0.0"
+  dart: ">=2.18.4 <3.0.0"
   flutter: ">=2.10.0"

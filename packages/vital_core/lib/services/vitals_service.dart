@@ -198,7 +198,6 @@ abstract class VitalsService extends ChopperService {
         ],
         converter: const JsonSerializableConverter({
           Measurement: Measurement.fromJson,
-          BloodPressureMeasurement: BloodPressureMeasurement.fromJson,
         }));
 
     return _$VitalsService(client);

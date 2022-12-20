@@ -19,12 +19,9 @@ dependencies:
     sdk: flutter
   fimber: ^0.6.6
   json_annotation: ^4.6.0
-  vital_core:
-    path: ../../../packages/vital_core
-  vital_health_platform_interface:
-    path: ../vital_health_platform_interface
-  vital_health_ios:
-    path: ../vital_health_ios
+  vital_core: ^0.5.0-alpha.1
+  vital_health_platform_interface: ^0.5.0-alpha.1
+  vital_health_ios: ^0.5.0-alpha.3
 
 dev_dependencies:
   flutter_test:

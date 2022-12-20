@@ -12,7 +12,7 @@ import 'package:vital_flutter_example/home/home_screen.dart';
 import 'package:vital_flutter_example/routes.dart';
 import 'package:vital_health/healthkit_services.dart';
 
-const apiKey = 'sk_eu_FpMg_kgYXjoxYcLCc77gDgYT6MnLIhdCD0FN_1Vjff4';
+const apiKey = 'sk_eu_S5Ld...'; //TODO replace it with your own api key
 const region = Region.eu;
 
 void main() {

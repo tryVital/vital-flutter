@@ -26,7 +26,5 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  vital_core:
-    path: ../../../packages/vital_core
-  vital_devices_platform_interface:
-    path: ../vital_devices_platform_interface
+  vital_core: ^0.5.0-alpha.1
+  vital_devices_platform_interface: ^0.5.0-alpha.1
