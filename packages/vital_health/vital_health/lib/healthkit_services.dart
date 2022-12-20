@@ -44,12 +44,23 @@ class HealthkitServices {
     return VitalHealthPlatform.instance.askForResources(resources);
   }
 
+  Future<PermissionOutcome> ask(List<HealthkitResource> readResources,
+      List<HealthkitResourceWrite> writeResources) async {
+    return VitalHealthPlatform.instance.ask(readResources, writeResources);
+  }
+
   Future<bool> hasAskedForPermission(HealthkitResource resource) async {
     return VitalHealthPlatform.instance.hasAskedForPermission(resource);
   }
 
   Future<void> syncData({List<HealthkitResource>? resources}) async {
     await VitalHealthPlatform.instance.syncData(resources: resources);
+  }
+
+  Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
+      DateTime startDate, DateTime endDate, double value) async {
+    await VitalHealthPlatform.instance
+        .writeHealthKitData(writeResource, startDate, endDate, value);
   }
 
   Future<void> cleanUp() async {

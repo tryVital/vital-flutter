@@ -90,8 +90,17 @@ class VitalHealthIos extends VitalHealthPlatform {
   @override
   Future<PermissionOutcome> askForResources(
       List<HealthkitResource> resources) async {
-    final outcome = await _channel.invokeMethod(
-        'askForResources', resources.map((it) => it.name).toList());
+    return ask(resources, []);
+  }
+
+  @override
+  Future<PermissionOutcome> ask(List<HealthkitResource> readResources,
+      List<HealthkitResourceWrite> writeResources) async {
+    final outcome = await _channel.invokeMethod('ask', [
+      readResources.map((it) => it.name).toList(),
+      writeResources.map((it) => it.name).toList()
+    ]);
+
     if (outcome == null) {
       return PermissionOutcome.success();
     } else {
@@ -122,6 +131,17 @@ class VitalHealthIos extends VitalHealthPlatform {
 
   Future<bool> isUserConnected(String provider) async {
     return await _channel.invokeMethod('isUserConnected', provider) as bool;
+  }
+
+  @override
+  Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
+      DateTime startDate, DateTime endDate, double value) async {
+    return await _channel.invokeMethod('writeHealthKitData', [
+      writeResource.name,
+      value,
+      startDate.millisecondsSinceEpoch,
+      endDate.millisecondsSinceEpoch
+    ]);
   }
 
   @override

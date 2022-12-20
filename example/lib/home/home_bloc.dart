@@ -57,7 +57,8 @@ class HomeBloc {
       HealthkitResource.heartRate,
       HealthkitResource.bloodPressure,
       HealthkitResource.glucose,
-      HealthkitResource.sleep
+      HealthkitResource.sleep,
+      HealthkitResource.water
     ]);
   }
 

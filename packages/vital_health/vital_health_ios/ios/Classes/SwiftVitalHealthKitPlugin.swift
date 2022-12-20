@@ -16,7 +16,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   private var cancellable: Cancellable? = nil
   private var flutterRunning = true
 
- init(_ channel: FlutterMethodChannel){
+  init(_ channel: FlutterMethodChannel){
     self.channel = channel;
   }
 
@@ -48,6 +48,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
+      case "writeHealthKitData":
+        writeHealthKitData(call.arguments as! [AnyObject], result: result)
+        return
       case "configureClient":
         configureClient(call.arguments as! [AnyObject], result: result)
         return
@@ -87,8 +90,8 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         }
         return
 
-      case "askForResources":
-        askForResources(resources: call.arguments as! [String], result: result)
+      case "ask":
+        ask(call.arguments as! [AnyObject], result: result)
         return
       case "syncData":
         syncData(resources: call.arguments as? [String], result: result)
@@ -110,6 +113,36 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
                              details: nil))
   }
 
+  private func writeHealthKitData(_ arguments: [AnyObject], result: @escaping FlutterResult){
+    do {
+      let resourceString: String = arguments[0] as! String
+      let resource = try mapResourceToVitalResource(resourceString)
+
+      let value: Double = arguments[1] as! Double
+
+      let startDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int) / 1000)
+      let endDate = Date(timeIntervalSince1970: Double(arguments[3] as! Int) / 1000)
+
+      let dataInput: DataInput
+
+      switch resource {
+        case .nutrition(.water):
+          dataInput = .water(milliliters: Int(value))
+        default:
+          fatalError("\(resource) not supported for writing to HealthKit")
+      }
+
+      Task {
+        try await VitalHealthKitClient.shared.write(input: dataInput, startDate: startDate, endDate: endDate)
+        result(nil)
+      }
+    } catch VitalError.UnsupportedResource(let errorMessage) {
+      result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
+    } catch {
+      result(encode(ErrorResult(code: error.localizedDescription)))
+    }
+  }
+
   private func configureClient(_ arguments: [AnyObject], result: @escaping FlutterResult){
     let apiKey: String = arguments[0] as! String
     let region: String  = arguments[1] as! String
@@ -125,7 +158,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   }
 
   private func configureHealthkit(_ arguments: [AnyObject], result: @escaping FlutterResult){
-    let backgroundDeliveryEnabled = arguments[0] as! Bool
+    let backgroundDeliveryEnabled: Bool = arguments[0] as! Bool
     let logsEnabled = arguments[1] as! Bool
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
@@ -136,8 +169,8 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       await VitalHealthKitClient.configure(
         .init(
           backgroundDeliveryEnabled: backgroundDeliveryEnabled,
-          logsEnabled: logsEnabled,
           numberOfDaysToBackFill: numberOfDaysToBackFill,
+          logsEnabled: logsEnabled,
           mode: mode
         )
       )
@@ -158,22 +191,23 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     }
   }
 
-  private func askForResources(resources: [String], result: @escaping FlutterResult){
+  private func ask(_ arguments: [AnyObject], result: @escaping FlutterResult){
+
+    let readResourcesString: [String] = arguments[0] as! [String]
+    let writeResourcesString: [String] = arguments[1] as! [String]
+
     Task {
-      do {
-        let outcome = try await VitalHealthKitClient.shared.ask(for: resources.map { try mapResourceToVitalResource($0) })
-        switch outcome {
-          case .success:
-            result(nil)
-          case .failure(let message):
-            result(encode(ErrorResult(code: "failure", message: message)))
-          case .healthKitNotAvailable:
-            result(encode(ErrorResult(code: "healthKitNotAvailable", message: "healthKitNotAvailable")))
-        }
-      } catch VitalError.UnsupportedResource(let errorMessage) {
-        result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
-      } catch {
-        result(encode(ErrorResult(code: "Unknown error")))
+      let readResources = readResourcesString.map { try! mapResourceToVitalResource($0) }
+      let writeResources = writeResourcesString.map { try! mapResourceToWritableVitalResource($0) }
+
+      let outcome = await VitalHealthKitClient.shared.ask(readPermissions: readResources, writePermissions: writeResources)
+      switch outcome {
+        case .success:
+          result(nil)
+        case .failure(let message):
+          result(encode(ErrorResult(code: "failure", message: message)))
+        case .healthKitNotAvailable:
+          result(encode(ErrorResult(code: "healthKitNotAvailable", message: "healthKitNotAvailable")))
       }
     }
   }
@@ -261,7 +295,7 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
     case .sleep:
       return "sleep"
     case .vitals(let type):
-      switch type{
+      switch type {
         case .glucose:
           return "glucose"
         case .bloodPressure:
@@ -287,6 +321,12 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
           return "weight"
         case .bodyFat:
           return "bodyFat"
+      }
+
+    case .nutrition(let type):
+      switch type {
+        case .water:
+          return "water"
       }
   }
 }
@@ -370,6 +410,17 @@ private func mapResourceToVitalResource(_ name: String) throws -> VitalResource 
       return .individual(.weight)
     case "bodyFat":
       return .individual(.bodyFat)
+    case "water":
+      return .nutrition(.water)
+    default:
+      throw VitalError.UnsupportedResource(name)
+  }
+}
+
+private func mapResourceToWritableVitalResource(_ name: String) throws -> WritableVitalResource {
+  switch name {
+    case "water":
+      return .water
     default:
       throw VitalError.UnsupportedResource(name)
   }
