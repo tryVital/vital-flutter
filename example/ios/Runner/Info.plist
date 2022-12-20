@@ -28,8 +28,10 @@
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Our app uses bluetooth to find, connect and transfer data between different devices</string>
-	<key>NSHealthShareUsageDescription</key>
+	<key>NSHealthUpdateUsageDescription</key>
 	<string>App collects the data from Health Kit for you to analyse them in using TryVital.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>App writes data to Health Kit.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
