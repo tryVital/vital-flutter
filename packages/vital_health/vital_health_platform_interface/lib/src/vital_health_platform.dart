@@ -49,6 +49,10 @@ class VitalHealthPlatform extends PlatformInterface {
 
   Future<void> syncData({List<HealthkitResource>? resources}) async {}
 
+  Future<bool> isUserConnected(String provider) async {
+    return false;
+  }
+
   Future<void> cleanUp() async {}
 
   Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
