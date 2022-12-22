@@ -57,6 +57,10 @@ class HealthkitServices {
     await VitalHealthPlatform.instance.syncData(resources: resources);
   }
 
+  Future<bool> isUserConnected(String provider) async {
+    return VitalHealthPlatform.instance.isUserConnected(provider);
+  }
+
   Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
     await VitalHealthPlatform.instance

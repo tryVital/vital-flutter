@@ -1,3 +1,7 @@
+## 0.5.0-alpha.5
+
+* Expose `isUserConnected()`, `PermissionOutcome`, `PermissionOutcomeType`, `SyncStatus`, `SyncStatusType`
+
 ## 0.5.0-alpha.4
 
 * You can call `writeHealthKitData` to write data to Apple HealthKit. Only `water` for now.
