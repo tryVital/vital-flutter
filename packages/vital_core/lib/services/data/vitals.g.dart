@@ -19,8 +19,8 @@ BloodPressureMeasurement _$BloodPressureMeasurementFromJson(
     BloodPressureMeasurement(
       id: json['id'] as int,
       timestamp: DateTime.parse(json['timestamp'] as String),
-      systolic: json['systolic'] as int,
-      diastolic: json['diastolic'] as int,
+      systolic: json['systolic'] as double,
+      diastolic: json['diastolic'] as double,
       type: json['type'] as String?,
       unit: json['unit'] as String?,
     );

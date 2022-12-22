@@ -57,32 +57,6 @@ class SyncStatusUnknown extends SyncStatus {
   SyncStatusUnknown() : super(SyncStatusType.unknown);
 }
 
-SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
-  switch (arguments[0] as String) {
-    case 'failedSyncing':
-      return SyncStatusFailed(
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]),
-          arguments[2]);
-    case 'successSyncing':
-      final resource =
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
-      return SyncStatusSuccessSyncing(
-        resource,
-        fromArgument(resource, arguments[2]),
-      );
-    case 'nothingToSync':
-      return SyncStatusNothingToSync(
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
-    case 'syncing':
-      return SyncStatusSyncing(
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
-    case 'syncingCompleted':
-      return SyncStatusCompleted();
-    default:
-      return SyncStatusUnknown();
-  }
-}
-
 enum PostResourceDataType {
   activity,
   body,
