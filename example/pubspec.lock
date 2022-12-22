@@ -384,14 +384,14 @@ packages:
       name: vital_health
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.0-alpha.5"
+    version: "0.5.0-alpha.6"
   vital_health_ios:
     dependency: transitive
     description:
       name: vital_health_ios
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.0-alpha.5"
+    version: "0.5.0-alpha.6"
   vital_health_platform_interface:
     dependency: transitive
     description:
