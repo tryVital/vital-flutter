@@ -1,3 +1,7 @@
+## 0.5.0-alpha.3
+
+ - Update a dependency to the latest release.
+
 ## 0.5.0-alpha.2
 
  - **FEAT**: expose all the resource types.

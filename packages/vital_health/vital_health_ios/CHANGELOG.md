@@ -1,3 +1,7 @@
+## 0.5.0-alpha.8
+
+ - Update a dependency to the latest release.
+
 ## 0.5.0-alpha.7
 
  - **FIX**: VIT-2228 expose missing classes from vital health ([#25](https://github.com/tryVital/vital-flutter/issues/25)).

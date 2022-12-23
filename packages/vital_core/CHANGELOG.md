@@ -1,3 +1,5 @@
+## 0.5.0-alpha.4
+
 ## 0.5.0-alpha.3
 
  - **FIX**: VIT-2228 expose missing classes from vital health ([#25](https://github.com/tryVital/vital-flutter/issues/25)).
