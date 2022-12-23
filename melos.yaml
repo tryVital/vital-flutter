@@ -1,0 +1,16 @@
+name: vital_flutter
+repository: https://github.com/tryVital/vital-flutter
+
+command:
+  bootstrap:
+    usePubspecOverrides: true
+
+packages:
+  - packages/**
+  - example
+
+scripts:
+  analyze:
+    exec: dart analyze .
+  postclean: >
+    melos exec --flutter --concurrency=3 -- "flutter clean"
