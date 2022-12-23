@@ -1,5 +1,10 @@
 name: Publish
 
+on:
+  push:
+    tags:
+      - vital_*
+
 jobs:
   pub_dev_publish_check:
     name: "Publish to pub.dev"
