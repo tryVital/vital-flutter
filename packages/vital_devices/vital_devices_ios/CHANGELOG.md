@@ -1,3 +1,7 @@
+## 0.5.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
 ## 0.5.0-alpha.2
 
 * Remove `VitalHealthKit` ios dependency as it is not used anymore

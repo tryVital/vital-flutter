@@ -1,3 +1,7 @@
+## 0.5.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
 ## 0.5.0-alpha.2
 
 * Update to VitalClient:v1.0.0-alpha.7 in android
