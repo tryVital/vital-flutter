@@ -10,7 +10,7 @@ packages:
   - example
 
 scripts:
-  analyze:
-    exec: dart analyze .
+  analyze: melos exec -- flutter analyze
+  format: melos exec -- flutter format .
   postclean: >
     melos exec --flutter --concurrency=3 -- "flutter clean"

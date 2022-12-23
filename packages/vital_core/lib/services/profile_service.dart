@@ -13,16 +13,22 @@ part 'profile_service.chopper.dart';
 @ChopperApi()
 abstract class ProfileService extends ChopperService {
   @Get(path: 'summary/profile/{user_id}')
-  Future<Response<Profile>> getProfile(@Path('user_id') String userId, @Query('provider') String? provider);
+  Future<Response<Profile>> getProfile(
+      @Path('user_id') String userId, @Query('provider') String? provider);
 
   @Get(path: 'summary/profile/{user_id}/raw')
-  Future<Response<Object>> getProfileRaw(@Path('user_id') String userId, @Query('provider') String? provider);
+  Future<Response<Object>> getProfileRaw(
+      @Path('user_id') String userId, @Query('provider') String? provider);
 
-  static ProfileService create(http.Client httpClient, String baseUrl, String apiKey) {
+  static ProfileService create(
+      http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,
-      interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+      interceptors: [
+        HttpRequestLoggingInterceptor(),
+        HttpApiKeyInterceptor(apiKey)
+      ],
       converter: const JsonSerializableConverter({
         Profile: Profile.fromJson,
       }),

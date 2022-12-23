@@ -24,16 +24,20 @@ abstract class UserService extends ChopperService {
   @FactoryConverter(
     request: JsonConverter.requestFactory,
   )
-  Future<Response<CreateUserResponse>> createUser(@Field('client_user_id') String clientUserId);
+  Future<Response<CreateUserResponse>> createUser(
+      @Field('client_user_id') String clientUserId);
 
   @Delete(path: 'user/{user_id}')
-  Future<Response<DeleteUserResponse>> deleteUser(@Path('user_id') String userId);
+  Future<Response<DeleteUserResponse>> deleteUser(
+      @Path('user_id') String userId);
 
   @Get(path: '/user/key/{client_user_id}')
-  Future<Response<User>> resolveUser(@Path('client_user_id') String clientUserId);
+  Future<Response<User>> resolveUser(
+      @Path('client_user_id') String clientUserId);
 
   @Get(path: '/user/providers/{user_id}')
-  Future<Response<ProvidersResponse>> getProviders(@Path('user_id') String userId);
+  Future<Response<ProvidersResponse>> getProviders(
+      @Path('user_id') String userId);
 
   @Delete(path: '/user/{user_id}/{provider}')
   Future<Response<DeregisterProviderResponse>> deregisterProvider(
@@ -44,11 +48,15 @@ abstract class UserService extends ChopperService {
   @Post(path: '/user/refresh/{user_id}', optionalBody: true)
   Future<Response<RefreshResponse>> refreshUser(@Path('user_id') String userId);
 
-  static UserService create(http.Client httpClient, String baseUrl, String apiKey) {
+  static UserService create(
+      http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,
-        interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+        interceptors: [
+          HttpRequestLoggingInterceptor(),
+          HttpApiKeyInterceptor(apiKey)
+        ],
         converter: const JsonSerializableConverter({
           User: User.fromJson,
           RefreshResponse: RefreshResponse.fromJson,

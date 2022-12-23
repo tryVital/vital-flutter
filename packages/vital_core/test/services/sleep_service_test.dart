@@ -13,10 +13,13 @@ void main() {
 
   group('Sleep service', () {
     test('Get sleep data', () async {
-      final httpClient = sleepClient('/summary/sleep/user_id_1', fakeSleepDataResponse, validation: validateDateRange);
+      final httpClient = sleepClient(
+          '/summary/sleep/user_id_1', fakeSleepDataResponse,
+          validation: validateDateRange);
 
       final sut = SleepService.create(httpClient, '', apiKey);
-      final response = await sut.getSleepData(userId, DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
+      final response = await sut.getSleepData(userId,
+          DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 
       expect(response.body!.sleep.length, 3);
       final sleep = response.body!.sleep[0];
@@ -24,12 +27,13 @@ void main() {
     });
 
     test('Get sleep stream series', () async {
-      final httpClient =
-          sleepClient('/summary/sleep/user_id_1/stream', fakeSleepStreamSeriesResponse, validation: validateDateRange);
+      final httpClient = sleepClient(
+          '/summary/sleep/user_id_1/stream', fakeSleepStreamSeriesResponse,
+          validation: validateDateRange);
 
       final sut = SleepService.create(httpClient, '', apiKey);
-      final response =
-          await sut.getSleepStreamSeries(userId, DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
+      final response = await sut.getSleepStreamSeries(userId,
+          DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 
       final sleepStreamSeries = response.body!;
       expect(sleepStreamSeries.sleep.length, 2);
@@ -39,7 +43,8 @@ void main() {
     });
 
     test('Get sleep stream', () async {
-      final httpClient = sleepClient('/timeseries/sleep/stream_id_1/stream', fakeSleepStreamResponse);
+      final httpClient = sleepClient(
+          '/timeseries/sleep/stream_id_1/stream', fakeSleepStreamResponse);
 
       final sut = SleepService.create(httpClient, '', apiKey);
       final response = await sut.getSleepStream(streamId);
@@ -50,7 +55,8 @@ void main() {
   });
 }
 
-MockClient sleepClient(String path, String response, {Function(http.Request)? validation}) {
+MockClient sleepClient(String path, String response,
+    {Function(http.Request)? validation}) {
   return MockClient((http.Request req) async {
     expect(req.url.toString(), startsWith(path));
     expect(req.method, 'GET');

@@ -11,7 +11,8 @@ class ActivitiesResponse {
     this.activity = const [],
   });
 
-  factory ActivitiesResponse.fromJson(Map<String, dynamic> json) => _$ActivitiesResponseFromJson(json);
+  factory ActivitiesResponse.fromJson(Map<String, dynamic> json) =>
+      _$ActivitiesResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -49,5 +50,6 @@ class Activity {
     required this.source,
   });
 
-  factory Activity.fromJson(Map<String, dynamic> json) => _$ActivityFromJson(json);
+  factory Activity.fromJson(Map<String, dynamic> json) =>
+      _$ActivityFromJson(json);
 }

@@ -11,7 +11,8 @@ class CreateLinkResponse {
     this.linkToken,
   });
 
-  factory CreateLinkResponse.fromJson(Map<String, dynamic> json) => _$CreateLinkResponseFromJson(json);
+  factory CreateLinkResponse.fromJson(Map<String, dynamic> json) =>
+      _$CreateLinkResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -41,7 +42,8 @@ class OauthLinkResponse {
     this.id = -1,
   });
 
-  factory OauthLinkResponse.fromJson(Map<String, dynamic> json) => _$OauthLinkResponseFromJson(json);
+  factory OauthLinkResponse.fromJson(Map<String, dynamic> json) =>
+      _$OauthLinkResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -55,5 +57,6 @@ class EmailProviderResponse {
     this.success = false,
   });
 
-  factory EmailProviderResponse.fromJson(Map<String, dynamic> json) => _$EmailProviderResponseFromJson(json);
+  factory EmailProviderResponse.fromJson(Map<String, dynamic> json) =>
+      _$EmailProviderResponseFromJson(json);
 }

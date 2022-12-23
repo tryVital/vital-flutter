@@ -33,11 +33,15 @@ abstract class WorkoutService extends ChopperService {
     @Path('workout_id') String workoutId,
   );
 
-  static WorkoutService create(http.Client httpClient, String baseUrl, String apiKey) {
+  static WorkoutService create(
+      http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,
-        interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+        interceptors: [
+          HttpRequestLoggingInterceptor(),
+          HttpApiKeyInterceptor(apiKey)
+        ],
         converter: const JsonSerializableConverter({
           WorkoutsResponse: WorkoutsResponse.fromJson,
           WorkoutStreamResponse: WorkoutStreamResponse.fromJson,

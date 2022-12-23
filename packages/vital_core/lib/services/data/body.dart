@@ -11,7 +11,8 @@ class BodyDataResponse {
     this.body = const [],
   });
 
-  factory BodyDataResponse.fromJson(Map<String, dynamic> json) => _$BodyDataResponseFromJson(json);
+  factory BodyDataResponse.fromJson(Map<String, dynamic> json) =>
+      _$BodyDataResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -36,5 +37,6 @@ class BodyData {
     required this.source,
   });
 
-  factory BodyData.fromJson(Map<String, dynamic> json) => _$BodyDataFromJson(json);
+  factory BodyData.fromJson(Map<String, dynamic> json) =>
+      _$BodyDataFromJson(json);
 }

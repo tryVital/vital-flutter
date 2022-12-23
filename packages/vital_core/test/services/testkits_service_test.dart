@@ -29,7 +29,8 @@ void main() {
       });
 
       final sut = TestkitsService.create(httpClient, '', apiKey);
-      final response = await sut.getAllOrders(DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
+      final response = await sut.getAllOrders(
+          DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 
       expect(response.body!.orders.length, 1);
       final order = response.body!.orders[0];

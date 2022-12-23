@@ -22,7 +22,8 @@ abstract class TestkitsService extends ChopperService {
     CreateOrderRequest request, {
     bool skipAddressValidation = false,
   }) {
-    return _createOrder(request, skipAddressValidation: '$skipAddressValidation');
+    return _createOrder(request,
+        skipAddressValidation: '$skipAddressValidation');
   }
 
   @Get(path: 'testkit/')
@@ -63,11 +64,15 @@ abstract class TestkitsService extends ChopperService {
   @Post(path: 'testkit/orders/{order_id}/cancel', optionalBody: true)
   Future<Response<OrderResponse>> cancelOrder(@Path('order_id') String orderId);
 
-  static TestkitsService create(http.Client httpClient, String baseUrl, String apiKey) {
+  static TestkitsService create(
+      http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,
-        interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+        interceptors: [
+          HttpRequestLoggingInterceptor(),
+          HttpApiKeyInterceptor(apiKey)
+        ],
         converter: const JsonSerializableConverter({
           OrdersResponse: OrdersResponse.fromJson,
           TestkitsResponse: TestkitsResponse.fromJson,

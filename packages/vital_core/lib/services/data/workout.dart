@@ -8,7 +8,8 @@ class WorkoutsResponse {
 
   WorkoutsResponse(this.workouts);
 
-  factory WorkoutsResponse.fromJson(Map<String, dynamic> json) => _$WorkoutsResponseFromJson(json);
+  factory WorkoutsResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutsResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -88,7 +89,8 @@ class Workout {
     this.source,
   });
 
-  factory Workout.fromJson(Map<String, dynamic> json) => _$WorkoutFromJson(json);
+  factory Workout.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -114,7 +116,8 @@ class MapData {
     this.summaryPolyline,
   });
 
-  factory MapData.fromJson(Map<String, dynamic> json) => _$MapDataFromJson(json);
+  factory MapData.fromJson(Map<String, dynamic> json) =>
+      _$MapDataFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -144,5 +147,6 @@ class WorkoutStreamResponse {
     this.resistance = const [],
   });
 
-  factory WorkoutStreamResponse.fromJson(Map<String, dynamic> json) => _$WorkoutStreamResponseFromJson(json);
+  factory WorkoutStreamResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutStreamResponseFromJson(json);
 }

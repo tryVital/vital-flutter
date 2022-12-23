@@ -21,7 +21,8 @@ class CreateOrderRequest {
     required this.patientDetails,
   });
 
-  factory CreateOrderRequest.fromJson(Map<String, dynamic> json) => _$CreateOrderRequestFromJson(json);
+  factory CreateOrderRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateOrderRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$CreateOrderRequestToJson(this);
 }
@@ -37,7 +38,8 @@ class OrderResponse {
     this.order,
   });
 
-  factory OrderResponse.fromJson(Map<String, dynamic> json) => _$OrderResponseFromJson(json);
+  factory OrderResponse.fromJson(Map<String, dynamic> json) =>
+      _$OrderResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -48,7 +50,8 @@ class OrdersResponse {
     this.orders = const [],
   });
 
-  factory OrdersResponse.fromJson(Map<String, dynamic> json) => _$OrdersResponseFromJson(json);
+  factory OrdersResponse.fromJson(Map<String, dynamic> json) =>
+      _$OrdersResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -59,7 +62,8 @@ class TestkitsResponse {
     this.testkits = const [],
   });
 
-  factory TestkitsResponse.fromJson(Map<String, dynamic> json) => _$TestkitsResponseFromJson(json);
+  factory TestkitsResponse.fromJson(Map<String, dynamic> json) =>
+      _$TestkitsResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -119,7 +123,8 @@ class OrderData {
     this.sampleId,
   });
 
-  factory OrderData.fromJson(Map<String, dynamic> json) => _$OrderDataFromJson(json);
+  factory OrderData.fromJson(Map<String, dynamic> json) =>
+      _$OrderDataFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -144,7 +149,8 @@ class Testkit {
     this.price,
   });
 
-  factory Testkit.fromJson(Map<String, dynamic> json) => _$TestkitFromJson(json);
+  factory Testkit.fromJson(Map<String, dynamic> json) =>
+      _$TestkitFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -159,7 +165,8 @@ class TestkitMarker {
     this.description,
   });
 
-  factory TestkitMarker.fromJson(Map<String, dynamic> json) => _$TestkitMarkerFromJson(json);
+  factory TestkitMarker.fromJson(Map<String, dynamic> json) =>
+      _$TestkitMarkerFromJson(json);
 }
 
 @JsonSerializable()
@@ -187,7 +194,8 @@ class PatientAddress {
     this.phoneNumber,
   });
 
-  factory PatientAddress.fromJson(Map<String, dynamic> json) => _$PatientAddressFromJson(json);
+  factory PatientAddress.fromJson(Map<String, dynamic> json) =>
+      _$PatientAddressFromJson(json);
 
   Map<String, dynamic> toJson() => _$PatientAddressToJson(this);
 }
@@ -204,7 +212,8 @@ class PatientDetails {
     this.email,
   });
 
-  factory PatientDetails.fromJson(Map<String, dynamic> json) => _$PatientDetailsFromJson(json);
+  factory PatientDetails.fromJson(Map<String, dynamic> json) =>
+      _$PatientDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$PatientDetailsToJson(this);
 }

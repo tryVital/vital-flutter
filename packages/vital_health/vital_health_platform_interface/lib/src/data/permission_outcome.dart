@@ -15,7 +15,8 @@ abstract class PermissionOutcome {
       PermissionResultFailure._init(PermissionOutcomeType.failure, message);
 
   factory PermissionOutcome.healthKitNotAvailable(String message) =>
-      PermissionResultFailure._init(PermissionOutcomeType.healthKitNotAvailable, message);
+      PermissionResultFailure._init(
+          PermissionOutcomeType.healthKitNotAvailable, message);
 }
 
 class PermissionResultSuccess extends PermissionOutcome {
@@ -25,5 +26,6 @@ class PermissionResultSuccess extends PermissionOutcome {
 class PermissionResultFailure extends PermissionOutcome {
   final String message;
 
-  PermissionResultFailure._init(PermissionOutcomeType status, this.message) : super(status);
+  PermissionResultFailure._init(PermissionOutcomeType status, this.message)
+      : super(status);
 }

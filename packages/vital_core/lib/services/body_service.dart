@@ -20,11 +20,15 @@ abstract class BodyService extends ChopperService {
     @Query('provider') String? provider,
   );
 
-  static BodyService create(http.Client httpClient, String baseUrl, String apiKey) {
+  static BodyService create(
+      http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,
-      interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+      interceptors: [
+        HttpRequestLoggingInterceptor(),
+        HttpApiKeyInterceptor(apiKey)
+      ],
       converter: const JsonSerializableConverter({
         BodyDataResponse: BodyDataResponse.fromJson,
       }),

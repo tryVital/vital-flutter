@@ -4,7 +4,6 @@ import 'package:vital_core/samples.dart';
 import 'package:vital_devices_platform_interface/vital_devices_platform_interface.dart';
 
 class DeviceManager {
-
   void init() {
     VitalDevicesPlatform.instance.init();
   }

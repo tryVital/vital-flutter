@@ -12,7 +12,8 @@ class SleepResponse {
     this.sleep = const [],
   });
 
-  factory SleepResponse.fromJson(Map<String, dynamic> json) => _$SleepResponseFromJson(json);
+  factory SleepResponse.fromJson(Map<String, dynamic> json) =>
+      _$SleepResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -78,7 +79,8 @@ class SleepData {
     this.sleepStream,
   });
 
-  factory SleepData.fromJson(Map<String, dynamic> json) => _$SleepDataFromJson(json);
+  factory SleepData.fromJson(Map<String, dynamic> json) =>
+      _$SleepDataFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -96,5 +98,6 @@ class SleepStreamResponse {
     this.respiratoryRate = const [],
   });
 
-  factory SleepStreamResponse.fromJson(Map<String, dynamic> json) => _$SleepStreamResponseFromJson(json);
+  factory SleepStreamResponse.fromJson(Map<String, dynamic> json) =>
+      _$SleepStreamResponseFromJson(json);
 }

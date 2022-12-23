@@ -26,7 +26,8 @@ abstract class SleepService extends ChopperService {
     DateTime? endDate,
     String? provider,
   ) {
-    return _getSleepData(userId, startDate.toIso8601String(), endDate?.toIso8601String(), provider);
+    return _getSleepData(userId, startDate.toIso8601String(),
+        endDate?.toIso8601String(), provider);
   }
 
   @Get(path: 'summary/sleep/{user_id}/stream')
@@ -43,7 +44,8 @@ abstract class SleepService extends ChopperService {
     @Query('end_date') DateTime? endDate,
     @Query('provider') String? provider,
   ) {
-    return _getSleepStreamSeries(userId, startDate.toIso8601String(), endDate?.toIso8601String(), provider);
+    return _getSleepStreamSeries(userId, startDate.toIso8601String(),
+        endDate?.toIso8601String(), provider);
   }
 
   @Get(path: 'summary/sleep/{user_id}/raw')
@@ -60,17 +62,23 @@ abstract class SleepService extends ChopperService {
     @Query('end_date') DateTime? endDate,
     @Query('provider') String? provider,
   ) {
-    return _getSleepDataRaw(userId, startDate.toIso8601String(), endDate?.toIso8601String(), provider);
+    return _getSleepDataRaw(userId, startDate.toIso8601String(),
+        endDate?.toIso8601String(), provider);
   }
 
   @Get(path: 'timeseries/sleep/{sleep_id}/stream')
-  Future<Response<SleepStreamResponse>> getSleepStream(@Path('sleep_id') String sleepId);
+  Future<Response<SleepStreamResponse>> getSleepStream(
+      @Path('sleep_id') String sleepId);
 
-  static SleepService create(http.Client httpClient, String baseUrl, String apiKey) {
+  static SleepService create(
+      http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,
-      interceptors: [HttpRequestLoggingInterceptor(), HttpApiKeyInterceptor(apiKey)],
+      interceptors: [
+        HttpRequestLoggingInterceptor(),
+        HttpApiKeyInterceptor(apiKey)
+      ],
       converter: const JsonSerializableConverter({
         SleepResponse: SleepResponse.fromJson,
         SleepStreamResponse: SleepStreamResponse.fromJson,

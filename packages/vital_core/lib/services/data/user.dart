@@ -40,7 +40,8 @@ class ConnectedSource {
     this.createdOn,
   });
 
-  factory ConnectedSource.fromJson(Map<String, dynamic> json) => _$ConnectedSourceFromJson(json);
+  factory ConnectedSource.fromJson(Map<String, dynamic> json) =>
+      _$ConnectedSourceFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -77,7 +78,8 @@ class RefreshResponse {
     this.failedSources = const [],
   });
 
-  factory RefreshResponse.fromJson(Map<String, dynamic> json) => _$RefreshResponseFromJson(json);
+  factory RefreshResponse.fromJson(Map<String, dynamic> json) =>
+      _$RefreshResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -88,7 +90,8 @@ class ProvidersResponse {
     this.providers = const [],
   });
 
-  factory ProvidersResponse.fromJson(Map<String, dynamic> json) => _$ProvidersResponseFromJson(json);
+  factory ProvidersResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProvidersResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -106,7 +109,8 @@ class CreateUserResponse {
     this.clientUserId,
   });
 
-  factory CreateUserResponse.fromJson(Map<String, dynamic> json) => _$CreateUserResponseFromJson(json);
+  factory CreateUserResponse.fromJson(Map<String, dynamic> json) =>
+      _$CreateUserResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -119,7 +123,8 @@ class DeleteUserResponse {
     this.error,
   });
 
-  factory DeleteUserResponse.fromJson(Map<String, dynamic> json) => _$DeleteUserResponseFromJson(json);
+  factory DeleteUserResponse.fromJson(Map<String, dynamic> json) =>
+      _$DeleteUserResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -130,7 +135,8 @@ class DeregisterProviderResponse {
     this.success = false,
   });
 
-  factory DeregisterProviderResponse.fromJson(Map<String, dynamic> json) => _$DeregisterProviderResponseFromJson(json);
+  factory DeregisterProviderResponse.fromJson(Map<String, dynamic> json) =>
+      _$DeregisterProviderResponseFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)

@@ -157,7 +157,7 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
           arguments[2]);
     case 'successSyncing':
       final resource =
-      HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
+          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
       return SyncStatusSuccessSyncing(
         resource,
         fromArgument(resource, arguments[2]),

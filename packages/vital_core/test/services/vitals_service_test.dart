@@ -14,7 +14,8 @@ void main() {
   group('Vitals service', () {
     test('Get cholesterol', () async {
       for (final type in CholesterolType.values) {
-        final httpClient = createVitalsClient('/timeseries/$userId/cholesterol/${type.name}');
+        final httpClient =
+            createVitalsClient('/timeseries/$userId/cholesterol/${type.name}');
 
         final sut = VitalsService.create(httpClient, '', apiKey);
         final response = await sut.getCholesterol(
