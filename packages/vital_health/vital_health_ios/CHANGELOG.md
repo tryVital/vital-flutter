@@ -1,3 +1,10 @@
+## 0.5.0-alpha.7
+
+ - **FIX**: VIT-2228 expose missing classes from vital health ([#25](https://github.com/tryVital/vital-flutter/issues/25)).
+ - **FEAT**: VIT-2193 expose all resources ([#23](https://github.com/tryVital/vital-flutter/issues/23)).
+ - **FEAT**: VIT-2016 change cleanup ([#20](https://github.com/tryVital/vital-flutter/issues/20)).
+ - **FEAT**: federate plugins ([#18](https://github.com/tryVital/vital-flutter/issues/18)).
+
 ## 0.5.0-alpha.6
 
 - Bump VitalHealthKit version
