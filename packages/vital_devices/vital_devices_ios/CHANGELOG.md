@@ -1,3 +1,7 @@
+## 0.5.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
 ## 0.5.0-alpha.3
 
  - **FEAT**: VIT-2193 expose all resources ([#23](https://github.com/tryVital/vital-flutter/issues/23)).
