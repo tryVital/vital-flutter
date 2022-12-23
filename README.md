@@ -19,6 +19,12 @@ For more example usage run the sample app with your API key and Region set in `m
 Please refer to the [official Vital](https://docs.tryvital.io/welcome/libraries) docs provide a full reference on using
 this library.
 
+## Development
+
+To start you need to run `melos bootstrap` to install all dependencies and link the packages together.
+
+If you want to release a new version run `melos version` then `melos publish --no-published --no-dry-run`
+
 ## License
 
 vital-flutter is available under the AGPLv3 license. See the LICENSE file for more info. VitalDevices is under
