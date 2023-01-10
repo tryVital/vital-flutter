@@ -385,6 +385,13 @@ packages:
       relative: true
     source: path
     version: "0.5.0"
+  vital_health_android:
+    dependency: "direct overridden"
+    description:
+      path: "../packages/vital_health/vital_health_android"
+      relative: true
+    source: path
+    version: "0.5.0"
   vital_health_ios:
     dependency: "direct overridden"
     description:

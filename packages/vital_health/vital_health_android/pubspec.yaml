@@ -1,5 +1,5 @@
-name: vital_health_ios
-description: The ios implementation of Vital Health.
+name: vital_health_android
+description: The Android implementation of Vital Health.
 version: 0.5.0
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
@@ -12,9 +12,10 @@ flutter:
   plugin:
     implements: vital_health
     platforms:
-      ios:
-        dartPluginClass: VitalHealthIos
+      android:
+        package: io.vital
         pluginClass: VitalHealthPlugin
+
 
 dependencies:
   flutter:
