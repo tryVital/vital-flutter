@@ -107,7 +107,6 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                             ).toString()
                         )
                     }
-
                 }
             }
             result.success(null)

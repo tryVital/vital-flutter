@@ -10,6 +10,7 @@ const _channel = MethodChannel('vital_health_kit');
 
 class VitalHealthIos extends VitalHealthPlatform {
   static void registerWith() {
+    print("register with ios health");
     VitalHealthPlatform.instance = VitalHealthIos();
   }
 
@@ -56,19 +57,13 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<void> configureHealthkit({
-    bool backgroundDeliveryEnabled = false,
-    bool logsEnabled = true,
-    int numberOfDaysToBackFill = 90,
-    String dataPushMode = "automatic",
-  }) async {
-    Fimber.d(
-        'Healthkit configureHealthkit $backgroundDeliveryEnabled, $logsEnabled, $numberOfDaysToBackFill, $dataPushMode');
+  Future<void> configureHealth({required HealthConfig config}) async {
+    Fimber.d('Healthkit configureHealthKit $config');
     await _channel.invokeMethod('configureHealthkit', [
-      backgroundDeliveryEnabled,
-      logsEnabled,
-      numberOfDaysToBackFill,
-      dataPushMode
+      config.iosConfig.backgroundDeliveryEnabled,
+      config.logsEnabled,
+      config.numberOfDaysToBackFill,
+      config.iosConfig.dataPushMode
     ]);
     _healthKitConfigured = true;
     if (_statusSubscribed) {
@@ -135,7 +130,7 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
+  Future<void> writeHealthData(HealthkitResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
     return await _channel.invokeMethod('writeHealthKitData', [
       writeResource.name,

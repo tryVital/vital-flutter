@@ -46,7 +46,13 @@ class HomeBloc {
 
   void _connectHealthPlatform() async {
     await healthkitServices.configureClient();
-    await healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
+    await healthkitServices.configureHealth(
+      config: const HealthConfig(
+        iosConfig: IosHealthConfig(
+          backgroundDeliveryEnabled: true,
+        ),
+      ),
+    );
   }
 
   void askForHealthResources() {
@@ -60,10 +66,6 @@ class HomeBloc {
       HealthkitResource.sleep,
       HealthkitResource.water
     ]);
-  }
-
-  Future<bool> hasPermissionForSleep() async {
-    return healthkitServices.hasAskedForPermission(HealthkitResource.sleep);
   }
 
   void selectUser(User user) async {

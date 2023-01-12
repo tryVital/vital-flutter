@@ -1,8 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:vital_core/vital_core.dart';
-import 'package:vital_health_platform_interface/src/data/permission_outcome.dart';
-import 'package:vital_health_platform_interface/src/data/sync_data.dart';
-import 'package:vital_health_platform_interface/src/healthkit_resource.dart';
+import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 class VitalHealthPlatform extends PlatformInterface {
   static final Object _token = Object();
@@ -25,12 +23,7 @@ class VitalHealthPlatform extends PlatformInterface {
           String apiKey, Region region, Environment environment) =>
       throw UnimplementedError('configureClient() has not been implemented.');
 
-  Future<void> configureHealthkit({
-    bool backgroundDeliveryEnabled = false,
-    bool logsEnabled = true,
-    int numberOfDaysToBackFill = 90,
-    String dataPushMode = "automatic",
-  }) =>
+  Future<void> configureHealth({required HealthConfig config}) =>
       throw UnimplementedError(
           'configureHealthkit() has not been implemented.');
 
@@ -60,7 +53,7 @@ class VitalHealthPlatform extends PlatformInterface {
     throw UnimplementedError('isUserConnected() has not been implemented.');
   }
 
-  writeHealthKitData(HealthkitResourceWrite writeResource, DateTime startDate,
+  writeHealthData(HealthkitResourceWrite writeResource, DateTime startDate,
       DateTime endDate, double value) {
     throw UnimplementedError('writeHealthKitData() has not been implemented.');
   }

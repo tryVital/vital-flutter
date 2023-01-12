@@ -21,18 +21,10 @@ class HealthkitServices {
         .configureClient(apiKey, region, environment);
   }
 
-  Future<void> configureHealthkit({
-    bool backgroundDeliveryEnabled = false,
-    bool logsEnabled = true,
-    int numberOfDaysToBackFill = 90,
-    String dataPushMode = "automatic",
+  Future<void> configureHealth({
+    HealthConfig config = const HealthConfig(),
   }) async {
-    await VitalHealthPlatform.instance.configureHealthkit(
-      backgroundDeliveryEnabled: backgroundDeliveryEnabled,
-      logsEnabled: logsEnabled,
-      numberOfDaysToBackFill: numberOfDaysToBackFill,
-      dataPushMode: dataPushMode,
-    );
+    await VitalHealthPlatform.instance.configureHealth(config: config);
   }
 
   Future<void> setUserId(String userId) async {
@@ -64,7 +56,7 @@ class HealthkitServices {
   Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
     await VitalHealthPlatform.instance
-        .writeHealthKitData(writeResource, startDate, endDate, value);
+        .writeHealthData(writeResource, startDate, endDate, value);
   }
 
   Future<void> cleanUp() async {
