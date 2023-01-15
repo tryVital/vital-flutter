@@ -26,7 +26,7 @@ void main() {
     );
 
   final DeviceManager deviceManager = DeviceManager();
-  final HealthkitServices healthkitServices = HealthkitServices(
+  final HealthServices healthkitServices = HealthServices(
     apiKey: apiKey,
     region: region,
     environment: Environment.sandbox,
@@ -41,7 +41,7 @@ class VitalSampleApp extends StatelessWidget {
   final VitalClient vitalClient;
 
   final DeviceManager deviceManager;
-  final HealthkitServices healthkitServices;
+  final HealthServices healthkitServices;
 
   const VitalSampleApp({
     super.key,

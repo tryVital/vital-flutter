@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
-class HealthkitServices {
+class HealthServices {
   final String apiKey;
   final Region region;
   final Environment environment;
 
-  HealthkitServices({
+  HealthServices({
     required this.apiKey,
     required this.region,
     required this.environment,
@@ -31,6 +31,7 @@ class HealthkitServices {
     await VitalHealthPlatform.instance.setUserId(userId);
   }
 
+  @Deprecated('Use ask() instead')
   Future<PermissionOutcome> askForResources(
       List<HealthkitResource> resources) async {
     return VitalHealthPlatform.instance.askForResources(resources);
@@ -53,7 +54,7 @@ class HealthkitServices {
     return VitalHealthPlatform.instance.isUserConnected(provider);
   }
 
-  Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
+  Future<void> writeHealthData(HealthkitResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
     await VitalHealthPlatform.instance
         .writeHealthData(writeResource, startDate, endDate, value);

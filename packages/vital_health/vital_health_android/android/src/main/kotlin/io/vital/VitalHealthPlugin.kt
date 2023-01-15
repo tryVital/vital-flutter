@@ -3,6 +3,7 @@ package io.vital
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.*
@@ -18,8 +19,10 @@ import io.tryvital.client.Region
 import io.tryvital.client.VitalClient
 import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitalhealthconnect.VitalHealthConnectManager
+import io.tryvital.vitalhealthconnect.model.HealthResource
 import io.tryvital.vitalhealthconnect.model.SyncStatus
 import kotlinx.coroutines.*
+import java.time.Instant
 import kotlin.reflect.KClass
 import io.flutter.plugin.common.MethodChannel.Result
 
@@ -33,12 +36,14 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private var vitalClient: VitalClient? = null
     private var vitalHealthConnectManager: VitalHealthConnectManager? = null
-    private var mainScope: CoroutineScope? = null
-    private var statusScope: CoroutineScope? = null
     private var activity: Activity? = null
 
     private var askForResourcesResult: Result? = null
     private var askedHealthPermissions: Set<HealthPermission>? = null
+
+    private var mainScope: CoroutineScope? = null
+    private var statusScope: CoroutineScope? = null
+    private var writeScope: CoroutineScope? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_health_connect")
@@ -55,21 +60,25 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                     vitalHealthConnectManager?.status?.collect {
                         withContext(Dispatchers.Main) {
                             when (it) {
-                                SyncStatus.FailedSyncing -> channel.invokeMethod(
+                                is SyncStatus.ResourceSyncFailed -> channel.invokeMethod(
                                     "status",
-                                    listOf("failedSyncing", "profile")
+                                    listOf("failedSyncing", it.resource.name)
                                 )
-                                SyncStatus.NothingToSync -> channel.invokeMethod(
+                                is SyncStatus.ResourceNothingToSync -> channel.invokeMethod(
                                     "status",
-                                    listOf("nothingToSync","profile")
+                                    listOf("nothingToSync", it.resource.name)
                                 )
-                                SyncStatus.Syncing -> channel.invokeMethod(
+                                is SyncStatus.ResourceSyncing -> channel.invokeMethod(
                                     "status",
-                                    listOf("syncing","profile")
+                                    listOf("syncing", it.resource.name)
+                                )
+                                is SyncStatus.ResourceSyncingComplete -> channel.invokeMethod(
+                                    "status",
+                                    listOf("successSyncing", it.resource.name)
                                 )
                                 SyncStatus.SyncingCompleted -> channel.invokeMethod(
                                     "status",
-                                    listOf("syncingCompleted","profile")
+                                    listOf("syncingCompleted")
                                 )
                                 SyncStatus.Unknown -> channel.invokeMethod(
                                     "status",
@@ -82,7 +91,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     channel.invokeMethod(
-                        "unknown", listOf("failedSyncing",)
+                        "unknown", listOf("failedSyncing")
                     )
                 }
             }
@@ -116,18 +125,25 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             "cleanUp" -> {
                 cleanUp(call, result)
             }
+            "writeHealthData" -> {
+                writeHealthData(call, result)
+            }
 
             else -> throw Exception("Unsupported method ${call.method}")
         }
     }
 
     private fun askForResources(call: MethodCall, result: Result) {
-        val resources = call.argument<List<String>>("readResources") ?: emptyList<String>()
+        val readResources = call.argument<List<String>>("readResources") ?: emptyList<String>()
+        val writeResources = call.argument<List<String>>("writeResources") ?: emptyList<String>()
 
         val requestPermissionActivityContract =
             PermissionController.createRequestPermissionResultContract()
-        val healthPermissions = resources.map { mapResourceToHealthRecord(it) }.flatten()
-            .map { HealthPermission.createReadPermission(it) }.toSet()
+        val healthPermissions = readResources.map { mapReadResourceToHealthRecord(it) }.flatten()
+            .map { HealthPermission.createReadPermission(it) }.toSet().plus(
+                writeResources.map { mapWriteResourceToHealthRecord(it) }.flatten()
+                    .map { HealthPermission.createWritePermission(it) }.toSet()
+            )
 
         askForResourcesResult = result
         askedHealthPermissions = healthPermissions
@@ -162,7 +178,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         return false
     }
 
-    private fun syncData(call: MethodCall, result: Result) {
+
+    private fun writeHealthData(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
             result.error(
                 "VitalHealthConnect is configured",
@@ -172,13 +189,48 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             return
         }
 
+        writeScope?.cancel()
+        writeScope = MainScope()
+        writeScope!!.launch {
+            try {
+                vitalHealthConnectManager!!.addHealthResource(
+                    mapStringToHealthResource(
+                        call.argument<String>(
+                            "resource"
+                        )!!
+                    )!!,
+                    startDate = Instant.ofEpochMilli(call.argument("startDate")!!),
+                    endDate = Instant.ofEpochMilli(call.argument("endDate")!!),
+                    value = call.argument("value")!!,
+                )
+            } catch (e: Exception) {
+                result.error(
+                    "Failed to write data",
+                    e.message,
+                    e
+                )
+            }
+        }
+    }
+
+
+    private fun syncData(call: MethodCall, result: Result) {
+        if (vitalHealthConnectManager == null) {
+            result.error(
+                "VitalHealthConnect is not configured",
+                "VitalHealthConnect is not configured",
+                null
+            )
+            return
+        }
+
         mainScope?.cancel()
         mainScope = MainScope()
         mainScope!!.launch {
+            val resources = call.argument<List<String>>("resources") ?: emptyList<String>()
+
             vitalHealthConnectManager!!.syncData(
-                vitalHealthConnectManager!!.getGrantedPermissions(
-                    context
-                )
+                resources.mapNotNull { mapStringToHealthResource(it) }.toSet()
             )
         }
     }
@@ -281,20 +333,55 @@ private fun stringToEnvironment(environment: String): Environment {
     throw Exception("Unsupported environment $environment")
 }
 
-private fun mapResourceToHealthRecord(resource: String): List<KClass<out Record>> {
+private fun mapReadResourceToHealthRecord(resource: String): List<KClass<out Record>> {
     when (resource) {
         "profile" -> return listOf(HeightRecord::class, WeightRecord::class)
         "body" -> return listOf(BodyFatRecord::class)
         "workout" -> return listOf(ExerciseSessionRecord::class)
-        "activity" -> return listOf()
+        "activity" -> return listOf(
+            ActiveCaloriesBurnedRecord::class,
+            BasalMetabolicRateRecord::class,
+            StepsRecord::class,
+            DistanceRecord::class,
+            FloorsClimbedRecord::class,
+            Vo2MaxRecord::class
+        )
         "sleep" -> return listOf(SleepSessionRecord::class)
-        "glucose" -> return listOf(BloodGlucoseRecord::class) // TODO this is missing in android
+        "glucose" -> return listOf(BloodGlucoseRecord::class)
         "bloodPressure" -> return listOf(BloodPressureRecord::class)
         "heartRate" -> return listOf(HeartRateVariabilitySdnnRecord::class)
         "steps" -> return listOf(StepsRecord::class)
         "activeEnergyBurned" -> return listOf(ActiveCaloriesBurnedRecord::class)
         "basalEnergyBurned" -> return listOf(BasalMetabolicRateRecord::class)
-        "water" -> return listOf()
+        "water" -> return listOf(HydrationRecord::class)
     }
     return listOf()
 }
+
+private fun mapWriteResourceToHealthRecord(resource: String): List<KClass<out Record>> {
+    when (resource) {
+        "water" -> return listOf(HydrationRecord::class)
+    }
+
+    return listOf()
+}
+
+
+private fun mapStringToHealthResource(resource: String): HealthResource? {
+    return when (resource) {
+        "profile" -> return HealthResource.Profile
+        "body" -> return HealthResource.Body
+        "workout" -> return HealthResource.Workout
+        "activity" -> return HealthResource.Activity
+        "sleep" -> return HealthResource.Sleep
+        "glucose" -> return HealthResource.Glucose
+        "bloodPressure" -> return HealthResource.BloodPressure
+        "heartRate" -> return HealthResource.HeartRate
+        "steps" -> return HealthResource.Steps
+        "activeEnergyBurned" -> return HealthResource.ActiveEnergyBurned
+        "basalEnergyBurned" -> return HealthResource.BasalEnergyBurned
+        "water" -> return HealthResource.Water
+        else -> null
+    }
+}
+

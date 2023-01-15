@@ -30,6 +30,7 @@ class VitalHealthPlatform extends PlatformInterface {
   Future<void> setUserId(String userId) =>
       throw UnimplementedError('setUserId() has not been implemented.');
 
+  @Deprecated('Use ask() instead')
   Future<PermissionOutcome> askForResources(
           List<HealthkitResource> resources) =>
       throw UnimplementedError('askForResources() has not been implemented.');

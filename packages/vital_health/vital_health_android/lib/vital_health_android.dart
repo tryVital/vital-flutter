@@ -22,9 +22,11 @@ class VitalHealthAndroid extends VitalHealthPlatform {
 
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
-        case "status":{
-          _statusSubject.add(mapArgumentsToStatus(call.arguments as List<dynamic>));
-        }
+        case "status":
+          {
+            _statusSubject
+                .add(mapArgumentsToStatus(call.arguments as List<dynamic>));
+          }
       }
     });
 
@@ -98,12 +100,12 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   @override
   Future<void> writeHealthData(HealthkitResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
-    await _channel.invokeMethod('writeHealthData', [
-      writeResource.name,
-      startDate.millisecondsSinceEpoch,
-      endDate.millisecondsSinceEpoch,
-      value,
-    ]);
+    await _channel.invokeMethod('writeHealthData', <String, dynamic>{
+      "resource": writeResource.name,
+      "startDate": startDate.millisecondsSinceEpoch,
+      "endDate": endDate.millisecondsSinceEpoch,
+      "value": value,
+    });
   }
 
   @override
@@ -118,7 +120,7 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
           arguments[2]);
     case 'successSyncing':
       final resource =
-      HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
+          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
       return SyncStatusSuccessSyncing(
         resource,
         fromArgument(resource, arguments[2]),
