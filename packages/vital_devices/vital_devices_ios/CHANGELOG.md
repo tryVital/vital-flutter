@@ -1,3 +1,7 @@
+## 0.5.1
+
+ - **FEAT**: expose all the resource types.
+
 ## 0.5.0
 
  - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
