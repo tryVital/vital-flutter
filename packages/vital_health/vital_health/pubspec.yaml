@@ -13,6 +13,8 @@ flutter:
     platforms:
       ios:
         default_package: vital_health_ios
+      android:
+        default_package: vital_health_android
 
 dependencies:
   flutter:
@@ -22,6 +24,8 @@ dependencies:
   vital_core: ^0.5.0
   vital_health_platform_interface: ^0.5.0
   vital_health_ios: ^0.5.0
+  vital_health_android: ^0.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

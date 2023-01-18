@@ -1,4 +1,4 @@
-group 'io.vital.devices'
+group 'io.vital.health'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -30,7 +30,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 26
     }
 
     compileOptions {
@@ -51,6 +51,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    implementation 'com.github.tryVital.vital-android:VitalClient:v1.0.0-alpha.7'
-    implementation 'com.github.tryVital.vital-android:VitalDevices:v1.0.0-alpha.7'
+    implementation 'com.github.tryVital.vital-android:VitalClient:v1.0.0-alpha.16'
+    implementation 'com.github.tryVital.vital-android:VitalHealthConnect:v1.0.0-alpha.16'
+    implementation "androidx.health.connect:connect-client:1.0.0-alpha08"
+
 }

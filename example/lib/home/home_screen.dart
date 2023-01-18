@@ -55,6 +55,7 @@ class UsersPage extends StatelessWidget {
                     linkAction: () => bloc.launchLink(users[index]),
                     deleteAction: () => bloc.deleteUser(users[index]),
                     onTap: () => bloc.selectUser(users[index]),
+                    waterAction: () => bloc.water(users[index]),
                   )),
               itemCount: users.length,
             )),
@@ -124,6 +125,7 @@ class UserWidget extends StatelessWidget {
   final VoidCallback? linkAction;
   final VoidCallback? deleteAction;
   final VoidCallback? onTap;
+  final VoidCallback? waterAction;
 
   const UserWidget({
     Key? key,
@@ -131,6 +133,7 @@ class UserWidget extends StatelessWidget {
     this.linkAction,
     this.deleteAction,
     this.onTap,
+    this.waterAction,
   }) : super(key: key);
 
   @override
@@ -153,6 +156,11 @@ class UserWidget extends StatelessWidget {
                 style: const TextStyle(fontSize: 18.0),
               ),
             ),
+            if (waterAction != null)
+              IconButton(
+                onPressed: waterAction,
+                icon: const Icon(Icons.water_drop_outlined),
+              ),
             if (linkAction != null) ...[
               const SizedBox(width: 12),
               IconButton(

@@ -1,10 +1,7 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:vital_core/vital_core.dart';
-import 'package:vital_health_platform_interface/src/data/permission_outcome.dart';
-import 'package:vital_health_platform_interface/src/data/sync_data.dart';
-import 'package:vital_health_platform_interface/src/healthkit_resource.dart';
+import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
-///TODO temporarily this is no op rather than throwing exceptions until android is added
 class VitalHealthPlatform extends PlatformInterface {
   static final Object _token = Object();
 
@@ -19,42 +16,46 @@ class VitalHealthPlatform extends PlatformInterface {
 
   static VitalHealthPlatform get instance => _instance;
 
-  Stream<SyncStatus> get status => Stream.empty();
+  Stream<SyncStatus> get status =>
+      throw UnimplementedError('status() has not been implemented.');
 
   Future<void> configureClient(
-      String apiKey, Region region, Environment environment) async {}
+          String apiKey, Region region, Environment environment) =>
+      throw UnimplementedError('configureClient() has not been implemented.');
 
-  Future<void> configureHealthkit({
-    bool backgroundDeliveryEnabled = false,
-    bool logsEnabled = true,
-    int numberOfDaysToBackFill = 90,
-    String dataPushMode = "automatic",
-  }) async {}
+  Future<void> configureHealth({required HealthConfig config}) =>
+      throw UnimplementedError(
+          'configureHealthkit() has not been implemented.');
 
-  Future<void> setUserId(String userId) async {}
+  Future<void> setUserId(String userId) =>
+      throw UnimplementedError('setUserId() has not been implemented.');
 
+  @Deprecated('Use ask() instead')
   Future<PermissionOutcome> askForResources(
-      List<HealthkitResource> resources) async {
-    return PermissionOutcome.success();
-  }
+          List<HealthkitResource> resources) =>
+      throw UnimplementedError('askForResources() has not been implemented.');
 
   Future<PermissionOutcome> ask(List<HealthkitResource> readResources,
       List<HealthkitResourceWrite> writeResources) async {
-    return PermissionOutcome.success();
+    throw UnimplementedError('ask() has not been implemented.');
   }
 
-  Future<bool> hasAskedForPermission(HealthkitResource resource) async {
-    return false;
+  Future<bool> hasAskedForPermission(HealthkitResource resource) =>
+      throw UnimplementedError(
+          'hasAskedForPermission() has not been implemented.');
+
+  Future<void> syncData({List<HealthkitResource>? resources}) =>
+      throw UnimplementedError('syncData() has not been implemented.');
+
+  Future<void> cleanUp() =>
+      throw UnimplementedError('cleanUp() has not been implemented.');
+
+  Future<bool> isUserConnected(String provider) {
+    throw UnimplementedError('isUserConnected() has not been implemented.');
   }
 
-  Future<void> syncData({List<HealthkitResource>? resources}) async {}
-
-  Future<bool> isUserConnected(String provider) async {
-    return false;
+  writeHealthData(HealthkitResourceWrite writeResource, DateTime startDate,
+      DateTime endDate, double value) {
+    throw UnimplementedError('writeHealthKitData() has not been implemented.');
   }
-
-  Future<void> cleanUp() async {}
-
-  Future<void> writeHealthKitData(HealthkitResourceWrite writeResource,
-      DateTime startDate, DateTime endDate, double value) async {}
 }

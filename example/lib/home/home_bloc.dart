@@ -6,7 +6,7 @@ import 'package:vital_health/vital_health.dart';
 
 class HomeBloc {
   final VitalClient client;
-  final HealthkitServices healthkitServices;
+  final HealthServices healthkitServices;
 
   final StreamController<List<User>> usersController = StreamController();
   final StreamController<User?> selectedUserController = StreamController();
@@ -46,11 +46,17 @@ class HomeBloc {
 
   void _connectHealthPlatform() async {
     await healthkitServices.configureClient();
-    await healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
+    await healthkitServices.configureHealth(
+      config: const HealthConfig(
+        iosConfig: IosHealthConfig(
+          backgroundDeliveryEnabled: true,
+        ),
+      ),
+    );
   }
 
   void askForHealthResources() {
-    healthkitServices.askForResources([
+    healthkitServices.ask([
       HealthkitResource.profile,
       HealthkitResource.body,
       HealthkitResource.activity,
@@ -59,11 +65,7 @@ class HomeBloc {
       HealthkitResource.glucose,
       HealthkitResource.sleep,
       HealthkitResource.water
-    ]);
-  }
-
-  Future<bool> hasPermissionForSleep() async {
-    return healthkitServices.hasAskedForPermission(HealthkitResource.sleep);
+    ], []);
   }
 
   void selectUser(User user) async {
@@ -72,14 +74,14 @@ class HomeBloc {
 
     final userId = _selectedUser?.userId;
     if (userId != null) {
-      await healthkitServices.setUserId("71639293-968e-4aa6-a41a-a5c7548f47e5");
+      await healthkitServices.setUserId(userId);
     }
   }
 
   void syncHealthPlatform() async {
     final userId = _selectedUser?.userId;
     if (userId != null) {
-      await healthkitServices.setUserId("71639293-968e-4aa6-a41a-a5c7548f47e5");
+      await healthkitServices.setUserId(userId);
       healthkitServices.syncData();
     }
   }
@@ -89,4 +91,9 @@ class HomeBloc {
       });
 
   Stream<User?> get selectedUser => selectedUserController.stream;
+
+  water(User user) {
+    healthkitServices.writeHealthData(
+        HealthkitResourceWrite.water, DateTime.now(), DateTime.now(), 100);
+  }
 }
