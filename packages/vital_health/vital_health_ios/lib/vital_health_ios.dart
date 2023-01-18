@@ -10,7 +10,6 @@ const _channel = MethodChannel('vital_health_kit');
 
 class VitalHealthIos extends VitalHealthPlatform {
   static void registerWith() {
-    print("register with ios health");
     VitalHealthPlatform.instance = VitalHealthIos();
   }
 
