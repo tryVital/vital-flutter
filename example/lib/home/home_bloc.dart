@@ -64,8 +64,12 @@ class HomeBloc {
       HealthkitResource.bloodPressure,
       HealthkitResource.glucose,
       HealthkitResource.sleep,
-      HealthkitResource.water
-    ], []);
+      HealthkitResource.water,
+      HealthkitResource.caffeine
+    ], [
+      HealthkitResourceWrite.water,
+      HealthkitResourceWrite.caffeine
+    ]);
   }
 
   void selectUser(User user) async {
@@ -92,8 +96,13 @@ class HomeBloc {
 
   Stream<User?> get selectedUser => selectedUserController.stream;
 
-  water(User user) {
+  void water(User user) {
     healthkitServices.writeHealthData(
         HealthkitResourceWrite.water, DateTime.now(), DateTime.now(), 100);
+  }
+
+  void caffeine(User user) {
+    healthkitServices.writeHealthData(
+        HealthkitResourceWrite.caffeine, DateTime.now(), DateTime.now(), 100);
   }
 }

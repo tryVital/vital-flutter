@@ -128,6 +128,8 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       switch resource {
         case .nutrition(.water):
           dataInput = .water(milliliters: Int(value))
+        case .nutrition(.caffeine):
+          dataInput = .caffeine(grams: Int(value))
         default:
           fatalError("\(resource) not supported for writing to HealthKit")
       }
@@ -327,6 +329,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
       switch type {
         case .water:
           return "water"
+        case .caffeine:
+          return "caffeine"
       }
   }
 }
@@ -412,6 +416,8 @@ private func mapResourceToVitalResource(_ name: String) throws -> VitalResource 
       return .individual(.bodyFat)
     case "water":
       return .nutrition(.water)
+    case "caffeine":
+      return .nutrition(.caffeine)
     default:
       throw VitalError.UnsupportedResource(name)
   }
@@ -421,6 +427,8 @@ private func mapResourceToWritableVitalResource(_ name: String) throws -> Writab
   switch name {
     case "water":
       return .water
+    case "caffeine":
+      return .caffeine
     default:
       throw VitalError.UnsupportedResource(name)
   }

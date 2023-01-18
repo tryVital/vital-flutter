@@ -11,6 +11,10 @@ enum HealthkitResource {
   activeEnergyBurned,
   basalEnergyBurned,
   water,
+  caffeine,
 }
 
-enum HealthkitResourceWrite { water }
+enum HealthkitResourceWrite {
+  water,
+  caffeine, // Not available on Android
+}
