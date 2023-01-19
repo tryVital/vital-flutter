@@ -103,6 +103,10 @@ Object? fromArgument(HealthkitResource resource, String argument) {
       return (jsonDecode(argument) as List)
           .map((e) => QuantitySample.fromJson(e))
           .toList();
+    case HealthkitResource.caffeine:
+      return (jsonDecode(argument) as List)
+          .map((e) => QuantitySample.fromJson(e))
+          .toList();
     default:
       return null;
   }
