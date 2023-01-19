@@ -1,3 +1,7 @@
+## 0.6.1
+
+ - **FEAT**: VIT-2334 add caffeine resource ([#27](https://github.com/tryVital/vital-flutter/issues/27)).
+
 ## 0.6.0
 
 > Note: This release has breaking changes.
