@@ -116,7 +116,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   private func writeHealthKitData(_ arguments: [AnyObject], result: @escaping FlutterResult){
     do {
       let resourceString: String = arguments[0] as! String
-      let resource = try mapResourceToVitalResource(resourceString)
+      let resource = try mapResourceToReadableVitalResource(resourceString)
 
       let value: Double = arguments[1] as! Double
 
@@ -130,6 +130,8 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
           dataInput = .water(milliliters: Int(value))
         case .nutrition(.caffeine):
           dataInput = .caffeine(grams: Int(value))
+        case .vitals(.mindfulSession):
+          dataInput = .mindfulSession
         default:
           fatalError("\(resource) not supported for writing to HealthKit")
       }
@@ -183,7 +185,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
 
   private func hasAskedForPermission(resource: String, result: @escaping FlutterResult) {
     do {
-      let resource = try mapResourceToVitalResource(resource)
+      let resource = try mapResourceToReadableVitalResource(resource)
       let value: Bool = VitalHealthKitClient.shared.hasAskedForPermission(resource: resource)
       result(value)
     } catch VitalError.UnsupportedResource(let errorMessage) {
@@ -199,7 +201,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let writeResourcesString: [String] = arguments[1] as! [String]
 
     Task {
-      let readResources = readResourcesString.map { try! mapResourceToVitalResource($0) }
+      let readResources = readResourcesString.map { try! mapResourceToReadableVitalResource($0) }
       let writeResources = writeResourcesString.map { try! mapResourceToWritableVitalResource($0) }
 
       let outcome = await VitalHealthKitClient.shared.ask(readPermissions: readResources, writePermissions: writeResources)
@@ -217,7 +219,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   private func syncData(resources: [String]?, result: @escaping FlutterResult){
     do {
       if let res = resources {
-        try VitalHealthKitClient.shared.syncData(for: res.map { try mapResourceToVitalResource($0) })
+        try VitalHealthKitClient.shared.syncData(for: res.map { try mapResourceToReadableVitalResource($0) })
       } else {
         VitalHealthKitClient.shared.syncData()
       }
@@ -304,6 +306,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
           return "bloodPressure"
         case .hearthRate:
           return "heartRate"
+        case .mindfulSession:
+          return "mindfulSession"
       }
     case .individual(let type):
       switch type {
@@ -380,7 +384,7 @@ private func mapToMode(_ mode: String) throws -> VitalHealthKitClient.Configurat
   }
 }
 
-private func mapResourceToVitalResource(_ name: String) throws -> VitalResource {
+private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalResource {
   switch name {
     case "profile":
       return .profile
@@ -398,6 +402,8 @@ private func mapResourceToVitalResource(_ name: String) throws -> VitalResource 
       return .vitals(.bloodPressure)
     case "heartRate":
       return .vitals(.hearthRate)
+    case "mindfulSession":
+      return .vitals(.mindfulSession)
     case "steps":
       return .individual(.steps)
     case "activeEnergyBurned":
@@ -429,6 +435,8 @@ private func mapResourceToWritableVitalResource(_ name: String) throws -> Writab
       return .water
     case "caffeine":
       return .caffeine
+    case "mindfulSession":
+      return .mindfulSession
     default:
       throw VitalError.UnsupportedResource(name)
   }

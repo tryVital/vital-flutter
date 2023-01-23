@@ -25,26 +25,26 @@ class VitalHealthPlatform extends PlatformInterface {
 
   Future<void> configureHealth({required HealthConfig config}) =>
       throw UnimplementedError(
-          'configureHealthkit() has not been implemented.');
+          'configureHealth() has not been implemented.');
 
   Future<void> setUserId(String userId) =>
       throw UnimplementedError('setUserId() has not been implemented.');
 
   @Deprecated('Use ask() instead')
   Future<PermissionOutcome> askForResources(
-          List<HealthkitResource> resources) =>
+          List<HealthResource> resources) =>
       throw UnimplementedError('askForResources() has not been implemented.');
 
-  Future<PermissionOutcome> ask(List<HealthkitResource> readResources,
-      List<HealthkitResourceWrite> writeResources) async {
+  Future<PermissionOutcome> ask(List<HealthResource> readResources,
+      List<HealthResourceWrite> writeResources) async {
     throw UnimplementedError('ask() has not been implemented.');
   }
 
-  Future<bool> hasAskedForPermission(HealthkitResource resource) =>
+  Future<bool> hasAskedForPermission(HealthResource resource) =>
       throw UnimplementedError(
           'hasAskedForPermission() has not been implemented.');
 
-  Future<void> syncData({List<HealthkitResource>? resources}) =>
+  Future<void> syncData({List<HealthResource>? resources}) =>
       throw UnimplementedError('syncData() has not been implemented.');
 
   Future<void> cleanUp() =>
@@ -54,8 +54,8 @@ class VitalHealthPlatform extends PlatformInterface {
     throw UnimplementedError('isUserConnected() has not been implemented.');
   }
 
-  writeHealthData(HealthkitResourceWrite writeResource, DateTime startDate,
+  writeHealthData(HealthResourceWrite writeResource, DateTime startDate,
       DateTime endDate, double value) {
-    throw UnimplementedError('writeHealthKitData() has not been implemented.');
+    throw UnimplementedError('writeHealthData() has not been implemented.');
   }
 }

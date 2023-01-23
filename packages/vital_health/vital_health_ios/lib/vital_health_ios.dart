@@ -83,13 +83,13 @@ class VitalHealthIos extends VitalHealthPlatform {
 
   @override
   Future<PermissionOutcome> askForResources(
-      List<HealthkitResource> resources) async {
+      List<HealthResource> resources) async {
     return ask(resources, []);
   }
 
   @override
-  Future<PermissionOutcome> ask(List<HealthkitResource> readResources,
-      List<HealthkitResourceWrite> writeResources) async {
+  Future<PermissionOutcome> ask(List<HealthResource> readResources,
+      List<HealthResourceWrite> writeResources) async {
     final outcome = await _channel.invokeMethod('ask', [
       readResources.map((it) => it.name).toList(),
       writeResources.map((it) => it.name).toList()
@@ -112,13 +112,13 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<void> syncData({List<HealthkitResource>? resources}) async {
+  Future<void> syncData({List<HealthResource>? resources}) async {
     await _channel.invokeMethod(
         'syncData', resources?.map((it) => it.name).toList());
   }
 
   @override
-  Future<bool> hasAskedForPermission(HealthkitResource resource) async {
+  Future<bool> hasAskedForPermission(HealthResource resource) async {
     return await _channel.invokeMethod('hasAskedForPermission', resource.name)
         as bool;
   }
@@ -129,8 +129,9 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<void> writeHealthData(HealthkitResourceWrite writeResource,
+  Future<void> writeHealthData(HealthResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
+    print('writeHealthData $writeResource $startDate $endDate $value');
     return await _channel.invokeMethod('writeHealthKitData', [
       writeResource.name,
       value,
@@ -147,21 +148,21 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
   switch (arguments[0] as String) {
     case 'failedSyncing':
       return SyncStatusFailed(
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]),
+          HealthResource.values.firstWhere((it) => it.name == arguments[1]),
           arguments[2]);
     case 'successSyncing':
       final resource =
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]);
+          HealthResource.values.firstWhere((it) => it.name == arguments[1]);
       return SyncStatusSuccessSyncing(
         resource,
         fromArgument(resource, arguments[2]),
       );
     case 'nothingToSync':
       return SyncStatusNothingToSync(
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
+          HealthResource.values.firstWhere((it) => it.name == arguments[1]));
     case 'syncing':
       return SyncStatusSyncing(
-          HealthkitResource.values.firstWhere((it) => it.name == arguments[1]));
+          HealthResource.values.firstWhere((it) => it.name == arguments[1]));
     case 'syncingCompleted':
       return SyncStatusCompleted();
     default:
