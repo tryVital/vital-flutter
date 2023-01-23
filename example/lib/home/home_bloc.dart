@@ -6,14 +6,14 @@ import 'package:vital_health/vital_health.dart';
 
 class HomeBloc {
   final VitalClient client;
-  final HealthServices healthkitServices;
+  final HealthServices healthServices;
 
   final StreamController<List<User>> usersController = StreamController();
   final StreamController<User?> selectedUserController = StreamController();
 
   User? _selectedUser;
 
-  HomeBloc(this.client, this.healthkitServices) {
+  HomeBloc(this.client, this.healthServices) {
     _connectHealthPlatform();
   }
 
@@ -45,8 +45,8 @@ class HomeBloc {
   }
 
   void _connectHealthPlatform() async {
-    await healthkitServices.configureClient();
-    await healthkitServices.configureHealth(
+    await healthServices.configureClient();
+    await healthServices.configureHealth(
       config: const HealthConfig(
         iosConfig: IosHealthConfig(
           backgroundDeliveryEnabled: true,
@@ -56,19 +56,21 @@ class HomeBloc {
   }
 
   void askForHealthResources() {
-    healthkitServices.ask([
-      HealthkitResource.profile,
-      HealthkitResource.body,
-      HealthkitResource.activity,
-      HealthkitResource.heartRate,
-      HealthkitResource.bloodPressure,
-      HealthkitResource.glucose,
-      HealthkitResource.sleep,
-      HealthkitResource.water,
-      HealthkitResource.caffeine
+    healthServices.ask([
+      HealthResource.profile,
+      HealthResource.body,
+      HealthResource.activity,
+      HealthResource.heartRate,
+      HealthResource.bloodPressure,
+      HealthResource.glucose,
+      HealthResource.sleep,
+      HealthResource.water,
+      HealthResource.caffeine,
+      HealthResource.mindfulSession
     ], [
-      HealthkitResourceWrite.water,
-      HealthkitResourceWrite.caffeine
+      HealthResourceWrite.water,
+      HealthResourceWrite.caffeine,
+      HealthResourceWrite.mindfulSession
     ]);
   }
 
@@ -78,31 +80,39 @@ class HomeBloc {
 
     final userId = _selectedUser?.userId;
     if (userId != null) {
-      await healthkitServices.setUserId(userId);
+      await healthServices.setUserId(userId);
     }
   }
 
   void syncHealthPlatform() async {
     final userId = _selectedUser?.userId;
     if (userId != null) {
-      await healthkitServices.setUserId(userId);
-      healthkitServices.syncData();
+      await healthServices.setUserId(userId);
+      healthServices.syncData();
     }
   }
 
-  Stream<String> get status => healthkitServices.status.map((event) {
+  Stream<String> get status => healthServices.status.map((event) {
         return event.status.name;
       });
 
   Stream<User?> get selectedUser => selectedUserController.stream;
 
   void water(User user) {
-    healthkitServices.writeHealthData(
-        HealthkitResourceWrite.water, DateTime.now(), DateTime.now(), 100);
+    healthServices.writeHealthData(
+        HealthResourceWrite.water, DateTime.now(), DateTime.now(), 100);
   }
 
   void caffeine(User user) {
-    healthkitServices.writeHealthData(
-        HealthkitResourceWrite.caffeine, DateTime.now(), DateTime.now(), 100);
+    healthServices.writeHealthData(
+        HealthResourceWrite.caffeine, DateTime.now(), DateTime.now(), 100);
+  }
+
+  void mindfulSession(User user) {
+    healthServices.writeHealthData(
+        HealthResourceWrite.mindfulSession,
+        DateTime.now().subtract(const Duration(minutes: 10)),
+        DateTime.now(),
+        100);
   }
 }

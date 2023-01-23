@@ -22,7 +22,7 @@ abstract class SyncStatus {
 }
 
 class SyncStatusFailed extends SyncStatus {
-  final HealthkitResource resource;
+  final HealthResource resource;
   final String? error;
 
   SyncStatusFailed(this.resource, this.error)
@@ -30,7 +30,7 @@ class SyncStatusFailed extends SyncStatus {
 }
 
 class SyncStatusSuccessSyncing<T> extends SyncStatus {
-  final HealthkitResource resource;
+  final HealthResource resource;
   final T data;
 
   SyncStatusSuccessSyncing(this.resource, this.data)
@@ -38,13 +38,13 @@ class SyncStatusSuccessSyncing<T> extends SyncStatus {
 }
 
 class SyncStatusNothingToSync extends SyncStatus {
-  final HealthkitResource resource;
+  final HealthResource resource;
 
   SyncStatusNothingToSync(this.resource) : super(SyncStatusType.nothingToSync);
 }
 
 class SyncStatusSyncing extends SyncStatus {
-  final HealthkitResource resource;
+  final HealthResource resource;
 
   SyncStatusSyncing(this.resource) : super(SyncStatusType.syncing);
 }
@@ -69,41 +69,41 @@ enum PostResourceDataType {
   unknown,
 }
 
-Object? fromArgument(HealthkitResource resource, String argument) {
+Object? fromArgument(HealthResource resource, String argument) {
   switch (resource) {
-    case HealthkitResource.activity:
+    case HealthResource.activity:
       return (jsonDecode(argument) as List)
           .map((e) => ActivitySummary.fromJson(e))
           .toList();
-    case HealthkitResource.profile:
+    case HealthResource.profile:
       return ProfileSummary.fromJson(jsonDecode(argument));
-    case HealthkitResource.body:
+    case HealthResource.body:
       return BodySummary.fromJson(jsonDecode(argument));
-    case HealthkitResource.sleep:
+    case HealthResource.sleep:
       return (jsonDecode(argument) as List)
           .map((e) => SleepSummary.fromJson(e))
           .toList();
-    case HealthkitResource.workout:
+    case HealthResource.workout:
       return (jsonDecode(argument) as List)
           .map((e) => WorkoutSummary.fromJson(e))
           .toList();
-    case HealthkitResource.glucose:
+    case HealthResource.glucose:
       return (jsonDecode(argument) as List)
           .map((e) => QuantitySample.fromJson(e))
           .toList();
-    case HealthkitResource.bloodPressure:
+    case HealthResource.bloodPressure:
       return (jsonDecode(argument) as List)
           .map((e) => BloodPressureSample.fromJson(e))
           .toList();
-    case HealthkitResource.heartRate:
+    case HealthResource.heartRate:
       return (jsonDecode(argument) as List)
           .map((e) => QuantitySample.fromJson(e))
           .toList();
-    case HealthkitResource.water:
+    case HealthResource.water:
       return (jsonDecode(argument) as List)
           .map((e) => QuantitySample.fromJson(e))
           .toList();
-    case HealthkitResource.caffeine:
+    case HealthResource.caffeine:
       return (jsonDecode(argument) as List)
           .map((e) => QuantitySample.fromJson(e))
           .toList();

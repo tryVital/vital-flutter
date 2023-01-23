@@ -26,7 +26,7 @@ void main() {
     );
 
   final DeviceManager deviceManager = DeviceManager();
-  final HealthServices healthkitServices = HealthServices(
+  final HealthServices healthServices = HealthServices(
     apiKey: apiKey,
     region: region,
     environment: Environment.sandbox,
@@ -34,20 +34,20 @@ void main() {
   runApp(VitalSampleApp(
       vitalClient: vitalClient,
       deviceManager: deviceManager,
-      healthkitServices: healthkitServices));
+      healthServices: healthServices));
 }
 
 class VitalSampleApp extends StatelessWidget {
   final VitalClient vitalClient;
 
   final DeviceManager deviceManager;
-  final HealthServices healthkitServices;
+  final HealthServices healthServices;
 
   const VitalSampleApp({
     super.key,
     required this.vitalClient,
     required this.deviceManager,
-    required this.healthkitServices,
+    required this.healthServices,
   });
 
   @override
@@ -60,7 +60,7 @@ class VitalSampleApp extends StatelessWidget {
         initialRoute: Routes.home,
         routes: {
           Routes.home: (_) => Provider(
-                create: (_) => HomeBloc(vitalClient, healthkitServices),
+                create: (_) => HomeBloc(vitalClient, healthServices),
                 child: const UsersScreen(),
               ),
           Routes.devices: (_) => ChangeNotifierProvider(

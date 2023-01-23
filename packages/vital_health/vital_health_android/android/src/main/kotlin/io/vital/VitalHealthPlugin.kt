@@ -3,7 +3,6 @@ package io.vital
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.*
@@ -13,6 +12,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import io.tryvital.client.Environment
 import io.tryvital.client.Region
@@ -24,7 +24,6 @@ import io.tryvital.vitalhealthconnect.model.SyncStatus
 import kotlinx.coroutines.*
 import java.time.Instant
 import kotlin.reflect.KClass
-import io.flutter.plugin.common.MethodChannel.Result
 
 /** VitalHealthPlugin */
 class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
@@ -123,7 +122,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 askForResources(call, result)
             }
             "cleanUp" -> {
-                cleanUp(call, result)
+                cleanUp(result)
             }
             "writeHealthData" -> {
                 writeHealthData(call, result)
@@ -134,8 +133,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     private fun askForResources(call: MethodCall, result: Result) {
-        val readResources = call.argument<List<String>>("readResources") ?: emptyList<String>()
-        val writeResources = call.argument<List<String>>("writeResources") ?: emptyList<String>()
+        val readResources = call.argument<List<String>>("readResources") ?: emptyList()
+        val writeResources = call.argument<List<String>>("writeResources") ?: emptyList()
 
         val requestPermissionActivityContract =
             PermissionController.createRequestPermissionResultContract()
@@ -160,14 +159,16 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             mainScope?.cancel()
             mainScope = MainScope()
             mainScope!!.launch {
-                if (askedHealthPermissions?.containsAll(
-                        vitalHealthConnectManager!!.getGrantedPermissions(
-                            context
-                        ).toSet()
-                    ) == true
-                ) {
+                val grantedPermissions =
+                    vitalHealthConnectManager!!.getGrantedPermissions(context).toSet()
+
+                val notGrantedPermissions = (askedHealthPermissions
+                    ?: emptySet()).filter { !grantedPermissions.contains(it) }
+
+                if (notGrantedPermissions.isEmpty()) {
                     askForResourcesResult?.success(true)
                 } else {
+                    vitalClient?.vitalLogger?.logI("Not granted permissions: $notGrantedPermissions")
                     askForResourcesResult?.success(false)
                 }
                 askedHealthPermissions = null
@@ -177,7 +178,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         }
         return false
     }
-
 
     private fun writeHealthData(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
@@ -227,7 +227,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         mainScope?.cancel()
         mainScope = MainScope()
         mainScope!!.launch {
-            val resources = call.argument<List<String>>("resources") ?: emptyList<String>()
+            val resources = call.argument<List<String>>("resources") ?: emptyList()
 
             vitalHealthConnectManager!!.syncData(
                 resources.mapNotNull { mapStringToHealthResource(it) }.toSet()
@@ -291,7 +291,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         result.success(null)
     }
 
-    private fun cleanUp(call: MethodCall, result: Result) {
+    private fun cleanUp(result: Result) {
         result.success(null)
     }
 
