@@ -1,4 +1,4 @@
-enum HealthkitResource {
+enum HealthResource {
   profile,
   body,
   workout,
@@ -11,10 +11,12 @@ enum HealthkitResource {
   activeEnergyBurned,
   basalEnergyBurned,
   water,
-  caffeine,
+  caffeine, // Not available on Android
+  mindfulSession, // Not available on Android
 }
 
-enum HealthkitResourceWrite {
+enum HealthResourceWrite {
   water,
   caffeine, // Not available on Android
+  mindfulSession, // Not available on Android
 }
