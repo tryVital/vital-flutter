@@ -1,22 +1,26 @@
+## 1.0.0
+
+- Bump version to 1.0.0
+
 ## 0.7.0
 
 > Note: This release has breaking changes.
 
- - **BREAKING** **FEAT**: VIT-2105 add mindful sessions ([#28](https://github.com/tryVital/vital-flutter/issues/28)).
+- **BREAKING** **FEAT**: VIT-2105 add mindful sessions ([#28](https://github.com/tryVital/vital-flutter/issues/28)).
 
 ## 0.6.1
 
- - **FEAT**: VIT-2334 add caffeine resource ([#27](https://github.com/tryVital/vital-flutter/issues/27)).
+- **FEAT**: VIT-2334 add caffeine resource ([#27](https://github.com/tryVital/vital-flutter/issues/27)).
 
 ## 0.6.0
 
 > Note: This release has breaking changes.
 
- - **BREAKING** **FEAT**: VIT-2127 add health connect ([#26](https://github.com/tryVital/vital-flutter/issues/26)).
+- **BREAKING** **FEAT**: VIT-2127 add health connect ([#26](https://github.com/tryVital/vital-flutter/issues/26)).
 
 ## 0.5.0
 
- - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+- Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
 
 ## 0.5.0-alpha.6
 
