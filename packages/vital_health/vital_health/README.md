@@ -18,47 +18,70 @@ The Vital SDK is split into three main components: `vital_core`, `vital_health` 
    capabilities and [background delivery](https://docs.tryvital.io/wearables/sdks/iOS#1-background-delivery) setup for
    your iOS app.
 
-2. To use HealthKit client you need to call configure first:
+
+2. Follow [Android SDK](https://docs.tryvital.io/wearables/sdks/android) instructions regarding Health Connect
+   capabilities setup for your Android app.
+
+
+3. To use Vital Health client you need to call configure first:
 
 ```dart
-await client.healthkitServices.configureClient();
-await client.healthkitServices.configureHealthkit(backgroundDeliveryEnabled: true);
+final HealthServices healthServices = HealthServices(
+  apiKey: apiKey,
+  region: region,
+  environment: Environment.sandbox,
+);
+
+await healthServices.configureClient();
+
+await healthkServices.configureHealth(HealthConfig(
+    iosConfig: IosHealthConfig(
+      backgroundDeliveryEnabled: true,
+    ),
+    androidConfig: AndroidHealthConfig(
+      syncOnAppStart: true,
+    ),
+));
 ```
 
-3. Set User ID
+4. Set User ID
 
 ```dart
-client.healthkitServices.setUserId('eba7c0a2-dc01-49f5-a361-...);
+healthServices.setUserId('eba7c0a2-dc01-49f5-a361-...);
 ```
 
-4. Ask user for permissions to collect HealthKit data.
+5. Ask user for permissions to collect/write Health data.
 
 ```dart
-client.healthkitServices.askForResources(
+healthServices.ask(
   [
-    HealthkitResource.profile,
-    HealthkitResource.body,
+    HealthResource.profile,
+    HealthResource.body,
+    ...
+  ],
+  [
+    HealthResourceWrite.water,
     ...
   ]
 );
 ```
 
-5. Sync data
+6. Sync data
 
 ```dart
-client.healthkitServices.syncData();
+healthServices.syncData();
 ```
 
-6. Observe sync status using status stream
+7. Observe sync status using status stream
 
 ```dart
-Stream<SyncStatus> status = client.healthkitServices.status
+Stream<SyncStatus> status = healthServices.status;
 ```
 
-7. When your user logs out you need to call cleanup on the health service 
+8. When your user logs out you need to call cleanup on the health service 
     
 ```dart
-client.healthkitServices.cleanUp();
+healthServices.cleanUp();
 ```
 ## Documentation
 
