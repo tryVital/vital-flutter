@@ -89,7 +89,6 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
           result(encode(ErrorResult(code: error.localizedDescription)))
         }
         return
-
       case "ask":
         ask(call.arguments as! [AnyObject], result: result)
         return
@@ -104,6 +103,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       case "unsubscribeFromStatus":
         cancellable?.cancel()
         result(nil)
+        return
+      case "read":
+        read(call.arguments as! [AnyObject], result: result)
         return
       default:
         break
@@ -146,6 +148,26 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       result(encode(ErrorResult(code: error.localizedDescription)))
     }
   }
+
+    private func read(_ arguments: [AnyObject], result: @escaping FlutterResult){
+        do {
+            let resourceString: String = arguments[0] as! String
+            let resource = try mapResourceToReadableVitalResource(resourceString)
+
+            let startDate = Date(timeIntervalSince1970: Double(arguments[1] as! Int) / 1000)
+            let endDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int) / 1000)
+
+            Task {
+                let readResult = try await VitalHealthKitClient.read(resource: resource, startDate: startDate, endDate: endDate)
+                result(encode(readResult))
+            }
+        } catch VitalError.UnsupportedResource(let errorMessage) {
+            result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
+        } catch {
+            result(encode(ErrorResult(code: error.localizedDescription)))
+        }
+    }
+
 
   private func configureClient(_ arguments: [AnyObject], result: @escaping FlutterResult){
     let apiKey: String = arguments[0] as! String

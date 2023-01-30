@@ -54,68 +54,16 @@ class UsersPage extends StatelessWidget {
                     user: users[index],
                     linkAction: () => bloc.launchLink(users[index]),
                     deleteAction: () => bloc.deleteUser(users[index]),
-                    onTap: () => bloc.selectUser(users[index]),
-                    waterAction: () => bloc.water(users[index]),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Routes.user,
+                          arguments: users[index]);
+                    },
                   )),
               itemCount: users.length,
             )),
-            const HealthKitWidget()
           ]),
         );
       },
-    );
-  }
-}
-
-class HealthKitWidget extends StatelessWidget {
-  const HealthKitWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final HomeBloc bloc = Provider.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Text(
-          'HealthKit:',
-          style: TextStyle(fontSize: 18),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Wrap(
-            spacing: 8,
-            children: [
-              MaterialButton(
-                color: Colors.blueGrey.shade100,
-                onPressed: () {
-                  bloc.askForHealthResources();
-                },
-                child: const Text('Ask for resources'),
-              ),
-              StreamBuilder(
-                stream: bloc.selectedUser,
-                builder: (context, AsyncSnapshot<User?> snapshot) =>
-                    MaterialButton(
-                  color: Colors.blueGrey.shade100,
-                  onPressed: snapshot.data != null
-                      ? () {
-                          bloc.syncHealthPlatform();
-                        }
-                      : null,
-                  child: const Text('Sync data'),
-                ),
-              ),
-              const SizedBox(height: 40)
-            ],
-          ),
-        ),
-        StreamBuilder(
-          stream: bloc.status,
-          builder: ((context, AsyncSnapshot<String> snapshot) {
-            return Text('Status: ${snapshot.data ?? '-'}');
-          }),
-        )
-      ]),
     );
   }
 }
@@ -125,16 +73,14 @@ class UserWidget extends StatelessWidget {
   final VoidCallback? linkAction;
   final VoidCallback? deleteAction;
   final VoidCallback? onTap;
-  final VoidCallback? waterAction;
 
   const UserWidget({
-    Key? key,
+    super.key,
     required this.user,
     this.linkAction,
     this.deleteAction,
     this.onTap,
-    this.waterAction,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -156,11 +102,6 @@ class UserWidget extends StatelessWidget {
                 style: const TextStyle(fontSize: 18.0),
               ),
             ),
-            if (waterAction != null)
-              IconButton(
-                onPressed: waterAction,
-                icon: const Icon(Icons.water_drop_outlined),
-              ),
             if (linkAction != null) ...[
               const SizedBox(width: 12),
               IconButton(

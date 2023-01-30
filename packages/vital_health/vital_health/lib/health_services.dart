@@ -60,6 +60,11 @@ class HealthServices {
         .writeHealthData(writeResource, startDate, endDate, value);
   }
 
+  Future<ProcessedData> read(
+      HealthResource resource, DateTime startDate, DateTime endDate) {
+    return VitalHealthPlatform.instance.read(resource, startDate, endDate);
+  }
+
   Future<void> cleanUp() async {
     await VitalHealthPlatform.instance.cleanUp();
   }

@@ -3,6 +3,7 @@ package io.vital
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.*
@@ -21,14 +22,20 @@ import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitalhealthconnect.VitalHealthConnectManager
 import io.tryvital.vitalhealthconnect.model.HealthResource
 import io.tryvital.vitalhealthconnect.model.SyncStatus
+import io.tryvital.vitalhealthconnect.model.processedresource.ProcessedResourceData
+import io.tryvital.vitalhealthconnect.model.processedresource.QuantitySample
+import io.tryvital.vitalhealthconnect.model.processedresource.SummaryData
+import io.tryvital.vitalhealthconnect.model.processedresource.TimeSeriesData
 import kotlinx.coroutines.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.time.Instant
 import kotlin.reflect.KClass
 
 /** VitalHealthPlugin */
 class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     PluginRegistry.ActivityResultListener {
-    private val logger = VitalLogger.create()
+    private val logger = VitalLogger.getOrCreate()
 
     private lateinit var context: Context
     private lateinit var channel: MethodChannel
@@ -43,6 +50,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private var mainScope: CoroutineScope? = null
     private var statusScope: CoroutineScope? = null
     private var writeScope: CoroutineScope? = null
+    private var readScope: CoroutineScope? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_health_connect")
@@ -126,6 +134,9 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             }
             "writeHealthData" -> {
                 writeHealthData(call, result)
+            }
+            "read" -> {
+                read(call, result)
             }
 
             else -> throw Exception("Unsupported method ${call.method}")
@@ -213,6 +224,200 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         }
     }
 
+    private fun read(call: MethodCall, result: Result) {
+        if (vitalHealthConnectManager == null) {
+            result.error(
+                "VitalHealthConnect is configured",
+                "VitalHealthConnect is configured",
+                null
+            )
+            return
+        }
+
+        readScope?.cancel()
+        readScope = MainScope()
+        readScope!!.launch {
+            try {
+                val readResult = vitalHealthConnectManager!!.read(
+                    mapStringToHealthResource(
+                        call.argument<String>(
+                            "resource"
+                        )!!
+                    )!!,
+                    startDate = Instant.ofEpochMilli(call.argument("startDate")!!),
+                    endDate = Instant.ofEpochMilli(call.argument("endDate")!!),
+                )
+
+                Log.e("asd", readResult.toString())
+                when (readResult) {
+                    is ProcessedResourceData.Summary -> {
+                        when (readResult.summaryData) {
+                            is SummaryData.Profile -> {
+                                result.success(
+                                    JSONObject(
+                                        mapOf(
+                                            "biologicalSex" to (readResult.summaryData as SummaryData.Profile).biologicalSex,
+                                            "dateOfBirth" to (readResult.summaryData as SummaryData.Profile).dateOfBirth.time,
+                                            "heightInCm" to (readResult.summaryData as SummaryData.Profile).heightInCm,
+                                        )
+                                    ).toString()
+                                )
+                            }
+                            is SummaryData.Body -> {
+                                result.success(
+                                    JSONObject(
+                                        mapOf(
+                                            "bodyMass" to JSONArray((readResult.summaryData as SummaryData.Body).bodyMass.map {
+                                                mapSampleToJson(it)
+                                            }),
+                                            "bodyFatPercentage" to JSONArray((readResult.summaryData as SummaryData.Body).bodyFatPercentage.map {
+                                                mapSampleToJson(it)
+                                            }),
+                                        )
+                                    ).toString()
+                                )
+                            }
+                            is SummaryData.Activities -> {
+                                result.success(
+                                    JSONObject(
+                                        mapOf(
+                                            "activities" to JSONArray((readResult.summaryData as SummaryData.Activities).samples.map {
+                                                JSONObject().apply {
+                                                    put(
+                                                        "activeEnergyBurned",
+                                                        JSONArray(it.activeEnergyBurned.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "basalEnergyBurned",
+                                                        JSONArray(it.basalEnergyBurned.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "steps",
+                                                        JSONArray(it.steps.map { mapSampleToJson(it) })
+                                                    )
+                                                    put(
+                                                        "distanceWalkingRunning",
+                                                        JSONArray(it.distanceWalkingRunning.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "vo2Max",
+                                                        JSONArray(it.vo2Max.map { mapSampleToJson(it) })
+                                                    )
+                                                    put(
+                                                        "floorsClimbed",
+                                                        JSONArray(it.floorsClimbed.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                }
+                                            }),
+                                        )
+                                    ).toString()
+                                )
+                            }
+                            is SummaryData.Workouts -> {
+                                result.success(
+                                    JSONObject(
+                                        mapOf(
+                                            "workouts" to JSONArray((readResult.summaryData as SummaryData.Workouts).samples.map {
+                                                JSONObject().apply {
+                                                    put("id", it.id)
+                                                    put("startDate", it.startDate.time)
+                                                    put("endDate", it.endDate.time)
+                                                    put("sourceBundle", it.sourceBundle)
+                                                    put("deviceModel", it.deviceModel)
+                                                    put("sport", it.sport)
+                                                    put(
+                                                        "caloriesInKiloJules",
+                                                        it.caloriesInKiloJules
+                                                    )
+                                                    put("distanceInMeter", it.distanceInMeter)
+                                                    put(
+                                                        "heartRate",
+                                                        JSONArray(it.heartRate.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "respiratoryRate",
+                                                        JSONArray(it.respiratoryRate.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                }
+                                            }),
+                                        )
+                                    ).toString()
+                                )
+                            }
+                            is SummaryData.Sleeps -> TODO("in ticket VIT-2412")
+                        }
+                    }
+                    is ProcessedResourceData.TimeSeries -> {
+                        when (readResult.timeSeriesData) {
+                            is TimeSeriesData.Glucose -> result.success(
+                                JSONObject(
+                                    mapOf(
+                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.Glucose).samples.map {
+                                            mapSampleToJson(it)
+                                        }),
+                                    )
+                                ).toString()
+                            )
+                            is TimeSeriesData.BloodPressure -> {
+                                result.success(
+                                    JSONObject(
+                                        mapOf(
+                                            "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.BloodPressure).samples.map {
+                                                JSONObject().apply {
+                                                    put("systolic", mapSampleToJson(it.systolic))
+                                                    put("diastolic", mapSampleToJson(it.diastolic))
+                                                    put(
+                                                        "pulse",
+                                                        it.pulse?.let { it1 -> mapSampleToJson(it1) })
+                                                }
+                                            })
+                                        )
+                                    ).toString()
+                                )
+                            }
+                            is TimeSeriesData.HeartRate -> result.success(
+                                JSONObject(
+                                    mapOf(
+                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.HeartRate).samples.map {
+                                            mapSampleToJson(it)
+                                        }),
+                                    )
+                                ).toString()
+                            )
+                            is TimeSeriesData.Water -> result.success(
+                                JSONObject(
+                                    mapOf(
+                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.Water).samples.map {
+                                            mapSampleToJson(it)
+                                        }),
+                                    )
+                                ).toString()
+                            )
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                result.error(
+                    "Failed to write data",
+                    e.message,
+                    e
+                )
+            }
+        }
+
+    }
 
     private fun syncData(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
@@ -384,4 +589,19 @@ private fun mapStringToHealthResource(resource: String): HealthResource? {
         else -> null
     }
 }
+
+private fun mapSampleToJson(it: QuantitySample): JSONObject {
+    return JSONObject().apply {
+        put("id", it.id)
+        put("value", it.value)
+        put("unit", it.unit)
+        put("startDate", it.startDate.time)
+        put("endDate", it.endDate.time)
+        put("sourceBundle", it.sourceBundle)
+        put("deviceModel", it.deviceModel)
+        put("type", it.type)
+        put("metadata", it.metadata)
+    }
+}
+
 

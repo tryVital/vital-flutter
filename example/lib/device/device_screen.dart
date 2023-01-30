@@ -30,7 +30,7 @@ class DeviceScreen extends StatelessWidget {
               Text(device.name,
                   style: Theme.of(context).textTheme.headlineSmall),
               Text(device.brand.name,
-                  style: Theme.of(context).textTheme.caption),
+                  style: Theme.of(context).textTheme.bodySmall),
               const Divider(),
               Text(
                 bloc.state.name,

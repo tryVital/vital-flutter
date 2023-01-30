@@ -24,6 +24,11 @@ class QuantitySample {
 
   factory QuantitySample.fromJson(Map<String, dynamic> json) =>
       _$QuantitySampleFromJson(json);
+
+  @override
+  String toString() {
+    return 'QuantitySample{id: $id, value: $value, startDate: $startDate, endDate: $endDate, sourceBundle: $sourceBundle, type: $type, unit: $unit}';
+  }
 }
 
 @JsonSerializable(createToJson: false)
@@ -40,4 +45,9 @@ class BloodPressureSample {
 
   factory BloodPressureSample.fromJson(Map<String, dynamic> json) =>
       _$BloodPressureSampleFromJson(json);
+
+  @override
+  String toString() {
+    return 'BloodPressureSample{systolic: $systolic, diastolic: $diastolic, pulse: $pulse}';
+  }
 }

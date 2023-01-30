@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.tryvital.client.services.data.QuantitySample
+import io.tryvital.client.services.data.QuantitySamplePayload
 import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitaldevices.*
 import kotlinx.coroutines.*
@@ -27,7 +27,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_devices")
         vitalDeviceManager = VitalDeviceManager(flutterPluginBinding.applicationContext)
-        VitalLogger.create().enabled = true
+        VitalLogger.getOrCreate().enabled = true
         context = flutterPluginBinding.applicationContext
         channel.setMethodCallHandler(this)
     }
@@ -278,7 +278,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun mapSample(it: QuantitySample): JSONObject {
+    private fun mapSample(it: QuantitySamplePayload): JSONObject {
         return JSONObject().apply {
             put("id", it.id)
             put("value", it.value)
