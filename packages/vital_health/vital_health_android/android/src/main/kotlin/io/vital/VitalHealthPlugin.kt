@@ -354,7 +354,85 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                     ).toString()
                                 )
                             }
-                            is SummaryData.Sleeps -> TODO("in ticket VIT-2412")
+                            is SummaryData.Sleeps -> {
+                                result.success(
+                                    JSONObject(
+                                        mapOf(
+                                            "sleeps" to JSONArray((readResult.summaryData as SummaryData.Sleeps).samples.map {
+                                                JSONObject().apply {
+                                                    put("id", it.id)
+                                                    put("startDate", it.startDate.time)
+                                                    put("endDate", it.endDate.time)
+                                                    put("sourceBundle", it.sourceBundle)
+                                                    put("deviceModel", it.deviceModel)
+                                                    put(
+                                                        "heartRate",
+                                                        JSONArray(it.heartRate.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "restingHeartRate",
+                                                        JSONArray(it.restingHeartRate.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "heartRateVariability",
+                                                        JSONArray(it.heartRateVariability.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "oxygenSaturation",
+                                                        JSONArray(it.oxygenSaturation.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put(
+                                                        "respiratoryRate",
+                                                        JSONArray(it.respiratoryRate.map {
+                                                            mapSampleToJson(it)
+                                                        })
+                                                    )
+                                                    put("sleepStages", JSONObject().apply {
+                                                        put(
+                                                            "awakeSleepSamples",
+                                                            it.stages.awakeSleepSamples.map {
+                                                                mapSampleToJson(it)
+                                                            })
+                                                        put(
+                                                            "deepSleepSamples",
+                                                            it.stages.deepSleepSamples.map {
+                                                                mapSampleToJson(it)
+                                                            })
+                                                        put(
+                                                            "lightSleepSamples",
+                                                            it.stages.lightSleepSamples.map {
+                                                                mapSampleToJson(it)
+                                                            })
+                                                        put(
+                                                            "remSleepSamples",
+                                                            it.stages.remSleepSamples.map {
+                                                                mapSampleToJson(it)
+                                                            })
+                                                        put(
+                                                            "outOfBedSleepSamples",
+                                                            it.stages.outOfBedSleepSamples.map {
+                                                                mapSampleToJson(it)
+                                                            })
+                                                        put(
+                                                            "unknownSleepSamples",
+                                                            it.stages.unknownSleepSamples.map {
+                                                                mapSampleToJson(it)
+                                                            })
+                                                    })
+                                                }
+                                            }),
+                                        )
+                                    ).toString()
+                                )
+                            }
                         }
                     }
                     is ProcessedResourceData.TimeSeries -> {
