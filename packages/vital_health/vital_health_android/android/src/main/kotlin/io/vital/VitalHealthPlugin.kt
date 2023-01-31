@@ -3,7 +3,6 @@ package io.vital
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.*
@@ -248,7 +247,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                     endDate = Instant.ofEpochMilli(call.argument("endDate")!!),
                 )
 
-                Log.e("asd", readResult.toString())
                 when (readResult) {
                     is ProcessedResourceData.Summary -> {
                         when (readResult.summaryData) {
