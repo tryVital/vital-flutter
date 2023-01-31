@@ -15,8 +15,7 @@ import 'package:vital_flutter_example/user/user_bloc.dart';
 import 'package:vital_flutter_example/user/user_screen.dart';
 import 'package:vital_health/vital_health.dart';
 
-//TODO remove
-const apiKey = 'sk_eu_S5LdXTS_CAtdFrkX9OYsiVq_jGHaIXtZyBPbBtPkzhA';
+const apiKey = 'sk_eu_S5Ld...'; //TODO replace it with your own api key
 const region = Region.eu;
 
 void main() {
