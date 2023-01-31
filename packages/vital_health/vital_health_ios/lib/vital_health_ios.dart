@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
+import 'package:vital_core/samples.dart';
 import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
@@ -131,7 +132,6 @@ class VitalHealthIos extends VitalHealthPlatform {
   @override
   Future<void> writeHealthData(HealthResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
-    print('writeHealthData $writeResource $startDate $endDate $value');
     return await _channel.invokeMethod('writeHealthKitData', [
       writeResource.name,
       value,
@@ -141,7 +141,174 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
+  Future<ProcessedData> read(
+      HealthResource resource, DateTime startDate, DateTime endDate) async {
+    final result = await _channel.invokeMethod('read', [
+      resource.name,
+      startDate.millisecondsSinceEpoch,
+      endDate.millisecondsSinceEpoch
+    ]);
+
+    return _mapJsonToProcessedData(resource, jsonDecode(result));
+  }
+
+  @override
   Stream<SyncStatus> get status => _statusStream;
+}
+
+ProcessedData _mapJsonToProcessedData(
+    HealthResource resource, Map<String, dynamic> json) {
+  switch (resource) {
+    case HealthResource.profile:
+      //TODO this needs to be checked by ios
+      return ProfileProcessedData(
+        biologicalSex: json['biologicalSex'],
+        dateOfBirth: json['dateOfBirth'],
+        heightInCm: json['heightInCm'],
+      );
+    case HealthResource.body:
+      return BodyProcessedData(
+        bodyMass:
+            (json['summary']["_0"]["body"]["_0"]['bodyMass'] as List<dynamic>)
+                .map((it) => _sampleFromSwiftJson(it))
+                .whereType<QuantitySample>()
+                .toList(),
+        bodyFatPercentage: (json['summary']["_0"]["body"]["_0"]
+                ['bodyFatPercentage'] as List<dynamic>)
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList(),
+      );
+    case HealthResource.workout: //TODO this needs to be checked by ios
+    case HealthResource.sleep:
+      return SleepProcessedData(
+        sleeps: [], //TODO handle it in VIT-2412
+      );
+    case HealthResource.activity:
+      return ActivityProcessedData(
+        activities: (json['summary']["_0"]["activity"]["_0"]["activities"]
+                as List<dynamic>)
+            .map((it) => _activityFromSwiftJson(it))
+            .whereType<Activity>()
+            .toList(),
+      );
+    case HealthResource.activeEnergyBurned:
+      return ActiveEnergyBurnedProcessedData(
+        activities: (json['summary']["_0"]["activity"]["_0"]["activities"]
+                as List<dynamic>)
+            .map((it) => _activityFromSwiftJson(it))
+            .whereType<Activity>()
+            .toList(),
+      );
+    case HealthResource.basalEnergyBurned:
+      return BasalEnergyBurnedProcessedData(
+        activities: (json['summary']["_0"]["activity"]["_0"]["activities"]
+                as List<dynamic>)
+            .map((it) => _activityFromSwiftJson(it))
+            .whereType<Activity>()
+            .toList(),
+      );
+
+    case HealthResource.steps:
+      return StepsProcessedData(
+        activities: (json['summary']["_0"]["activity"]["_0"]["activities"]
+                as List<dynamic>)
+            .map((it) => _activityFromSwiftJson(it))
+            .whereType<Activity>()
+            .toList(),
+      );
+    case HealthResource.glucose:
+      return GlucoseProcessedData(
+        timeSeries: (json['timeSeries']["_0"]["glucose"]["_0"] as List<dynamic>)
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList(),
+      );
+    case HealthResource.bloodPressure:
+      return BloodPressureProcessedData(
+        timeSeries:
+            (json['timeSeries']["_0"]["bloodPressure"]["_0"] as List<dynamic>)
+                .map((it) => _bloodPressureSampleFromSwiftJson(it))
+                .whereType<BloodPressureSample>()
+                .toList(),
+      );
+    case HealthResource.heartRate:
+      return HeartRateProcessedData(
+        timeSeries:
+            (json['timeSeries']["_0"]["heartRate"]["_0"] as List<dynamic>)
+                .map((it) => _sampleFromSwiftJson(it))
+                .whereType<QuantitySample>()
+                .toList(),
+      );
+    case HealthResource.water:
+      return WaterProcessedData(
+        timeSeries: (json['timeSeries']["_0"]["nutrition"]["_0"]["water"]["_0"]
+                as List<dynamic>)
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList(),
+      );
+    case HealthResource.caffeine:
+      return CaffeineProcessedData(
+        timeSeries: (json['timeSeries']["_0"]["nutrition"]["_0"]["caffeine"]
+                ["_0"] as List<dynamic>)
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList(),
+      );
+    case HealthResource.mindfulSession:
+      return MindfulSessionProcessedData(
+        timeSeries:
+            (json['timeSeries']["_0"]["mindfulSession"]["_0"] as List<dynamic>)
+                .map((it) => _sampleFromSwiftJson(it))
+                .whereType<QuantitySample>()
+                .toList(),
+      );
+  }
+}
+
+Activity? _activityFromSwiftJson(Map<dynamic, dynamic>? json) {
+  if (json == null) {
+    return null;
+  }
+  return Activity(
+    distanceWalkingRunning: (json['distanceWalkingRunning'] != null
+        ? json['distanceWalkingRunning']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    activeEnergyBurned: (json['activeEnergyBurned'] != null
+        ? json['activeEnergyBurned']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    basalEnergyBurned: (json['basalEnergyBurned'] != null
+        ? json['basalEnergyBurned']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    steps: (json['steps'] != null
+        ? json['steps']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    floorsClimbed: (json['floorsClimbed'] != null
+        ? json['floorsClimbed']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    vo2Max: (json['vo2Max'] != null
+        ? json['vo2Max']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+  );
 }
 
 SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
@@ -167,5 +334,45 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
       return SyncStatusCompleted();
     default:
       return SyncStatusUnknown();
+  }
+}
+
+BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
+  try {
+    return BloodPressureSample(
+      systolic: _sampleFromSwiftJson(e["systolic"])!,
+      diastolic: _sampleFromSwiftJson(e["diastolic"])!,
+      pulse: _sampleFromSwiftJson(e["pulse"]),
+    );
+  } catch (e, stacktrace) {
+    Fimber.i("Error parsing sample: $e $stacktrace");
+    return null;
+  }
+}
+
+final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
+
+QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
+  if (json == null) {
+    return null;
+  }
+
+  try {
+    final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
+    final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+
+    return QuantitySample(
+      id: json['id'] as String?,
+      value: double.parse(json['value'].toString()),
+      unit: json['unit'] as String,
+      startDate: DateTime.fromMillisecondsSinceEpoch(
+          _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
+      endDate: DateTime.fromMillisecondsSinceEpoch(
+          _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+      type: json['type'] as String,
+    );
+  } catch (e, stacktrace) {
+    Fimber.i("Error parsing sample: $e $stacktrace");
+    return null;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart';
 import 'package:vital_devices/vital_devices.dart';
 import 'package:vital_flutter_example/device/device_bloc.dart';
@@ -10,6 +11,8 @@ import 'package:vital_flutter_example/devices/devices_screen.dart';
 import 'package:vital_flutter_example/home/home_bloc.dart';
 import 'package:vital_flutter_example/home/home_screen.dart';
 import 'package:vital_flutter_example/routes.dart';
+import 'package:vital_flutter_example/user/user_bloc.dart';
+import 'package:vital_flutter_example/user/user_screen.dart';
 import 'package:vital_health/vital_health.dart';
 
 const apiKey = 'sk_eu_S5Ld...'; //TODO replace it with your own api key
@@ -60,7 +63,9 @@ class VitalSampleApp extends StatelessWidget {
         initialRoute: Routes.home,
         routes: {
           Routes.home: (_) => Provider(
-                create: (_) => HomeBloc(vitalClient, healthServices),
+                create: (_) => HomeBloc(
+                  vitalClient,
+                ),
                 child: const UsersScreen(),
               ),
           Routes.devices: (_) => ChangeNotifierProvider(
@@ -74,7 +79,14 @@ class VitalSampleApp extends StatelessWidget {
                   ModalRoute.of(context)!.settings.arguments as DeviceModel,
                 ),
                 child: const DeviceScreen(),
-              )
+              ),
+          Routes.user: (context) => ChangeNotifierProvider(
+                create: (_) => UserBloc(
+                  ModalRoute.of(context)!.settings.arguments as User,
+                  healthServices,
+                ),
+                child: const UserScreen(),
+              ),
         });
   }
 }

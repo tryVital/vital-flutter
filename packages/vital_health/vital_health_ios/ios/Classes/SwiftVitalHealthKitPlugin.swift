@@ -4,6 +4,8 @@ import Combine
 import VitalCore
 import VitalHealthKit
 
+private typealias NonthrowingTask = Task<Void, Never>
+
 private let jsonEncoder: JSONEncoder = {
   let jsonEncoder = JSONEncoder()
   jsonEncoder.outputFormatting = .withoutEscapingSlashes
@@ -58,13 +60,13 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         configureHealthkit(call.arguments as! [AnyObject], result: result)
         return
       case "setUserId":
-        Task {
+        NonthrowingTask {
           await VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
           result(nil)
         }
         return
       case "cleanUp":
-        Task {
+        NonthrowingTask {
           await VitalHealthKitClient.shared.cleanUp()
           result(nil)
         }
@@ -79,17 +81,20 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
           let providerString = call.arguments as! String
           let provider = try mapProviderToVitalProvider(providerString)
 
-          Task {
-            let isConnected = try await VitalClient.shared.isUserConnected(to: provider)
-            result(isConnected)
+          NonthrowingTask {
+            do {
+              let isConnected = try await VitalClient.shared.isUserConnected(to: provider)
+              result(isConnected)
+            } catch let error {
+              result(encode(ErrorResult(from: error)))
+            }
           }
         } catch VitalError.UnsupportedProvider(let errorMessage) {
-          result(encode(ErrorResult(code: "UnsupportedProvider", message: errorMessage)))
-        } catch {
-          result(encode(ErrorResult(code: error.localizedDescription)))
+          result(encode(ErrorResult(code: .unsupportedProvider, message: errorMessage)))
+        } catch let error {
+          result(encode(ErrorResult(from: error)))
         }
         return
-
       case "ask":
         ask(call.arguments as! [AnyObject], result: result)
         return
@@ -104,6 +109,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       case "unsubscribeFromStatus":
         cancellable?.cancel()
         result(nil)
+        return
+      case "read":
+        read(call.arguments as! [AnyObject], result: result)
         return
       default:
         break
@@ -136,14 +144,41 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
           fatalError("\(resource) not supported for writing to HealthKit")
       }
 
-      Task {
-        try await VitalHealthKitClient.shared.write(input: dataInput, startDate: startDate, endDate: endDate)
-        result(nil)
+      NonthrowingTask {
+        do {
+          try await VitalHealthKitClient.shared.write(input: dataInput, startDate: startDate, endDate: endDate)
+          result(nil)
+        } catch let error {
+          result(encode(ErrorResult(from: error)))
+        }
       }
     } catch VitalError.UnsupportedResource(let errorMessage) {
-      result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
+      result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
     } catch {
-      result(encode(ErrorResult(code: error.localizedDescription)))
+      result(encode(ErrorResult(from: error)))
+    }
+  }
+
+  private func read(_ arguments: [AnyObject], result: @escaping FlutterResult){
+    do {
+      let resourceString: String = arguments[0] as! String
+      let resource = try mapResourceToReadableVitalResource(resourceString)
+
+      let startDate = Date(timeIntervalSince1970: Double(arguments[1] as! Int) / 1000)
+      let endDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int) / 1000)
+
+      NonthrowingTask {
+        do {
+          let readResult = try await VitalHealthKitClient.read(resource: resource, startDate: startDate, endDate: endDate)
+          result(encode(readResult))
+        } catch let error {
+          result(encode(ErrorResult(from: error)))
+        }
+      }
+    } catch VitalError.UnsupportedResource(let errorMessage) {
+      result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
+    } catch {
+      result(encode(ErrorResult(from: error)))
     }
   }
 
@@ -152,12 +187,16 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let region: String  = arguments[1] as! String
     let environment: String = arguments[2] as! String
 
-    Task {
-      await VitalClient.configure(
-        apiKey: apiKey,
-        environment: try resolveEnvironment(region: region, environment: environment)
-      )
-      result(nil)
+    NonthrowingTask {
+      do {
+        await VitalClient.configure(
+          apiKey: apiKey,
+          environment: try resolveEnvironment(region: region, environment: environment)
+        )
+        result(nil)
+      } catch let error {
+        result(encode(ErrorResult(from: error)))
+      }
     }
   }
 
@@ -167,19 +206,23 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
 
-    Task {
-      let mode = try mapToMode(modeString)
+    NonthrowingTask {
+      do {
+        let mode = try mapToMode(modeString)
 
-      await VitalHealthKitClient.configure(
-        .init(
-          backgroundDeliveryEnabled: backgroundDeliveryEnabled,
-          numberOfDaysToBackFill: numberOfDaysToBackFill,
-          logsEnabled: logsEnabled,
-          mode: mode
+        await VitalHealthKitClient.configure(
+          .init(
+            backgroundDeliveryEnabled: backgroundDeliveryEnabled,
+            numberOfDaysToBackFill: numberOfDaysToBackFill,
+            logsEnabled: logsEnabled,
+            mode: mode
+          )
         )
-      )
 
-      result(nil)
+        result(nil)
+      } catch let error {
+        result(encode(ErrorResult(from: error)))
+      }
     }
   }
 
@@ -189,9 +232,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       let value: Bool = VitalHealthKitClient.shared.hasAskedForPermission(resource: resource)
       result(value)
     } catch VitalError.UnsupportedResource(let errorMessage) {
-      result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
-    } catch {
-      result(encode(ErrorResult(code: "Unknown error")))
+      result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
+    } catch let error {
+      result(encode(ErrorResult(from: error)))
     }
   }
 
@@ -200,7 +243,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let readResourcesString: [String] = arguments[0] as! [String]
     let writeResourcesString: [String] = arguments[1] as! [String]
 
-    Task {
+    NonthrowingTask {
       let readResources = readResourcesString.map { try! mapResourceToReadableVitalResource($0) }
       let writeResources = writeResourcesString.map { try! mapResourceToWritableVitalResource($0) }
 
@@ -209,9 +252,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         case .success:
           result(nil)
         case .failure(let message):
-          result(encode(ErrorResult(code: "failure", message: message)))
+          result(encode(ErrorResult(code: .failure, message: message)))
         case .healthKitNotAvailable:
-          result(encode(ErrorResult(code: "healthKitNotAvailable", message: "healthKitNotAvailable")))
+          result(encode(ErrorResult(code: .healthKitNotAvailable, message: "healthKitNotAvailable")))
       }
     }
   }
@@ -225,9 +268,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       }
       result(nil)
     } catch VitalError.UnsupportedResource(let errorMessage) {
-      result(encode(ErrorResult(code: "UnsupportedResource", message: errorMessage)))
-    } catch {
-      result(encode(ErrorResult(code: "Unknown error")))
+      result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
+    } catch let error {
+      result(encode(ErrorResult(from: error)))
     }
   }
 
@@ -252,12 +295,35 @@ struct AnyEncodable: Encodable {
 }
 
 struct ErrorResult: Encodable {
-  let code: String
+  struct Code: RawRepresentable, Encodable {
+    static let healthKitNotAvailable = Code(rawValue: "healthKitNotAvailable")
+    static let failure = Code(rawValue: "failure")
+    static let unsupportedResource = Code(rawValue: "UnsupportedResource")
+    static let unsupportedProvider = Code(rawValue: "UnsupportedProvider")
+    static let genericError = Code(rawValue: "GenericError")
+
+    let rawValue: String
+
+    init(rawValue: String) {
+      self.rawValue = rawValue
+    }
+  }
+
+  let code: Code
   let message: String?
 
-  init(code: String, message: String? = nil){
+  init(code: Code, message: String? = nil){
     self.code = code
     self.message = message
+  }
+
+  init(from error: Error) {
+    switch error {
+    case let error as NSError:
+      self.init(code: Code(rawValue: error.domain), message: error.localizedDescription)
+    default:
+      self.init(code: .genericError, message: error.localizedDescription)
+    }
   }
 }
 
