@@ -26,22 +26,10 @@ class UserBloc extends ChangeNotifier {
   }
 
   void askForHealthResources() {
-    healthServices.ask([
-      HealthResource.profile,
-      HealthResource.body,
-      HealthResource.activity,
-      HealthResource.heartRate,
-      HealthResource.bloodPressure,
-      HealthResource.glucose,
-      HealthResource.sleep,
-      HealthResource.water,
-      HealthResource.caffeine,
-      HealthResource.mindfulSession
-    ], [
-      HealthResourceWrite.water,
-      HealthResourceWrite.caffeine,
-      HealthResourceWrite.mindfulSession
-    ]);
+    healthServices.ask(
+      HealthResource.values,
+      HealthResourceWrite.values,
+    );
   }
 
   Future<void> sync() async {

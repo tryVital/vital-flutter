@@ -24,4 +24,9 @@ class Workout {
     required this.heartRate,
     required this.respiratoryRate,
   });
+
+  @override
+  String toString() {
+    return 'Workout{id: $id, startDate: $startDate, endDate: $endDate, sourceBundle: $sourceBundle, deviceModel: $deviceModel, sport: $sport, caloriesInKiloJules: $caloriesInKiloJules, distanceInMeter: $distanceInMeter, heartRate: $heartRate, respiratoryRate: $respiratoryRate}';
+  }
 }

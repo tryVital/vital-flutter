@@ -9,6 +9,8 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 
 const _channel = MethodChannel('vital_health_kit');
 
+final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
+
 class VitalHealthIos extends VitalHealthPlatform {
   static void registerWith() {
     VitalHealthPlatform.instance = VitalHealthIos();
@@ -160,7 +162,6 @@ ProcessedData _mapJsonToProcessedData(
     HealthResource resource, Map<String, dynamic> json) {
   switch (resource) {
     case HealthResource.profile:
-      //TODO this needs to be checked by ios
       return ProfileProcessedData(
         biologicalSex: json['biologicalSex'],
         dateOfBirth: json['dateOfBirth'],
@@ -179,7 +180,14 @@ ProcessedData _mapJsonToProcessedData(
             .whereType<QuantitySample>()
             .toList(),
       );
-    case HealthResource.workout: //TODO this needs to be checked by ios
+    case HealthResource.workout:
+      return WorkoutProcessedData(
+        workouts: (json['summary']["_0"]["workout"]["_0"]["workouts"]
+                as List<dynamic>)
+            .map((it) => _workoutFromSwiftJson(it))
+            .whereType<Workout>()
+            .toList(),
+      );
     case HealthResource.sleep:
       return SleepProcessedData(
         sleeps: [], //TODO handle it in VIT-2412
@@ -267,6 +275,35 @@ ProcessedData _mapJsonToProcessedData(
   }
 }
 
+Workout? _workoutFromSwiftJson(Map<dynamic, dynamic>? json) {
+  if (json == null) {
+    return null;
+  }
+
+  final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
+  final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+
+  return Workout(
+      id: json['id'],
+      startDate: DateTime.fromMillisecondsSinceEpoch(
+          _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
+      endDate: DateTime.fromMillisecondsSinceEpoch(
+          _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+      sourceBundle: json['sourceBundle'],
+      deviceModel: json['deviceModel'],
+      sport: json['sport'],
+      caloriesInKiloJules: json['calories'],
+      distanceInMeter: json['distance'],
+      heartRate: (json['heartRate'] as List<dynamic>)
+          .map((it) => _sampleFromSwiftJson(it))
+          .whereType<QuantitySample>()
+          .toList(),
+      respiratoryRate: (json['respiratoryRate'] as List<dynamic>)
+          .map((it) => _sampleFromSwiftJson(it))
+          .whereType<QuantitySample>()
+          .toList());
+}
+
 Activity? _activityFromSwiftJson(Map<dynamic, dynamic>? json) {
   if (json == null) {
     return null;
@@ -349,8 +386,6 @@ BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
     return null;
   }
 }
-
-final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
 
 QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
   if (json == null) {
