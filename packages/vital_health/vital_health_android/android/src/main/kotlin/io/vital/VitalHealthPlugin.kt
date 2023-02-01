@@ -137,8 +137,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             "read" -> {
                 read(call, result)
             }
-
-            else -> result.error("Unimplemented", "Unimplemented", null)
+            else -> throw Exception("Unsupported method ${call.method}")
         }
     }
 

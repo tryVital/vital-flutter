@@ -44,7 +44,7 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   Future<void> configureHealth({required HealthConfig config}) async {
     Fimber.d('Health Connect configureHealthConnect');
     try {
-      await _channel.invokeMethod('configdureHealthConnect', <String, dynamic>{
+      await _channel.invokeMethod('configureHealthConnect', <String, dynamic>{
         "logsEnabled": config.logsEnabled,
         "numberOfDaysToBackFill": config.numberOfDaysToBackFill,
         "syncOnAppStart": config.androidConfig.syncOnAppStart
@@ -478,6 +478,8 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
 VitalException _mapException(Exception e) {
   if (e is PlatformException) {
     switch (e.code) {
+      case "ClientSetup":
+        return ClientSetupException(e.message ?? "");
       case "UnsupportedRegion":
         return UnsupportedRegionException(e.message ?? "");
       case "UnsupportedEnvironment":
