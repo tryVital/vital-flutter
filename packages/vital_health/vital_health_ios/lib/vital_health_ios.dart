@@ -9,6 +9,8 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 
 const _channel = MethodChannel('vital_health_kit');
 
+final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
+
 class VitalHealthIos extends VitalHealthPlatform {
   static void registerWith() {
     VitalHealthPlatform.instance = VitalHealthIos();
@@ -160,7 +162,6 @@ ProcessedData _mapJsonToProcessedData(
     HealthResource resource, Map<String, dynamic> json) {
   switch (resource) {
     case HealthResource.profile:
-      //TODO this needs to be checked by ios
       return ProfileProcessedData(
         biologicalSex: json['biologicalSex'],
         dateOfBirth: json['dateOfBirth'],
@@ -179,10 +180,20 @@ ProcessedData _mapJsonToProcessedData(
             .whereType<QuantitySample>()
             .toList(),
       );
-    case HealthResource.workout: //TODO this needs to be checked by ios
+    case HealthResource.workout:
+      return WorkoutProcessedData(
+        workouts: (json['summary']["_0"]["workout"]["_0"]['workouts']
+                as List<dynamic>)
+            .map((it) => _workoutFromJson(it))
+            .whereType<Workout>()
+            .toList(),
+      );
     case HealthResource.sleep:
       return SleepProcessedData(
-        sleeps: [], //TODO handle it in VIT-2412
+        sleeps: (json['summary']["_0"]["sleep"]["_0"]['sleep'] as List<dynamic>)
+            .map((it) => _sleepFromJson(it))
+            .whereType<Sleep>()
+            .toList(),
       );
     case HealthResource.activity:
       return ActivityProcessedData(
@@ -337,6 +348,121 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
   }
 }
 
+Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
+  if (json == null) {
+    return null;
+  }
+
+  final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
+  final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+
+  return Sleep(
+    id: json['id'],
+    startDate: DateTime.fromMillisecondsSinceEpoch(
+        _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
+    endDate: DateTime.fromMillisecondsSinceEpoch(
+        _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+    sourceBundle: json['sourceBundle'],
+    deviceModel: json['deviceModel'],
+    heartRate: (json['heartRate'] != null
+        ? json['heartRate']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    respiratoryRate: (json['respiratoryRate'] != null
+        ? json['respiratoryRate']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    heartRateVariability: (json['heartRateVariability'] != null
+        ? json['heartRateVariability']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    oxygenSaturation: (json['oxygenSaturation'] != null
+        ? json['oxygenSaturation']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    restingHeartRate: (json['restingHeartRate'] != null
+        ? json['restingHeartRate']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    sleepStages: SleepStages(
+      awakeSleepSamples: json['sleepStages']['awakeSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['awakeSleepSamples'])
+              .map((it) => _sampleFromSwiftJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      deepSleepSamples: json['sleepStages']['deepSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['deepSleepSamples'])
+              .map((it) => _sampleFromSwiftJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      lightSleepSamples: json['sleepStages']['lightSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['lightSleepSamples'])
+              .map((it) => _sampleFromSwiftJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      remSleepSamples: json['sleepStages']['remSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['remSleepSamples'])
+              .map((it) => _sampleFromSwiftJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      unknownSleepSamples: json['sleepStages']['unknownSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['unknownSleepSamples'])
+              .map((it) => _sampleFromSwiftJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+    ),
+  );
+}
+
+Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
+  if (json == null) {
+    return null;
+  }
+
+  final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
+  final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+
+  return Workout(
+    id: json['id'],
+    startDate: DateTime.fromMillisecondsSinceEpoch(
+        _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
+    endDate: DateTime.fromMillisecondsSinceEpoch(
+        _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+    sourceBundle: json['sourceBundle'],
+    deviceModel: json['deviceModel'],
+    sport: json['sport'],
+    caloriesInKiloJules: json['calories'],
+    distanceInMeter: json['distance'],
+    heartRate: (json['heartRate'] != null
+        ? json['heartRate']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    respiratoryRate: (json['respiratoryRate'] != null
+        ? json['respiratoryRate']
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+  );
+}
+
 BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
   try {
     return BloodPressureSample(
@@ -349,8 +475,6 @@ BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
     return null;
   }
 }
-
-final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
 
 QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
   if (json == null) {

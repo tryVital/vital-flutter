@@ -11,6 +11,7 @@ class Sleep {
   final List<QuantitySample> heartRateVariability;
   final List<QuantitySample> oxygenSaturation;
   final List<QuantitySample> respiratoryRate;
+  final SleepStages sleepStages;
 
   Sleep({
     required this.id,
@@ -23,5 +24,27 @@ class Sleep {
     required this.heartRateVariability,
     required this.oxygenSaturation,
     required this.respiratoryRate,
+    required this.sleepStages,
+  });
+
+  @override
+  String toString() {
+    return 'Sleep{id: $id, startDate: $startDate, endDate: $endDate, sourceBundle: $sourceBundle, deviceModel: $deviceModel, heartRate: $heartRate, restingHeartRate: $restingHeartRate, heartRateVariability: $heartRateVariability, oxygenSaturation: $oxygenSaturation, respiratoryRate: $respiratoryRate, sleepStages: $sleepStages}';
+  }
+}
+
+class SleepStages {
+  final List<QuantitySample> awakeSleepSamples;
+  final List<QuantitySample> deepSleepSamples;
+  final List<QuantitySample> lightSleepSamples;
+  final List<QuantitySample> remSleepSamples;
+  final List<QuantitySample> unknownSleepSamples;
+
+  SleepStages({
+    required this.awakeSleepSamples,
+    required this.deepSleepSamples,
+    required this.lightSleepSamples,
+    required this.remSleepSamples,
+    required this.unknownSleepSamples,
   });
 }

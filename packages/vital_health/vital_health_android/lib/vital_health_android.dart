@@ -160,7 +160,10 @@ ProcessedData _mapJsonToProcessedData(
       );
     case HealthResource.sleep:
       return SleepProcessedData(
-        sleeps: [], //TODO handle it in VIT-2412
+        sleeps: (json['sleeps'] as List<dynamic>)
+            .map((it) => _sleepFromJson(it))
+            .whereType<Sleep>()
+            .toList(),
       );
     case HealthResource.activity:
       return ActivityProcessedData(
@@ -224,6 +227,81 @@ ProcessedData _mapJsonToProcessedData(
     case HealthResource.mindfulSession:
       throw Exception("Not supported on Android");
   }
+}
+
+Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
+  if (json == null) {
+    return null;
+  }
+  return Sleep(
+    id: json['id'],
+    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate']),
+    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate']),
+    sourceBundle: json['sourceBundle'],
+    deviceModel: json['deviceModel'],
+    heartRate: (json['heartRate'] != null
+        ? json['heartRate']
+            .map((it) => _sampleFromJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    respiratoryRate: (json['respiratoryRate'] != null
+        ? json['respiratoryRate']
+            .map((it) => _sampleFromJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    heartRateVariability: (json['heartRateVariability'] != null
+        ? json['heartRateVariability']
+            .map((it) => _sampleFromJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    oxygenSaturation: (json['oxygenSaturation'] != null
+        ? json['oxygenSaturation']
+            .map((it) => _sampleFromJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    restingHeartRate: (json['restingHeartRate'] != null
+        ? json['restingHeartRate']
+            .map((it) => _sampleFromJson(it))
+            .whereType<QuantitySample>()
+            .toList()
+        : <QuantitySample>[]),
+    sleepStages: SleepStages(
+      awakeSleepSamples: json['sleepStages']['awakeSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['awakeSleepSamples'])
+              .map((it) => _sampleFromJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      deepSleepSamples: json['sleepStages']['deepSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['deepSleepSamples'])
+              .map((it) => _sampleFromJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      lightSleepSamples: json['sleepStages']['lightSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['lightSleepSamples'])
+              .map((it) => _sampleFromJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      remSleepSamples: json['sleepStages']['remSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['remSleepSamples'])
+              .map((it) => _sampleFromJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+      unknownSleepSamples: json['sleepStages']['unknownSleepSamples'] != null
+          ? jsonDecode(json['sleepStages']['unknownSleepSamples'])
+              .map((it) => _sampleFromJson(it))
+              .whereType<QuantitySample>()
+              .toList()
+          : <QuantitySample>[],
+    ),
+  );
 }
 
 Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
