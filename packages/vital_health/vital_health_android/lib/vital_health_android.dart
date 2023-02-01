@@ -180,7 +180,7 @@ ProcessedData _mapJsonToProcessedData(
       return ProfileProcessedData(
         biologicalSex: json['biologicalSex'],
         dateOfBirth: json['dateOfBirth'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(json['dateOfBirth'])
+            ? DateTime.fromMillisecondsSinceEpoch(json['dateOfBirth'], isUtc: true)
             : null,
         heightInCm: json['heightInCm'],
       );
@@ -286,8 +286,8 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
   }
   return Sleep(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate']),
-    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate']),
+    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     heartRate: (json['heartRate'] != null
@@ -361,8 +361,8 @@ Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
   }
   return Workout(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate']),
-    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate']),
+    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     sport: json['sport'],
@@ -472,10 +472,8 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
       id: json['id'] as String?,
       value: double.parse(json['value'].toString()),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int,
-          isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int,
-          isUtc: true),
+      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
       type: json['type'] as String?,
     );
   } catch (e, stacktrace) {

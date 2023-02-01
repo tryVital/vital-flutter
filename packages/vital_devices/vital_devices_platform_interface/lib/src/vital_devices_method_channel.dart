@@ -282,10 +282,8 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
       id: json['id'] as String?,
       value: double.parse(json['value'].toString()),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int,
-          isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int,
-          isUtc: true),
+      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
       type: json['type'] as String?,
     );
   } catch (e, stacktrace) {
@@ -294,21 +292,17 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   }
 }
 
-final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
-
 QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic> json) {
   try {
-    final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
-    final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+    final startMillisecondsSinceEpoch = (json['startDate'] as int);
+    final endMillisecondsSinceEpoch = (json['endDate'] as int);
 
     return QuantitySample(
       id: json['id'] as String?,
       value: double.parse(json['value'].toString()),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(
-          _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
-      endDate: DateTime.fromMillisecondsSinceEpoch(
-          _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+      startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
       type: json['type'] as String,
     );
   } catch (e, stacktrace) {
