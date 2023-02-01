@@ -163,9 +163,9 @@ ProcessedData _mapJsonToProcessedData(
   switch (resource) {
     case HealthResource.profile:
       return ProfileProcessedData(
-        biologicalSex: json['biologicalSex'],
-        dateOfBirth: json['dateOfBirth'],
-        heightInCm: json['heightInCm'],
+        biologicalSex: json['summary']["_0"]["profile"]["_0"]['biologicalSex'],
+        dateOfBirth: json['summary']["_0"]["profile"]["_0"]['dateOfBirth'],
+        heightInCm: json['summary']["_0"]["profile"]["_0"]['heightInCm'],
       );
     case HealthResource.body:
       return BodyProcessedData(

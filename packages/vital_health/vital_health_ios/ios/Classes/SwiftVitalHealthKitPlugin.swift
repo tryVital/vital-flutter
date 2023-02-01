@@ -374,6 +374,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
           return "heartRate"
         case .mindfulSession:
           return "mindfulSession"
+      case .heartRateVariability:
+          return "heartRateVariability"
       }
     case .individual(let type):
       switch type {
