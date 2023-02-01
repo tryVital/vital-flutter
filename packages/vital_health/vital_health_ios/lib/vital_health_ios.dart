@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
+import 'package:vital_core/exceptions.dart';
 import 'package:vital_core/samples.dart';
 import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
@@ -61,27 +62,42 @@ class VitalHealthIos extends VitalHealthPlatform {
   @override
   Future<void> configureHealth({required HealthConfig config}) async {
     Fimber.d('Healthkit configureHealthKit $config');
-    await _channel.invokeMethod('configureHealthkit', [
+    final result = await _channel.invokeMethod('configureHealthkit', [
       config.iosConfig.backgroundDeliveryEnabled,
       config.logsEnabled,
       config.numberOfDaysToBackFill,
       config.iosConfig.dataPushMode
     ]);
-    _healthKitConfigured = true;
-    if (_statusSubscribed) {
-      Fimber.d('Healthkit subscribeToStatus (configure)');
-      await _channel.invokeMethod('subscribeToStatus');
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    } else {
+      _healthKitConfigured = true;
+      if (_statusSubscribed) {
+        Fimber.d('Healthkit subscribeToStatus (configure)');
+        await _channel.invokeMethod('subscribeToStatus');
+      }
     }
   }
 
   @override
   Future<void> setUserId(String userId) async {
-    await _channel.invokeMethod('setUserId', userId);
+    final result = await _channel.invokeMethod('setUserId', userId);
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    }
   }
 
   @override
   Future<void> cleanUp() async {
-    await _channel.invokeMethod('cleanUp');
+    final result = await _channel.invokeMethod('cleanUp');
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    }
   }
 
   @override
@@ -116,30 +132,54 @@ class VitalHealthIos extends VitalHealthPlatform {
 
   @override
   Future<void> syncData({List<HealthResource>? resources}) async {
-    await _channel.invokeMethod(
+    final result = await _channel.invokeMethod(
         'syncData', resources?.map((it) => it.name).toList());
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    }
   }
 
   @override
   Future<bool> hasAskedForPermission(HealthResource resource) async {
-    return await _channel.invokeMethod('hasAskedForPermission', resource.name)
-        as bool;
+    final result =
+        await _channel.invokeMethod('hasAskedForPermission', resource.name);
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    } else {
+      return result as bool;
+    }
   }
 
   @override
   Future<bool> isUserConnected(String provider) async {
-    return await _channel.invokeMethod('isUserConnected', provider) as bool;
+    final result = await _channel.invokeMethod('isUserConnected', provider);
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    } else {
+      return result as bool;
+    }
   }
 
   @override
   Future<void> writeHealthData(HealthResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
-    return await _channel.invokeMethod('writeHealthKitData', [
+    final result = await _channel.invokeMethod('writeHealthKitData', [
       writeResource.name,
       value,
       startDate.millisecondsSinceEpoch,
       endDate.millisecondsSinceEpoch
     ]);
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    }
   }
 
   @override
@@ -151,7 +191,12 @@ class VitalHealthIos extends VitalHealthPlatform {
       endDate.millisecondsSinceEpoch
     ]);
 
-    return _mapJsonToProcessedData(resource, jsonDecode(result));
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    } else {
+      return _mapJsonToProcessedData(resource, jsonDecode(result));
+    }
   }
 
   @override
@@ -498,5 +543,32 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");
     return null;
+  }
+}
+
+VitalException? _mapError(dynamic arguments) {
+  if (arguments is! Map) return null;
+
+  final code = arguments.containsKey("code") ? arguments["code"] : null;
+  final message =
+      arguments.containsKey("message") ? arguments["message"] : null;
+
+  if (code == null || message == null) {
+    return null;
+  } else {
+    switch (code) {
+      case "UnsupportedRegion":
+        return UnsupportedRegionException(message);
+      case "UnsupportedEnvironment":
+        return UnsupportedEnvironmentException(message);
+      case "UnsupportedResource":
+        return UnsupportedResourceException(message);
+      case "UnsupportedDataPushMode":
+        return UnsupportedDataPushModeException(message);
+      case "UnsupportedProvider":
+        return UnsupportedProviderException(message);
+    }
+
+    return UnknownException(code + " " + message);
   }
 }

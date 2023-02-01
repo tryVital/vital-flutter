@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vital_core/exceptions.dart';
 import 'package:vital_core/samples.dart';
 import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
@@ -42,89 +43,130 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   @override
   Future<void> configureHealth({required HealthConfig config}) async {
     Fimber.d('Health Connect configureHealthConnect');
-    await _channel.invokeMethod('configureHealthConnect', <String, dynamic>{
-      "logsEnabled": config.logsEnabled,
-      "numberOfDaysToBackFill": config.numberOfDaysToBackFill,
-      "syncOnAppStart": config.androidConfig.syncOnAppStart
-    });
+    try {
+      await _channel.invokeMethod('configdureHealthConnect', <String, dynamic>{
+        "logsEnabled": config.logsEnabled,
+        "numberOfDaysToBackFill": config.numberOfDaysToBackFill,
+        "syncOnAppStart": config.androidConfig.syncOnAppStart
+      });
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<void> setUserId(String userId) async {
-    await _channel.invokeMethod('setUserId', <String, dynamic>{
-      "userId": userId,
-    });
+    try {
+      await _channel.invokeMethod('setUserId', <String, dynamic>{
+        "userId": userId,
+      });
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<void> cleanUp() async {
-    await _channel.invokeMethod('cleanUp');
+    try {
+      await _channel.invokeMethod('cleanUp');
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<PermissionOutcome> askForResources(
       List<HealthResource> resources) async {
-    return ask(resources, []);
+    try {
+      return ask(resources, []);
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<PermissionOutcome> ask(List<HealthResource> readResources,
       List<HealthResourceWrite> writeResources) async {
-    final result =
-        await _channel.invokeMethod('askForResources', <String, dynamic>{
-      "readResources": readResources.map((e) => e.name).toList(),
-      "writeResources": writeResources.map((e) => e.name).toList(),
-    });
+    try {
+      final result =
+          await _channel.invokeMethod('askForResources', <String, dynamic>{
+        "readResources": readResources.map((e) => e.name).toList(),
+        "writeResources": writeResources.map((e) => e.name).toList(),
+      });
 
-    return result
-        ? PermissionOutcome.success()
-        : PermissionOutcome.failure(result);
+      return result
+          ? PermissionOutcome.success()
+          : PermissionOutcome.failure(result);
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<void> syncData({List<HealthResource>? resources}) async {
-    await _channel.invokeMethod('syncData', <String, dynamic>{
-      "resources": resources?.map((e) => e.name).toList(),
-    });
+    try {
+      await _channel.invokeMethod('syncData', <String, dynamic>{
+        "resources": resources?.map((e) => e.name).toList(),
+      });
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<bool> hasAskedForPermission(HealthResource resource) async {
-    return await _channel.invokeMethod('hasAskedForPermission', resource.name)
-        as bool;
+    try {
+      return await _channel.invokeMethod('hasAskedForPermission', resource.name)
+          as bool;
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<bool> isUserConnected(String provider) async {
-    return await _channel.invokeMethod('isUserConnected', provider) as bool;
+    try {
+      return await _channel.invokeMethod('isUserConnected', provider) as bool;
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<void> writeHealthData(HealthResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
-    await _channel.invokeMethod('writeHealthData', <String, dynamic>{
-      "resource": writeResource.name,
-      "startDate": startDate.millisecondsSinceEpoch,
-      "endDate": endDate.millisecondsSinceEpoch,
-      "value": value,
-    });
+    try {
+      await _channel.invokeMethod('writeHealthData', <String, dynamic>{
+        "resource": writeResource.name,
+        "startDate": startDate.millisecondsSinceEpoch,
+        "endDate": endDate.millisecondsSinceEpoch,
+        "value": value,
+      });
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
   }
 
   @override
   Future<ProcessedData> read(
       HealthResource resource, DateTime startDate, DateTime endDate) async {
-    if (resource == HealthResource.caffeine ||
-        resource == HealthResource.mindfulSession) {
-      throw UnsupportedError("Resource $resource is not supported on Android");
+    try {
+      if (resource == HealthResource.caffeine ||
+          resource == HealthResource.mindfulSession) {
+        throw UnsupportedResourceException(
+            "Resource $resource is not supported on Android");
+      }
+
+      final result = await _channel.invokeMethod('read', <String, dynamic>{
+        "resource": resource.name,
+        "startDate": startDate.millisecondsSinceEpoch,
+        "endDate": endDate.millisecondsSinceEpoch,
+      });
+
+      return _mapJsonToProcessedData(resource, jsonDecode(result));
+    } on Exception catch (e) {
+      throw _mapException(e);
     }
-
-    final result = await _channel.invokeMethod('read', <String, dynamic>{
-      "resource": resource.name,
-      "startDate": startDate.millisecondsSinceEpoch,
-      "endDate": endDate.millisecondsSinceEpoch,
-    });
-
-    return _mapJsonToProcessedData(resource, jsonDecode(result));
   }
 
   @override
@@ -430,5 +472,26 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");
     return null;
+  }
+}
+
+VitalException _mapException(Exception e) {
+  if (e is PlatformException) {
+    switch (e.code) {
+      case "UnsupportedRegion":
+        return UnsupportedRegionException(e.message ?? "");
+      case "UnsupportedEnvironment":
+        return UnsupportedEnvironmentException(e.message ?? "");
+      case "UnsupportedResource":
+        return UnsupportedResourceException(e.message ?? "");
+      case "UnsupportedDataPushMode":
+        return UnsupportedDataPushModeException(e.message ?? "");
+      case "UnsupportedProvider":
+        return UnsupportedProviderException(e.message ?? "");
+      default:
+        return UnknownException(e.message ?? "");
+    }
+  } else {
+    return UnknownException(e.toString());
   }
 }
