@@ -5,11 +5,9 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vital_core/exceptions.dart';
 import 'package:vital_core/samples.dart';
-import 'package:vital_devices_platform_interface/src/brand.dart';
-import 'package:vital_devices_platform_interface/src/device.dart';
-import 'package:vital_devices_platform_interface/src/exception.dart';
-import 'package:vital_devices_platform_interface/src/vital_devices_platform.dart';
+import 'package:vital_devices_platform_interface/vital_devices_platform_interface.dart';
 
 const _channel = MethodChannel('vital_devices');
 
@@ -215,7 +213,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
     }
   }
 
-  DeviceManagerExceptions? _mapError(dynamic arguments) {
+  VitalException? _mapError(dynamic arguments) {
     if (arguments is! Map) return null;
 
     final code = arguments.containsKey("code") ? arguments["code"] : null;

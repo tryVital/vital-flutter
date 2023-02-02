@@ -137,7 +137,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             "read" -> {
                 read(call, result)
             }
-
             else -> throw Exception("Unsupported method ${call.method}")
         }
     }
@@ -192,8 +191,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun writeHealthData(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
             result.error(
-                "VitalHealthConnect is configured",
-                "VitalHealthConnect is configured",
+                "ClientSetup",
+                "VitalHealthConnect is not configured",
                 null
             )
             return
@@ -215,7 +214,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 )
             } catch (e: Exception) {
                 result.error(
-                    "Failed to write data",
+                    "Unknown",
                     e.message,
                     e
                 )
@@ -226,8 +225,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun read(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
             result.error(
-                "VitalHealthConnect is configured",
-                "VitalHealthConnect is configured",
+                "ClientSetup",
+                "VitalHealthConnect is not configured",
                 null
             )
             return
@@ -486,7 +485,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 }
             } catch (e: Exception) {
                 result.error(
-                    "Failed to write data",
+                    "Unknown",
                     e.message,
                     e
                 )
@@ -498,7 +497,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun syncData(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
             result.error(
-                "VitalHealthConnect is not configured",
+                "ClientSetup",
                 "VitalHealthConnect is not configured",
                 null
             )
@@ -519,8 +518,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun setUserId(call: MethodCall, result: Result) {
         if (vitalHealthConnectManager == null) {
             result.error(
-                "VitalHealthConnect is configured",
-                "VitalHealthConnect is configured",
+                "ClientSetup",
+                "VitalHealthConnect is not configured",
                 null
             )
             return
@@ -536,7 +535,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private fun configureHealthConnect(call: MethodCall, result: Result) {
         if (vitalClient == null) {
-            result.error("VitalClient is not configured", "VitalClient is not configured", null)
+            result.error("ClientSetup", "VitalClient is not configured", null)
         }
 
         vitalHealthConnectManager = VitalHealthConnectManager.create(
