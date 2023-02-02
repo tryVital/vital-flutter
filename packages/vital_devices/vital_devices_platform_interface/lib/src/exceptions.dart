@@ -46,3 +46,23 @@ class DeviceNotFoundException extends VitalException {
     return 'DeviceNotFoundException{ code: $code, message: $message }';
   }
 }
+
+class GlucoseMeterReadingErrorException extends VitalException {
+  GlucoseMeterReadingErrorException(String message)
+      : super('GlucoseMeterReadingError', message);
+
+  @override
+  String toString() {
+    return 'GlucoseMeterReadingErrorException{ code: $code, message: $message }';
+  }
+}
+
+class BloodPressureReadingErrorException extends VitalException {
+  BloodPressureReadingErrorException(String message)
+      : super('BloodPressureReadingError', message);
+
+  @override
+  String toString() {
+    return 'BloodPressureReadingErrorException{ code: $code, message: $message }';
+  }
+}

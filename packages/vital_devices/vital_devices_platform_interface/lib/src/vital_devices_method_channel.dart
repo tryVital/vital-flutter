@@ -58,7 +58,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
             final error = _mapError(decodedArguments);
 
             if (error != null) {
-              _scanSubject.addError(error);
+              _glucoseReadSubject.addError(error);
             } else {
               _glucoseReadSubject.sink.add(
                 decodedArguments
@@ -71,16 +71,18 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
             }
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
-            _scanSubject.addError(UnknownException("$exception $stackTrace"));
+            _glucoseReadSubject
+                .addError(UnknownException("$exception $stackTrace"));
           }
           break;
         case "sendBloodPressureReading":
           try {
+            print(call.arguments);
             final decodedArguments = jsonDecode(call.arguments as String);
             final error = _mapError(decodedArguments);
 
             if (error != null) {
-              _scanSubject.addError(error);
+              _bloodPressureSubject.addError(error);
             } else {
               _bloodPressureSubject.sink.add(
                 decodedArguments
@@ -93,7 +95,8 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
             }
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
-            _scanSubject.addError(UnknownException("$exception $stackTrace"));
+            _bloodPressureSubject
+                .addError(UnknownException("$exception $stackTrace"));
           }
           break;
         default:
@@ -236,6 +239,10 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
           return UnsupportedBrandException(message);
         case "UnsupportedKind":
           return UnsupportedKindException(message);
+        case "GlucoseMeterReadingError":
+          return GlucoseMeterReadingErrorException(message);
+        case "BloodPressureReadingError":
+          return BloodPressureReadingErrorException(message);
       }
 
       return UnknownException(code + " " + message);
