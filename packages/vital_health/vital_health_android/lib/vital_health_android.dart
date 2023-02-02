@@ -257,6 +257,13 @@ ProcessedData _mapJsonToProcessedData(
             .whereType<QuantitySample>()
             .toList(),
       );
+    case HealthResource.heartRateVariability:
+      return HeartRateVariabilityProcessedData(
+        timeSeries: (json['timeSeries'] as List<dynamic>)
+            .map((it) => _sampleFromJson(it))
+            .whereType<QuantitySample>()
+            .toList(),
+      );
     case HealthResource.water:
       return WaterProcessedData(
         timeSeries: (json['timeSeries'] as List<dynamic>)

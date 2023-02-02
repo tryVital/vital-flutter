@@ -7,6 +7,7 @@ enum HealthResource {
   glucose,
   bloodPressure,
   heartRate,
+  heartRateVariability,
   steps,
   activeEnergyBurned,
   basalEnergyBurned,
