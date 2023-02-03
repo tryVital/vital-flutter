@@ -50,6 +50,8 @@ class HealthServices {
     await VitalHealthPlatform.instance.syncData(resources: resources);
   }
 
+  @Deprecated(
+      'Will be removed in coming versions. Use `UserService.getProviders` in the `vital_core` package instead')
   Future<bool> isUserConnected(String provider) async {
     return VitalHealthPlatform.instance.isUserConnected(provider);
   }
