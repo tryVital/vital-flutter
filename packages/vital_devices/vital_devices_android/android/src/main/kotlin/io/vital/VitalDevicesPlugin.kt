@@ -140,7 +140,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                         channel.invokeMethod(
                             "sendGlucoseMeterReading", JSONObject(
                                 mapOf(
-                                    "code" to "UnknownError",
+                                    "code" to "GlucoseMeterReadingError",
                                     "message" to e.message,
                                 )
                             ).toString()
@@ -187,7 +187,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                         channel.invokeMethod(
                             "sendBloodPressureReading", JSONObject(
                                 mapOf(
-                                    "code" to "UnknownError",
+                                    "code" to "BloodPressureReadingError",
                                     "message" to e.message,
                                 )
                             ).toString()

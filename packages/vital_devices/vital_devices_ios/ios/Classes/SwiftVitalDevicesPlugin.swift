@@ -191,12 +191,12 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private func startReadingGlucoseMeter(_ arguments: [AnyObject], result: @escaping FlutterResult){
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
-
+        
         guard scannedDevice != nil else {
             result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
             return
         }
-
+        
         glucoseMeterCancellable?.cancel()
         glucoseMeterCancellable =  deviceManager.glucoseMeter(for :scannedDevice!)
             .read(device: scannedDevice!)
@@ -204,13 +204,19 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                 guard self?.flutterRunning ?? false else {
                     return
                 }
-
-                self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: "error reading data from device \(value)")
+                
+                switch(value.self){
+                case .finished:
+                    return
+                case .failure(let error):
+                    self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: encode(ErrorResult(code: "GlucoseMeterReadingError", message: error.localizedDescription)))
+                }
+                
             }, receiveValue:{[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
                 }
-
+                
                 self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: encode(value))
             })
         result(nil)
@@ -219,12 +225,12 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private func startReadingBloodPressure(_ arguments: [AnyObject], result: @escaping FlutterResult){
         let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
         let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
-
+        
         guard scannedDevice != nil else {
             result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
             return
         }
-
+        
         bloodPressureCancellable?.cancel()
         bloodPressureCancellable = deviceManager.bloodPressureReader(for :scannedDevice!)
             .read(device: scannedDevice!)
@@ -232,13 +238,18 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                 guard self?.flutterRunning ?? false else {
                     return
                 }
-
-                self?.channel.invokeMethod("sendBloodPressureReading", arguments: "error reading data from device \(value)")
+                
+                switch(value.self){
+                case .finished:
+                    return
+                case .failure(let error):
+                    self?.channel.invokeMethod("sendBloodPressureReading", arguments: encode(ErrorResult(code: "BloodPressureReadingError", message: error.localizedDescription)))
+                }
             }, receiveValue:{[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
                 }
-
+                
                 self?.channel.invokeMethod("sendBloodPressureReading", arguments: encode(value))
             })
         result(nil)
