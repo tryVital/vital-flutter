@@ -1,3 +1,10 @@
+## 1.1.0
+
+ - **FEAT**: VIT-2430 handle errors ([#32](https://github.com/tryVital/vital-flutter/issues/32)).
+ - **FEAT**: VIT-2412 add sleep and workout ([#31](https://github.com/tryVital/vital-flutter/issues/31)).
+ - **FEAT**: VIT-2418 integrate read data ([#29](https://github.com/tryVital/vital-flutter/issues/29)).
+ - **FEAT**: VIT-2418 integrate read data.
+
 ## 1.0.0
 
 - Bump version to 1.0.0

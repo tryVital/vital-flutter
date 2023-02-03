@@ -1,3 +1,7 @@
+## 1.0.1
+
+ - **FIX**: VIT-2439 correctly handle errors coming when reading from device ([#36](https://github.com/tryVital/vital-flutter/issues/36)).
+
 ## 1.0.0
 
 - Bump version to 1.0.0

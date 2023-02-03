@@ -1,3 +1,8 @@
+## 1.1.0
+
+ - **FEAT**: VIT-2418 integrate read data ([#29](https://github.com/tryVital/vital-flutter/issues/29)).
+ - **DOCS**: update docs.
+
 ## 1.0.0
 
 - Bump version to 1.0.0
