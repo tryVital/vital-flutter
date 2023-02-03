@@ -296,6 +296,7 @@ private func mapBrandToString(_ brand: Brand) -> String {
 private func encode(_ encodable: Encodable) -> String? {
   let json: String?
   let jsonEncoder = JSONEncoder()
+  jsonEncoder.dateEncodingStrategy = .millisecondsSince1970
 
   if let data = try? encode(encodable, encoder: jsonEncoder) {
     json = String(data: data, encoding: .utf8)

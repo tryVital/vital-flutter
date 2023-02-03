@@ -128,8 +128,8 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
 
       let value: Double = arguments[1] as! Double
 
-      let startDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int) / 1000)
-      let endDate = Date(timeIntervalSince1970: Double(arguments[3] as! Int) / 1000)
+      let startDate = Date(epochMillis: arguments[2] as! Int)
+      let endDate = Date(epochMillis: arguments[3] as! Int)
 
       let dataInput: DataInput
 
@@ -164,8 +164,8 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       let resourceString: String = arguments[0] as! String
       let resource = try mapResourceToReadableVitalResource(resourceString)
 
-      let startDate = Date(timeIntervalSince1970: Double(arguments[1] as! Int) / 1000)
-      let endDate = Date(timeIntervalSince1970: Double(arguments[2] as! Int) / 1000)
+      let startDate = Date(epochMillis: arguments[1] as! Int)
+      let endDate = Date(epochMillis: arguments[2] as! Int)
 
       NonthrowingTask {
         do {
@@ -220,6 +220,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         )
 
         result(nil)
+
       } catch let error {
         result(encode(ErrorResult(from: error)))
       }
@@ -523,6 +524,7 @@ private func mapProviderToVitalProvider(_ provider: String) throws -> Provider {
 private func encode(_ encodable: Encodable) -> String? {
   let json: String?
   let jsonEncoder = JSONEncoder()
+  jsonEncoder.dateEncodingStrategy = .millisecondsSince1970
 
   if let data = try? encode(encodable, encoder: jsonEncoder) {
     json = String(data: data, encoding: .utf8)

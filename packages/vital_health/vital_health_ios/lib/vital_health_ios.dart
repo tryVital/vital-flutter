@@ -10,8 +10,6 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 
 const _channel = MethodChannel('vital_health_kit');
 
-final _swiftTimeStart = DateTime.utc(2001, 1, 1, 0, 0, 0, 0, 0);
-
 class VitalHealthIos extends VitalHealthPlatform {
   static void registerWith() {
     VitalHealthPlatform.instance = VitalHealthIos();
@@ -410,15 +408,13 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
     return null;
   }
 
-  final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
-  final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+  final startMillisecondsSinceEpoch = (json['startDate'] as int);
+  final endMillisecondsSinceEpoch = (json['endDate'] as int);
 
   return Sleep(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(
-        _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
-    endDate: DateTime.fromMillisecondsSinceEpoch(
-        _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+    startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     heartRate: (json['heartRate'] != null
@@ -491,15 +487,13 @@ Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
     return null;
   }
 
-  final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
-  final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+  final startMillisecondsSinceEpoch = (json['startDate'] as int);
+  final endMillisecondsSinceEpoch = (json['endDate'] as int);
 
   return Workout(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(
-        _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
-    endDate: DateTime.fromMillisecondsSinceEpoch(
-        _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+    startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     sport: json['sport'],
@@ -539,17 +533,15 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
   }
 
   try {
-    final startMillisecondsSinceEpoch = (json['startDate'] as int) * 1000;
-    final endMillisecondsSinceEpoch = (json['endDate'] as int) * 1000;
+    final startMillisecondsSinceEpoch = (json['startDate'] as int);
+    final endMillisecondsSinceEpoch = (json['endDate'] as int);
 
     return QuantitySample(
       id: json['id'] as String?,
       value: double.parse(json['value'].toString()),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(
-          _swiftTimeStart.millisecondsSinceEpoch + startMillisecondsSinceEpoch),
-      endDate: DateTime.fromMillisecondsSinceEpoch(
-          _swiftTimeStart.millisecondsSinceEpoch + endMillisecondsSinceEpoch),
+      startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
       type: json['type'] as String,
     );
   } catch (e, stacktrace) {
