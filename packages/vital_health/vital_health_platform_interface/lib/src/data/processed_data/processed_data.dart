@@ -12,8 +12,8 @@ abstract class ProcessedData {
 
 class ProfileProcessedData extends ProcessedData {
   final String biologicalSex;
-  final DateTime dateOfBirth;
-  final int heightInCm;
+  final DateTime? dateOfBirth;
+  final int? heightInCm;
 
   ProfileProcessedData({
     required this.biologicalSex,

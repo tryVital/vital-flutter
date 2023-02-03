@@ -179,7 +179,9 @@ ProcessedData _mapJsonToProcessedData(
     case HealthResource.profile:
       return ProfileProcessedData(
         biologicalSex: json['biologicalSex'],
-        dateOfBirth: DateTime.fromMillisecondsSinceEpoch(json['dateOfBirth']),
+        dateOfBirth: json['dateOfBirth'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(json['dateOfBirth'])
+            : null,
         heightInCm: json['heightInCm'],
       );
     case HealthResource.body:

@@ -207,10 +207,14 @@ ProcessedData _mapJsonToProcessedData(
     HealthResource resource, Map<String, dynamic> json) {
   switch (resource) {
     case HealthResource.profile:
+      final rawDateOfBirth =
+          json['summary']["_0"]["profile"]["_0"]['dateOfBirth'];
       return ProfileProcessedData(
-        biologicalSex: json['biologicalSex'],
-        dateOfBirth: json['dateOfBirth'],
-        heightInCm: json['heightInCm'],
+        biologicalSex: json['summary']["_0"]["profile"]["_0"]['biologicalSex'],
+        dateOfBirth: rawDateOfBirth != null
+            ? DateTime.fromMillisecondsSinceEpoch(rawDateOfBirth, isUtc: true)
+            : null,
+        heightInCm: json['summary']["_0"]["profile"]["_0"]['heightInCm'],
       );
     case HealthResource.body:
       return BodyProcessedData(
