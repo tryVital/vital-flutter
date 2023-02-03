@@ -471,6 +471,15 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                     )
                                 ).toString()
                             )
+                            is TimeSeriesData.HeartRateVariabilityRmssd -> result.success(
+                                JSONObject(
+                                    mapOf(
+                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.HeartRateVariabilityRmssd).samples.map {
+                                            mapSampleToJson(it)
+                                        }),
+                                    )
+                                ).toString()
+                            )
                             is TimeSeriesData.Water -> result.success(
                                 JSONObject(
                                     mapOf(
@@ -629,7 +638,8 @@ private fun mapReadResourceToHealthRecord(resource: String): List<KClass<out Rec
         "sleep" -> return listOf(SleepSessionRecord::class)
         "glucose" -> return listOf(BloodGlucoseRecord::class)
         "bloodPressure" -> return listOf(BloodPressureRecord::class)
-        "heartRate" -> return listOf(HeartRateVariabilitySdnnRecord::class)
+        "heartRate" -> return listOf(HeartRateRecord::class)
+        "heartRateVariability" -> return listOf(HeartRateVariabilityRmssdRecord::class)
         "steps" -> return listOf(StepsRecord::class)
         "activeEnergyBurned" -> return listOf(ActiveCaloriesBurnedRecord::class)
         "basalEnergyBurned" -> return listOf(BasalMetabolicRateRecord::class)
@@ -657,6 +667,7 @@ private fun mapStringToHealthResource(resource: String): HealthResource? {
         "glucose" -> return HealthResource.Glucose
         "bloodPressure" -> return HealthResource.BloodPressure
         "heartRate" -> return HealthResource.HeartRate
+        "heartRateVariability" -> return HealthResource.HeartRateVariability
         "steps" -> return HealthResource.Steps
         "activeEnergyBurned" -> return HealthResource.ActiveEnergyBurned
         "basalEnergyBurned" -> return HealthResource.BasalEnergyBurned

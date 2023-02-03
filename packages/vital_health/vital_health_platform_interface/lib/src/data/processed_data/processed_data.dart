@@ -146,6 +146,20 @@ class HeartRateProcessedData extends ProcessedData {
   }
 }
 
+class HeartRateVariabilityProcessedData extends ProcessedData {
+  final List<QuantitySample> timeSeries;
+
+  HeartRateVariabilityProcessedData({
+    required this.timeSeries,
+  }) : super(HealthResource.heartRate);
+
+  @override
+  String toString() {
+    return 'HeartRateVariabilityProcessedData{timeSeries: $timeSeries}';
+  }
+}
+
+
 class StepsProcessedData extends ProcessedData {
   final List<Activity> activities;
 

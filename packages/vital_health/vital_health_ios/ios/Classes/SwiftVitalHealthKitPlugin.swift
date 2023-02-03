@@ -370,6 +370,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
           return "bloodPressure"
         case .hearthRate:
           return "heartRate"
+        case .heartRateVariability:
+          return "heartRateVariability"
         case .mindfulSession:
           return "mindfulSession"
       }
@@ -466,6 +468,8 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .vitals(.bloodPressure)
     case "heartRate":
       return .vitals(.hearthRate)
+    case "heartRateVariability":
+      return .vitals(.heartRateVariability)
     case "mindfulSession":
       return .vitals(.mindfulSession)
     case "steps":

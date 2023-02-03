@@ -296,6 +296,14 @@ ProcessedData _mapJsonToProcessedData(
                 .whereType<QuantitySample>()
                 .toList(),
       );
+    case HealthResource.heartRateVariability:
+      return HeartRateProcessedData(
+        timeSeries: (json['timeSeries']["_0"]["heartRateVariability"]["_0"]
+                as List<dynamic>)
+            .map((it) => _sampleFromSwiftJson(it))
+            .whereType<QuantitySample>()
+            .toList(),
+      );
     case HealthResource.water:
       return WaterProcessedData(
         timeSeries: (json['timeSeries']["_0"]["nutrition"]["_0"]["water"]["_0"]
