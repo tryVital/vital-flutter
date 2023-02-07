@@ -48,7 +48,7 @@ SPEC CHECKSUMS:
   CombineCoreBluetooth: 87fc830440fa8b1e1024c35eaa5e116e743c2660
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  url_launcher_ios: ae1517e5e344f5544fb090b079e11f399dfbe4d2
+  url_launcher_ios: fb12c43172927bb5cf75aeebd073f883801f1993
   vital_devices_ios: 4daadeb199f585f23f4d66c4984ca688e869d8fe
   vital_health_ios: 74ff82989b02f2aab3666afbeadd85e02a5189c2
   VitalCore: 7a1a1d1d4051ef799393137c41d14f15a2138b0e
