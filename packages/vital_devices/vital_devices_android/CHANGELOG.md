@@ -1,3 +1,8 @@
+## 1.2.0
+
+ - **FIX**: VIT-2439 correctly handle errors coming when reading from device ([#36](https://github.com/tryVital/vital-flutter/issues/36)).
+ - **FEAT**: VIT-2418 integrate read data ([#29](https://github.com/tryVital/vital-flutter/issues/29)).
+
 ## 1.1.0
 
  - **FIX**: VIT-2439 correctly handle errors coming when reading from device ([#36](https://github.com/tryVital/vital-flutter/issues/36)).

@@ -1,3 +1,11 @@
+## 1.2.0
+
+ - **FIX**: VIT-2431 read profile never returned on ios ([#34](https://github.com/tryVital/vital-flutter/issues/34)).
+ - **FEAT**: VIT-2435 add heart rate variability resource ([#37](https://github.com/tryVital/vital-flutter/issues/37)).
+ - **FEAT**: VIT-2430 handle errors ([#32](https://github.com/tryVital/vital-flutter/issues/32)).
+ - **FEAT**: VIT-2412 add sleep and workout ([#31](https://github.com/tryVital/vital-flutter/issues/31)).
+ - **FEAT**: VIT-2418 integrate read data ([#29](https://github.com/tryVital/vital-flutter/issues/29)).
+
 ## 1.1.0
 
  - **FEAT**: VIT-2430 handle errors ([#32](https://github.com/tryVital/vital-flutter/issues/32)).

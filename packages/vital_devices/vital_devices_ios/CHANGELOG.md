@@ -1,3 +1,8 @@
+## 1.1.0
+
+ - **FIX**: VIT-2439 correctly handle errors coming when reading from device ([#36](https://github.com/tryVital/vital-flutter/issues/36)).
+ - **FEAT**: VIT-2435 add heart rate variability resource ([#37](https://github.com/tryVital/vital-flutter/issues/37)).
+
 ## 1.0.1
 
  - **FIX**: VIT-2439 correctly handle errors coming when reading from device ([#36](https://github.com/tryVital/vital-flutter/issues/36)).

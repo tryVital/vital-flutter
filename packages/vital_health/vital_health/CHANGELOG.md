@@ -1,3 +1,9 @@
+## 1.2.0
+
+ - **REFACTOR**: VIT-2384 deprecate isUserConnected ([#33](https://github.com/tryVital/vital-flutter/issues/33)).
+ - **FEAT**: VIT-2418 integrate read data ([#29](https://github.com/tryVital/vital-flutter/issues/29)).
+ - **DOCS**: update docs.
+
 ## 1.1.0
 
  - **FEAT**: VIT-2418 integrate read data ([#29](https://github.com/tryVital/vital-flutter/issues/29)).
