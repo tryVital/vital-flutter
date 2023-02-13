@@ -170,6 +170,12 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       NonthrowingTask {
         do {
           let readResult = try await VitalHealthKitClient.read(resource: resource, startDate: startDate, endDate: endDate)
+
+          if readResult == nil {
+            result(nil)
+            return
+          }
+
           result(encode(readResult))
         } catch let error {
           result(encode(ErrorResult(from: error)))

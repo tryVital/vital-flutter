@@ -181,13 +181,17 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<ProcessedData> read(
+  Future<ProcessedData?> read(
       HealthResource resource, DateTime startDate, DateTime endDate) async {
     final result = await _channel.invokeMethod('read', [
       resource.name,
       startDate.millisecondsSinceEpoch,
       endDate.millisecondsSinceEpoch
     ]);
+
+    if (result == null) {
+      return null;
+    }
 
     final error = _mapError(result);
     if (error != null) {
@@ -413,8 +417,10 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
 
   return Sleep(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
-    endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
+    startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch,
+        isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch,
+        isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     heartRate: (json['heartRate'] != null
@@ -492,8 +498,10 @@ Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
 
   return Workout(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
-    endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
+    startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch,
+        isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch,
+        isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     sport: json['sport'],
@@ -540,8 +548,11 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
       id: json['id'] as String?,
       value: double.parse(json['value'].toString()),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
+      startDate: DateTime.fromMillisecondsSinceEpoch(
+          startMillisecondsSinceEpoch,
+          isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch,
+          isUtc: true),
       type: json['type'] as String,
     );
   } catch (e, stacktrace) {
