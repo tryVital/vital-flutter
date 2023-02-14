@@ -181,13 +181,17 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<ProcessedData> read(
+  Future<ProcessedData?> read(
       HealthResource resource, DateTime startDate, DateTime endDate) async {
     final result = await _channel.invokeMethod('read', [
       resource.name,
       startDate.millisecondsSinceEpoch,
       endDate.millisecondsSinceEpoch
     ]);
+
+    if (result == null) {
+      return null;
+    }
 
     final error = _mapError(result);
     if (error != null) {
@@ -551,7 +555,7 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
           isUtc: true),
       endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch,
           isUtc: true),
-      type: json['type'] as String?,
+          type: json['type'] as String?,
     );
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");

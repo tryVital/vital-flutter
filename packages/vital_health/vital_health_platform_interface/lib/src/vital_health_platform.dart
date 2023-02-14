@@ -57,7 +57,7 @@ class VitalHealthPlatform extends PlatformInterface {
     throw UnimplementedError('writeHealthData() has not been implemented.');
   }
 
-  Future<ProcessedData> read(
+  Future<ProcessedData?> read(
       HealthResource resource, DateTime startDate, DateTime endDate) {
     throw UnimplementedError('read() has not been implemented.');
   }
