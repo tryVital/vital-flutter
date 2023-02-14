@@ -180,7 +180,9 @@ ProcessedData _mapJsonToProcessedData(
       return ProfileProcessedData(
         biologicalSex: json['biologicalSex'],
         dateOfBirth: json['dateOfBirth'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(json['dateOfBirth'], isUtc: true)
+            ? DateTime.fromMillisecondsSinceEpoch(
+                (json['dateOfBirth'] as num).toInt(),
+                isUtc: true)
             : null,
         heightInCm: json['heightInCm'],
       );
@@ -286,8 +288,12 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
   }
   return Sleep(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
-    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
+    startDate: DateTime.fromMillisecondsSinceEpoch(
+        (json['startDate'] as num).toInt(),
+        isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(
+        (json['endDate'] as num).toInt(),
+        isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     heartRate: (json['heartRate'] != null
@@ -361,8 +367,12 @@ Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
   }
   return Workout(
     id: json['id'],
-    startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
-    endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
+    startDate: DateTime.fromMillisecondsSinceEpoch(
+        (json['startDate'] as num).toInt(),
+        isUtc: true),
+    endDate: DateTime.fromMillisecondsSinceEpoch(
+        (json['endDate'] as num).toInt(),
+        isUtc: true),
     sourceBundle: json['sourceBundle'],
     deviceModel: json['deviceModel'],
     sport: json['sport'],
@@ -470,10 +480,14 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   try {
     return QuantitySample(
       id: json['id'] as String?,
-      value: double.parse(json['value'].toString()),
+      value: (json['value'] as num).toDouble(),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
+      startDate: DateTime.fromMillisecondsSinceEpoch(
+          (json['startDate'] as num).toInt(),
+          isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(
+          (json['endDate'] as num).toInt(),
+          isUtc: true),
       type: json['type'] as String?,
     );
   } catch (e, stacktrace) {
