@@ -62,9 +62,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
             } else {
               _glucoseReadSubject.sink.add(
                 decodedArguments
-                    .map((e) => Platform.isIOS
-                        ? _sampleFromSwiftJson(e)
-                        : _sampleFromJson(e))
+                    .map((e) => _sampleFromJson(e))
                     .whereType<QuantitySample>()
                     .toList(),
               );
@@ -77,7 +75,6 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
           break;
         case "sendBloodPressureReading":
           try {
-            print(call.arguments);
             final decodedArguments = jsonDecode(call.arguments as String);
             final error = _mapError(decodedArguments);
 
@@ -86,9 +83,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
             } else {
               _bloodPressureSubject.sink.add(
                 decodedArguments
-                    .map((e) => Platform.isIOS
-                        ? _bloodPressureSampleFromSwiftJson(e)
-                        : _bloodPressureSampleFromJson(e))
+                    .map((e) => _bloodPressureSampleFromJson(e))
                     .whereType<BloodPressureSample>()
                     .toList(),
               );
@@ -250,25 +245,12 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 }
 
-BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
-  try {
-    return BloodPressureSample(
-      systolic: _sampleFromSwiftJson(e["systolic"])!,
-      diastolic: _sampleFromSwiftJson(e["diastolic"])!,
-      pulse: _sampleFromSwiftJson(e["pulse"]),
-    );
-  } catch (e, stacktrace) {
-    Fimber.i("Error parsing sample: $e $stacktrace");
-    return null;
-  }
-}
-
 BloodPressureSample? _bloodPressureSampleFromJson(e) {
   try {
     return BloodPressureSample(
       systolic: _sampleFromJson(e["systolic"])!,
       diastolic: _sampleFromJson(e["diastolic"])!,
-      pulse: _sampleFromJson(e["pulse"]),
+      pulse: e["pulse"] != null ? _sampleFromJson(e["pulse"]) : null,
     );
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");
@@ -280,30 +262,15 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   try {
     return QuantitySample(
       id: json['id'] as String?,
-      value: double.parse(json['value'].toString()),
+      value: (json['value'] as num).toDouble(),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(json['startDate'] as int, isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(json['endDate'] as int, isUtc: true),
+      startDate: DateTime.fromMillisecondsSinceEpoch(
+          (json['startDate'] as num).toInt(),
+          isUtc: true),
+      endDate: DateTime.fromMillisecondsSinceEpoch(
+          (json['endDate'] as num).toInt(),
+          isUtc: true),
       type: json['type'] as String?,
-    );
-  } catch (e, stacktrace) {
-    Fimber.i("Error parsing sample: $e $stacktrace");
-    return null;
-  }
-}
-
-QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic> json) {
-  try {
-    final startMillisecondsSinceEpoch = (json['startDate'] as int);
-    final endMillisecondsSinceEpoch = (json['endDate'] as int);
-
-    return QuantitySample(
-      id: json['id'] as String?,
-      value: double.parse(json['value'].toString()),
-      unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(startMillisecondsSinceEpoch, isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch, isUtc: true),
-      type: json['type'] as String,
     );
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");

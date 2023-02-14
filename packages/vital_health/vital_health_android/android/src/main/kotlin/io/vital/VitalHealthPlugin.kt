@@ -19,6 +19,7 @@ import io.tryvital.client.Region
 import io.tryvital.client.VitalClient
 import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitalhealthconnect.VitalHealthConnectManager
+import io.tryvital.vitalhealthconnect.model.HealthConnectAvailability
 import io.tryvital.vitalhealthconnect.model.HealthResource
 import io.tryvital.vitalhealthconnect.model.SyncStatus
 import io.tryvital.vitalhealthconnect.model.processedresource.ProcessedResourceData
@@ -544,29 +545,40 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private fun configureHealthConnect(call: MethodCall, result: Result) {
         if (vitalClient == null) {
-            result.error("ClientSetup", "VitalClient is not configured", null)
+            return result.error("ClientSetup", "VitalClient is not configured", null)
         }
 
-        vitalHealthConnectManager = VitalHealthConnectManager.create(
+        val manager = VitalHealthConnectManager.create(
             context,
             vitalClient!!.apiKey,
             vitalClient!!.region,
             vitalClient!!.environment
         )
+        val availability = manager.isAvailable(context)
 
-        mainScope?.cancel()
-        mainScope = MainScope()
-        mainScope!!.launch {
-            vitalHealthConnectManager!!.configureHealthConnectClient(
-                logsEnabled = call.argument<Boolean?>("logsEnabled")!!,
-                syncOnAppStart = call.argument<Boolean?>("syncOnAppStart")!!,
-                numberOfDaysToBackFill = call.argument<Int?>("numberOfDaysToBackFill")!!,
+        if (availability != HealthConnectAvailability.Installed) {
+            return result.error(
+                "ClientSetup",
+                "Health Connect is unavailable: ${availability}",
+                null
             )
         }
 
-        startStatusUpdate()
+        vitalHealthConnectManager = manager
 
-        result.success(null)
+        mainScope?.cancel()
+        mainScope = MainScope().apply {
+            launch {
+                manager.configureHealthConnectClient(
+                    logsEnabled = call.argument<Boolean?>("logsEnabled")!!,
+                    syncOnAppStart = call.argument<Boolean?>("syncOnAppStart")!!,
+                    numberOfDaysToBackFill = call.argument<Int?>("numberOfDaysToBackFill")!!,
+                )
+                result.success(null)
+            }
+        }
+
+        startStatusUpdate()
     }
 
     private fun configureClient(call: MethodCall, result: Result) {

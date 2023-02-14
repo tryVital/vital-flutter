@@ -214,7 +214,9 @@ ProcessedData _mapJsonToProcessedData(
       return ProfileProcessedData(
         biologicalSex: json['summary']["_0"]["profile"]["_0"]['biologicalSex'],
         dateOfBirth: rawDateOfBirth != null
-            ? DateTime.fromMillisecondsSinceEpoch(rawDateOfBirth, isUtc: true)
+            ? DateTime.fromMillisecondsSinceEpoch(
+                (rawDateOfBirth as num).toInt(),
+                isUtc: true)
             : null,
         heightInCm: json['summary']["_0"]["profile"]["_0"]['heightInCm'],
       );
@@ -412,8 +414,8 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
     return null;
   }
 
-  final startMillisecondsSinceEpoch = (json['startDate'] as int);
-  final endMillisecondsSinceEpoch = (json['endDate'] as int);
+  final startMillisecondsSinceEpoch = (json['startDate'] as num).toInt();
+  final endMillisecondsSinceEpoch = (json['endDate'] as num).toInt();
 
   return Sleep(
     id: json['id'],
@@ -493,8 +495,8 @@ Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
     return null;
   }
 
-  final startMillisecondsSinceEpoch = (json['startDate'] as int);
-  final endMillisecondsSinceEpoch = (json['endDate'] as int);
+  final startMillisecondsSinceEpoch = (json['startDate'] as num).toInt();
+  final endMillisecondsSinceEpoch = (json['endDate'] as num).toInt();
 
   return Workout(
     id: json['id'],
@@ -527,7 +529,7 @@ BloodPressureSample? _bloodPressureSampleFromSwiftJson(e) {
     return BloodPressureSample(
       systolic: _sampleFromSwiftJson(e["systolic"])!,
       diastolic: _sampleFromSwiftJson(e["diastolic"])!,
-      pulse: _sampleFromSwiftJson(e["pulse"]),
+      pulse: e["pulse"] != null ? _sampleFromSwiftJson(e["pulse"]) : null,
     );
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");
@@ -541,19 +543,19 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
   }
 
   try {
-    final startMillisecondsSinceEpoch = (json['startDate'] as int);
-    final endMillisecondsSinceEpoch = (json['endDate'] as int);
+    final startMillisecondsSinceEpoch = (json['startDate'] as num).toInt();
+    final endMillisecondsSinceEpoch = (json['endDate'] as num).toInt();
 
     return QuantitySample(
       id: json['id'] as String?,
-      value: double.parse(json['value'].toString()),
+      value: (json['value'] as num).toDouble(),
       unit: json['unit'] as String,
       startDate: DateTime.fromMillisecondsSinceEpoch(
           startMillisecondsSinceEpoch,
           isUtc: true),
       endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch,
           isUtc: true),
-      type: json['type'] as String,
+          type: json['type'] as String?,
     );
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");
