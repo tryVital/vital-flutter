@@ -1,3 +1,7 @@
+## 1.2.1
+
+ - Update a dependency to the latest release.
+
 ## 1.2.0
 
  - **FIX**: VIT-2431 read profile never returned on ios ([#34](https://github.com/tryVital/vital-flutter/issues/34)).

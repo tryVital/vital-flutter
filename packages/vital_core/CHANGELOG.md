@@ -1,3 +1,7 @@
+## 1.2.1
+
+ - y
+
 ## 1.2.0
 
  - **FEAT**: VIT-2430 handle errors ([#32](https://github.com/tryVital/vital-flutter/issues/32)).

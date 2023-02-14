@@ -1,3 +1,7 @@
+## 1.2.1
+
+ - Update a dependency to the latest release.
+
 ## 1.2.0
 
  - **REFACTOR**: VIT-2384 deprecate isUserConnected ([#33](https://github.com/tryVital/vital-flutter/issues/33)).
