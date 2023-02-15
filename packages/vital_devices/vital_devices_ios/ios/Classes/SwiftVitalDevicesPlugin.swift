@@ -182,6 +182,9 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             case .failure(let error):  channel?.invokeMethod("sendPair", arguments: encode(ErrorResult(code: "PairError", message: error.localizedDescription)))
             case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
         }
+
+        // Since the contract is delivery-once-then-complete, we assume the Dart `sendPair`
+        // should have closed the Dart Stream/Future at this point.
     }
 
     private func handlePairValue(channel: FlutterMethodChannel?) {
@@ -207,6 +210,8 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                 
                 switch(value.self){
                 case .finished:
+                    // Since the contract is delivery-once-then-complete, we assume the Dart `sendGlucoseMeterReading`
+                    // should have closed the Dart Stream/Future at this point.
                     return
                 case .failure(let error):
                     self?.channel.invokeMethod("sendGlucoseMeterReading", arguments: encode(ErrorResult(code: "GlucoseMeterReadingError", message: error.localizedDescription)))
@@ -241,6 +246,8 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                 
                 switch(value.self){
                 case .finished:
+                    // Since the contract is delivery-once-then-complete, we assume the Dart `sendBloodPressureReading`
+                    // should have closed the Stream/Future at this point.
                     return
                 case .failure(let error):
                     self?.channel.invokeMethod("sendBloodPressureReading", arguments: encode(ErrorResult(code: "BloodPressureReadingError", message: error.localizedDescription)))

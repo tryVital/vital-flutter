@@ -56,7 +56,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void pair(BuildContext context, ScannedDevice scannedDevice) {
-    _deviceManager.pair(scannedDevice).listen((event) {
+    _deviceManager.pair(scannedDevice).then((event) {
       if (event) {
         state = DeviceState.paired;
 
@@ -72,7 +72,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       Fimber.i(error.toString(), stacktrace: stackTrace);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Failed to pair e: $error")));
-    }).disposedBy(disposeBag);
+    });
   }
 
   void readData(BuildContext context, ScannedDevice scannedDevice) {
@@ -82,9 +82,12 @@ class DeviceBloc extends ChangeNotifier with Disposer {
     switch (scannedDevice.deviceModel.kind) {
       case DeviceKind.bloodPressure:
         // `readBloodPressureData` delivers all data in one batch, and then completes.
-        _deviceManager.readBloodPressureData(scannedDevice).listen(
+        _deviceManager.readBloodPressureData(scannedDevice).then(
             (List<BloodPressureSample> newReadings) {
           state = DeviceState.paired;
+
+          Fimber.i(
+              'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
           for (var newReading in newReadings) {
             if (!bloodPressureMeterResults.any((e) =>
@@ -98,14 +101,16 @@ class DeviceBloc extends ChangeNotifier with Disposer {
 
           notifyListeners();
         },
-            onError: (error, stackTrace) => _showReadingError(
-                error, stackTrace, context)).disposedBy(disposeBag);
+            onError: (error, stackTrace) =>
+                _showReadingError(error, stackTrace, context));
         break;
       case DeviceKind.glucoseMeter:
-        // `readGlucoseMeterData` delivers all data in one batch, and then completes.
-        _deviceManager.readGlucoseMeterData(scannedDevice).listen(
+        _deviceManager.readGlucoseMeterData(scannedDevice).then(
             (List<QuantitySample> newReadings) {
           state = DeviceState.paired;
+
+          Fimber.i(
+              'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
           for (var newReading in newReadings) {
             if (!glucoseMeterResults
@@ -119,8 +124,8 @@ class DeviceBloc extends ChangeNotifier with Disposer {
 
           notifyListeners();
         },
-            onError: (error, stackTrace) => _showReadingError(
-                error, stackTrace, context)).disposedBy(disposeBag);
+            onError: (error, stackTrace) =>
+                _showReadingError(error, stackTrace, context));
         break;
     }
 

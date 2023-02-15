@@ -20,16 +20,16 @@ class DeviceManager {
     return VitalDevicesPlatform.instance.stopScan();
   }
 
-  Stream<bool> pair(ScannedDevice scannedDevice) {
+  Future<bool> pair(ScannedDevice scannedDevice) {
     return VitalDevicesPlatform.instance.pair(scannedDevice);
   }
 
-  Stream<List<QuantitySample>> readGlucoseMeterData(
+  Future<List<QuantitySample>> readGlucoseMeterData(
       ScannedDevice scannedDevice) {
     return VitalDevicesPlatform.instance.readGlucoseMeterData(scannedDevice);
   }
 
-  Stream<List<BloodPressureSample>> readBloodPressureData(
+  Future<List<BloodPressureSample>> readBloodPressureData(
       ScannedDevice scannedDevice) {
     return VitalDevicesPlatform.instance.readBloodPressureData(scannedDevice);
   }
@@ -38,62 +38,6 @@ class DeviceManager {
     return VitalDevicesPlatform.instance.cleanUp();
   }
 
-  final List<Brand> brands = [
-    Brand.omron,
-    Brand.accuChek,
-    Brand.contour,
-    Brand.beurer,
-    Brand.libre,
-  ];
-
-  final devices = [
-    const DeviceModel(
-      id: "omron_m4",
-      name: "Omron Intelli IT M4",
-      brand: Brand.omron,
-      kind: DeviceKind.bloodPressure,
-    ),
-    const DeviceModel(
-      id: "omron_m7",
-      name: "Omron Intelli IT M7",
-      brand: Brand.omron,
-      kind: DeviceKind.bloodPressure,
-    ),
-    const DeviceModel(
-      id: "accuchek_guide",
-      name: "Accu-Chek Guide",
-      brand: Brand.accuChek,
-      kind: DeviceKind.glucoseMeter,
-    ),
-    const DeviceModel(
-      id: "accuchek_guide_me",
-      name: "Accu-Chek Guide Me",
-      brand: Brand.accuChek,
-      kind: DeviceKind.glucoseMeter,
-    ),
-    const DeviceModel(
-      id: "accuchek_guide_active",
-      name: "Accu-Chek Active",
-      brand: Brand.accuChek,
-      kind: DeviceKind.glucoseMeter,
-    ),
-    const DeviceModel(
-      id: "contour_next_one",
-      name: "Contour Next One",
-      brand: Brand.contour,
-      kind: DeviceKind.glucoseMeter,
-    ),
-    const DeviceModel(
-      id: "beurer",
-      name: "Beurer Devices",
-      brand: Brand.beurer,
-      kind: DeviceKind.bloodPressure,
-    ),
-    const DeviceModel(
-      id: "libre1",
-      name: "Freestyle Libre 1",
-      brand: Brand.libre,
-      kind: DeviceKind.glucoseMeter,
-    ),
-  ];
+  final List<Brand> brands = VitalDevicesPlatform.instance.brands;
+  final devices = VitalDevicesPlatform.instance.devices;
 }
