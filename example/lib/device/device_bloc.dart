@@ -34,7 +34,10 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void scan(BuildContext context) {
-    _deviceManager.scanForDevice(device).listen((event) {
+    _deviceManager
+        .scanForDevice(device)
+        .firstWhere((event) => event.deviceModel == device)
+        .then((event) {
       if (event.deviceModel == device) {
         Fimber.i('Found device: ${event.deviceModel.name}');
         state = DeviceState.pairing;
@@ -47,7 +50,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Error scanning: $error")));
       notifyListeners();
-    }).disposedBy(disposeBag);
+    });
 
     notifyListeners();
   }
@@ -73,8 +76,12 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void readData(BuildContext context, ScannedDevice scannedDevice) {
+    Fimber.i(
+        'Request to read data from device: ${scannedDevice.deviceModel.name}');
+
     switch (scannedDevice.deviceModel.kind) {
       case DeviceKind.bloodPressure:
+        // `readBloodPressureData` delivers all data in one batch, and then completes.
         _deviceManager.readBloodPressureData(scannedDevice).listen(
             (List<BloodPressureSample> newReadings) {
           state = DeviceState.paired;
@@ -89,14 +96,13 @@ class DeviceBloc extends ChangeNotifier with Disposer {
                 b.diastolic.startDate.compareTo(a.diastolic.startDate));
           }
 
-          //We restart scanning to wait for new data
-          scan(context);
           notifyListeners();
         },
             onError: (error, stackTrace) => _showReadingError(
                 error, stackTrace, context)).disposedBy(disposeBag);
         break;
       case DeviceKind.glucoseMeter:
+        // `readGlucoseMeterData` delivers all data in one batch, and then completes.
         _deviceManager.readGlucoseMeterData(scannedDevice).listen(
             (List<QuantitySample> newReadings) {
           state = DeviceState.paired;
@@ -111,8 +117,6 @@ class DeviceBloc extends ChangeNotifier with Disposer {
           glucoseMeterResults
               .sort((a, b) => b.startDate.compareTo(a.startDate));
 
-          //We restart scanning to wait for new data
-          scan(context);
           notifyListeners();
         },
             onError: (error, stackTrace) => _showReadingError(
