@@ -1,6 +1,7 @@
 library vital;
 
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
@@ -31,6 +32,13 @@ abstract class LinkService extends ChopperService {
     @Field('redirect_url') required String redirectUrl,
     @Header('LinkToken') required String linkToken,
   });
+
+  @Post(path: 'link/provider/manual/{provider}')
+  @FactoryConverter(request: JsonConverter.requestFactory)
+  Future<Response<Void>> createManualProvider(
+    @Field('user_id') String userId,
+    @Field('provider') String provider,
+  );
 
   @Post(path: 'link/provider/email/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)

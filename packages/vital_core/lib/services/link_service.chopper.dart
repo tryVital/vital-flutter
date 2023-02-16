@@ -72,6 +72,28 @@ class _$LinkService extends LinkService {
   }
 
   @override
+  Future<Response<Void>> createManualProvider(
+    String userId,
+    String provider,
+  ) {
+    final $url = 'link/provider/manual/{provider}';
+    final $body = <String, dynamic>{
+      'user_id': userId,
+      'provider': provider,
+    };
+    final $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Void, Void>(
+      $request,
+      requestConverter: JsonConverter.requestFactory,
+    );
+  }
+
+  @override
   Future<Response<EmailProviderResponse>> _emailProvider(
     String provider,
     String email,
