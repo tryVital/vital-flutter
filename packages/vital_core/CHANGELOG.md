@@ -1,3 +1,7 @@
+## 1.2.2
+
+ - Exposed creation manual provider
+
 ## 1.2.1
 
  - y
