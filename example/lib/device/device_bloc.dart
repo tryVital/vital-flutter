@@ -34,7 +34,10 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void scan(BuildContext context) {
-    _deviceManager.scanForDevice(device).listen((event) {
+    _deviceManager
+        .scanForDevice(device)
+        .firstWhere((event) => event.deviceModel == device)
+        .then((event) {
       if (event.deviceModel == device) {
         Fimber.i('Found device: ${event.deviceModel.name}');
         state = DeviceState.pairing;
@@ -47,13 +50,13 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Error scanning: $error")));
       notifyListeners();
-    }).disposedBy(disposeBag);
+    });
 
     notifyListeners();
   }
 
   void pair(BuildContext context, ScannedDevice scannedDevice) {
-    _deviceManager.pair(scannedDevice).listen((event) {
+    _deviceManager.pair(scannedDevice).then((event) {
       if (event) {
         state = DeviceState.paired;
 
@@ -69,15 +72,22 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       Fimber.i(error.toString(), stacktrace: stackTrace);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Failed to pair e: $error")));
-    }).disposedBy(disposeBag);
+    });
   }
 
   void readData(BuildContext context, ScannedDevice scannedDevice) {
+    Fimber.i(
+        'Request to read data from device: ${scannedDevice.deviceModel.name}');
+
     switch (scannedDevice.deviceModel.kind) {
       case DeviceKind.bloodPressure:
-        _deviceManager.readBloodPressureData(scannedDevice).listen(
+        // `readBloodPressureData` delivers all data in one batch, and then completes.
+        _deviceManager.readBloodPressureData(scannedDevice).then(
             (List<BloodPressureSample> newReadings) {
           state = DeviceState.paired;
+
+          Fimber.i(
+              'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
           for (var newReading in newReadings) {
             if (!bloodPressureMeterResults.any((e) =>
@@ -89,17 +99,18 @@ class DeviceBloc extends ChangeNotifier with Disposer {
                 b.diastolic.startDate.compareTo(a.diastolic.startDate));
           }
 
-          //We restart scanning to wait for new data
-          scan(context);
           notifyListeners();
         },
-            onError: (error, stackTrace) => _showReadingError(
-                error, stackTrace, context)).disposedBy(disposeBag);
+            onError: (error, stackTrace) =>
+                _showReadingError(error, stackTrace, context));
         break;
       case DeviceKind.glucoseMeter:
-        _deviceManager.readGlucoseMeterData(scannedDevice).listen(
+        _deviceManager.readGlucoseMeterData(scannedDevice).then(
             (List<QuantitySample> newReadings) {
           state = DeviceState.paired;
+
+          Fimber.i(
+              'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
           for (var newReading in newReadings) {
             if (!glucoseMeterResults
@@ -111,12 +122,10 @@ class DeviceBloc extends ChangeNotifier with Disposer {
           glucoseMeterResults
               .sort((a, b) => b.startDate.compareTo(a.startDate));
 
-          //We restart scanning to wait for new data
-          scan(context);
           notifyListeners();
         },
-            onError: (error, stackTrace) => _showReadingError(
-                error, stackTrace, context)).disposedBy(disposeBag);
+            onError: (error, stackTrace) =>
+                _showReadingError(error, stackTrace, context));
         break;
     }
 

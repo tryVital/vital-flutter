@@ -96,6 +96,9 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                             }
                         }
                     }
+
+                    // Since the contract is delivery-once-then-complete, we assume the Dart `sendPair`
+                    // should have closed the Dart Stream/Future at this point.
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         channel.invokeMethod(
@@ -134,6 +137,9 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                                     )
                                 }
                             }
+
+                            // Since the contract is delivery-once-then-complete, we assume the Dart `sendGlucoseMeterReading`
+                            // should have closed the Dart Stream/Future at this point.
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
@@ -181,6 +187,9 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                                     )
                                 }
                             }
+
+                            // Since the contract is delivery-once-then-complete, we assume the Dart `sendBloodPressureReading`
+                            // should have closed the Dart Stream/Future at this point.
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {

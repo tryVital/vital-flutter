@@ -32,15 +32,15 @@ class VitalDevicesPlatform extends PlatformInterface {
   Future<void> stopScan() async =>
       throw UnimplementedError('stopScan() has not been implemented.');
 
-  Stream<bool> pair(ScannedDevice scannedDevice) =>
+  Future<bool> pair(ScannedDevice scannedDevice) =>
       throw UnimplementedError('pair() has not been implemented.');
 
-  Stream<List<QuantitySample>> readGlucoseMeterData(
+  Future<List<QuantitySample>> readGlucoseMeterData(
           ScannedDevice scannedDevice) =>
       throw UnimplementedError(
           'readGlucoseMeterData() has not been implemented.');
 
-  Stream<List<BloodPressureSample>> readBloodPressureData(
+  Future<List<BloodPressureSample>> readBloodPressureData(
           ScannedDevice scannedDevice) =>
       throw UnimplementedError(
           'readBloodPressureData() has not been implemented.');
@@ -77,6 +77,12 @@ class VitalDevicesPlatform extends PlatformInterface {
     const DeviceModel(
       id: "accuchek_guide_me",
       name: "Accu-Chek Guide Me",
+      brand: Brand.accuChek,
+      kind: DeviceKind.glucoseMeter,
+    ),
+    const DeviceModel(
+      id: "\$vital_ble_simulator\$",
+      name: "Vital BLE Simulator",
       brand: Brand.accuChek,
       kind: DeviceKind.glucoseMeter,
     ),

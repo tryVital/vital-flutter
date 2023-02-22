@@ -132,14 +132,13 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 
   @override
-  Stream<bool> pair(ScannedDevice scannedDevice) {
-    return Stream.fromFuture(
-      _checkPermissions().then(
-        (value) => _channel.invokeMethod('pair', [scannedDevice.id]),
-      ),
-    ).flatMap((outcome) {
+  Future<bool> pair(ScannedDevice scannedDevice) {
+    return _checkPermissions()
+        .then((value) => _channel.invokeMethod('pair', [scannedDevice.id]))
+        .then((outcome) {
       if (outcome == null) {
-        return _pairSubject;
+        // Forward either the first batch delivered, or the first error.
+        return _pairSubject.first;
       } else {
         throw UnknownException("Couldn't pair device: $outcome");
       }
@@ -147,16 +146,15 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 
   @override
-  Stream<List<QuantitySample>> readGlucoseMeterData(
+  Future<List<QuantitySample>> readGlucoseMeterData(
       ScannedDevice scannedDevice) {
-    return Stream.fromFuture(
-      _checkPermissions().then(
-        (value) => _channel
-            .invokeMethod('startReadingGlucoseMeter', [scannedDevice.id]),
-      ),
-    ).flatMap((outcome) {
+    return _checkPermissions()
+        .then((value) => _channel
+            .invokeMethod('startReadingGlucoseMeter', [scannedDevice.id]))
+        .then((outcome) {
       if (outcome == null) {
-        return _glucoseReadSubject;
+        // Forward either the first batch delivered, or the first error.
+        return _glucoseReadSubject.first;
       } else {
         throw UnknownException("Could not start scan: $outcome");
       }
@@ -164,16 +162,15 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 
   @override
-  Stream<List<BloodPressureSample>> readBloodPressureData(
+  Future<List<BloodPressureSample>> readBloodPressureData(
       ScannedDevice scannedDevice) {
-    return Stream.fromFuture(
-      _checkPermissions().then(
-        (value) => _channel
-            .invokeMethod('startReadingBloodPressure', [scannedDevice.id]),
-      ),
-    ).flatMap((outcome) {
+    return _checkPermissions()
+        .then((value) => _channel
+            .invokeMethod('startReadingBloodPressure', [scannedDevice.id]))
+        .then((outcome) {
       if (outcome == null) {
-        return _bloodPressureSubject;
+        // Forward either the first batch delivered, or the first error.
+        return _bloodPressureSubject.first;
       } else {
         throw Exception("Could not start scan: $outcome");
       }
