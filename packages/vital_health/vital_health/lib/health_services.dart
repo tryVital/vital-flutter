@@ -62,7 +62,7 @@ class HealthServices {
         .writeHealthData(writeResource, startDate, endDate, value);
   }
 
-  Future<ProcessedData> read(
+  Future<ProcessedData?> read(
       HealthResource resource, DateTime startDate, DateTime endDate) {
     return VitalHealthPlatform.instance.read(resource, startDate, endDate);
   }
