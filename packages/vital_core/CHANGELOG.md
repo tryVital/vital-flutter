@@ -1,3 +1,7 @@
+## 1.2.3
+
+ - Fix
+
 ## 1.2.2
 
  - Exposed creation manual provider
