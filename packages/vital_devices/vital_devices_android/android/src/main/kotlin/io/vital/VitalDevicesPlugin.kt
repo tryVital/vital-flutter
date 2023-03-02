@@ -20,7 +20,8 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var vitalDeviceManager: VitalDeviceManager
 
-    private val scannedDevices: MutableList<ScannedDevice> = mutableListOf()
+    // BLE Address -> ScannedDevice
+    private val knownScannedDevices: MutableMap<String, ScannedDevice> = mutableMapOf()
 
     private var mainScope: CoroutineScope? = null
 
@@ -57,6 +58,10 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(null)
             }
 
+            "getConnectedDevices" -> {
+                getConnectedDevices(call.arguments<List<String>>()!!, result)
+            }
+
             "pair" -> {
                 pair(call.arguments<List<String>>()!!.first(), result)
             }
@@ -71,7 +76,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
 
             "cleanUp" -> {
                 mainScope?.cancel()
-                scannedDevices.clear()
+                knownScannedDevices.clear()
                 result.success(null)
             }
 
@@ -80,7 +85,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun pair(scannedDeviceId: String, result: Result) {
-        val scannedDevice = scannedDevices.firstOrNull { it.address == scannedDeviceId }
+        val scannedDevice = knownScannedDevices[scannedDeviceId]
 
         if (scannedDevice == null) {
             result.error("DeviceNotFound", "Device $scannedDeviceId not found", null)
@@ -117,7 +122,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun startReadingGlucoseMeter(scannedDeviceId: String, result: Result) {
-        val scannedDevice = scannedDevices.firstOrNull { it.address == scannedDeviceId }
+        val scannedDevice = knownScannedDevices[scannedDeviceId]
 
         if (scannedDevice == null) {
             result.error("DeviceNotFound", "Device $scannedDeviceId not found", null)
@@ -161,7 +166,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun startReadingBloodPressure(scannedDeviceId: String, result: Result) {
-        val scannedDevice = scannedDevices.firstOrNull { it.address == scannedDeviceId }
+        val scannedDevice = knownScannedDevices[scannedDeviceId]
 
         if (scannedDevice == null) {
             result.error("DeviceNotFound", "Device $scannedDeviceId not found", null)
@@ -212,28 +217,14 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private suspend fun startScanForDevice(arguments: List<String>) {
-        val deviceModel = DeviceModel(
-            id = arguments[0],
-            name = arguments[1],
-            brand = stringToBrand(arguments[2]),
-            kind = stringToKind(arguments[3]),
-        )
-
         try {
+            val deviceModel = parseDeviceModelFromArguments(arguments)
+
             vitalDeviceManager.search(deviceModel).flowOn(Dispatchers.IO).collect {
                 withContext(Dispatchers.Main) {
-                    scannedDevices.add(it)
+                    knownScannedDevices[it.address] = it
                     channel.invokeMethod(
-                        "sendScan", JSONObject(
-                            mapOf(
-                                "id" to it.address, "name" to it.name, "deviceModel" to mapOf(
-                                    "id" to it.deviceModel.id,
-                                    "name" to it.deviceModel.name,
-                                    "brand" to brandToString(it.deviceModel.brand),
-                                    "kind" to kindToString(it.deviceModel.kind)
-                                )
-                            )
-                        ).toString()
+                        "sendScan", it.toJsonObject().toString()
                     )
                 }
             }
@@ -251,21 +242,26 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun kindToString(kind: Kind): String {
-        return when (kind) {
-            Kind.GlucoseMeter -> "glucoseMeter"
-            Kind.BloodPressure -> "bloodPressure"
+    private fun getConnectedDevices(arguments: List<String>, result: Result) {
+        try {
+            val deviceModel = parseDeviceModelFromArguments(arguments)
+            val devices = vitalDeviceManager.connected(deviceModel)
+
+            devices.forEach { knownScannedDevices[it.address] = it }
+
+            result.success(JSONArray(devices.map { it.toJsonObject() }).toString())
+        } catch (e: Exception) {
+            result.error("UnknownError", e.message, e)
         }
     }
 
-    private fun brandToString(brand: Brand): String {
-        return when (brand) {
-            Brand.Omron -> "omron"
-            Brand.AccuChek -> "accuChek"
-            Brand.Contour -> "contour"
-            Brand.Beurer -> "beurer"
-            Brand.Libre -> "libre"
-        }
+    private fun parseDeviceModelFromArguments(arguments: List<String>): DeviceModel {
+        return DeviceModel(
+            id = arguments[0],
+            name = arguments[1],
+            brand = stringToBrand(arguments[2]),
+            kind = stringToKind(arguments[3]),
+        )
     }
 
     private fun stringToBrand(string: String): Brand {
@@ -290,11 +286,40 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
     private fun mapSample(it: QuantitySamplePayload): JSONObject {
         return JSONObject().apply {
             put("id", it.id)
-            put("value", it.value)
+            put("value", it.value.toDouble())
             put("unit", it.unit)
             put("startDate", it.startDate.time)
             put("endDate", it.endDate.time)
             put("type", it.type)
         }
+    }
+}
+
+fun ScannedDevice.toJsonObject() = JSONObject(
+    mapOf(
+        "id" to address,
+        "name" to name,
+        "deviceModel" to mapOf(
+            "id" to deviceModel.id,
+            "name" to deviceModel.name,
+            "brand" to brandToString(deviceModel.brand),
+            "kind" to kindToString(deviceModel.kind),
+        )
+    )
+)
+private fun kindToString(kind: Kind): String {
+    return when (kind) {
+        Kind.GlucoseMeter -> "glucoseMeter"
+        Kind.BloodPressure -> "bloodPressure"
+    }
+}
+
+private fun brandToString(brand: Brand): String {
+    return when (brand) {
+        Brand.Omron -> "omron"
+        Brand.AccuChek -> "accuChek"
+        Brand.Contour -> "contour"
+        Brand.Beurer -> "beurer"
+        Brand.Libre -> "libre"
     }
 }
