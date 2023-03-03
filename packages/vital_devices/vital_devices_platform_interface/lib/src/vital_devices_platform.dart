@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:vital_core/samples.dart';
 import 'package:vital_devices_platform_interface/src/brand.dart';
@@ -25,6 +27,10 @@ class VitalDevicesPlatform extends PlatformInterface {
 
   List<DeviceModel> getDevices(Brand brand) =>
       throw UnimplementedError('getDevices() has not been implemented.');
+
+  Future<List<ScannedDevice>> getConnectedDevices(DeviceModel deviceModel) =>
+      throw UnimplementedError(
+          'getConnectedDevices() has not been implemented.');
 
   Stream<ScannedDevice> scanForDevice(DeviceModel deviceModel) =>
       throw UnimplementedError('scanForDevice() has not been implemented.');
@@ -80,8 +86,8 @@ class VitalDevicesPlatform extends PlatformInterface {
       brand: Brand.accuChek,
       kind: DeviceKind.glucoseMeter,
     ),
-    const DeviceModel(
-      id: "\$vital_ble_simulator\$",
+    DeviceModel(
+      id: Platform.isIOS ? "\$vital_ble_simulator\$" : "_vital_ble_simulator_",
       name: "Vital BLE Simulator",
       brand: Brand.accuChek,
       kind: DeviceKind.glucoseMeter,

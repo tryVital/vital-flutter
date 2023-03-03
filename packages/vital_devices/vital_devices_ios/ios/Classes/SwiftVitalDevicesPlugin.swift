@@ -17,7 +17,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     private var pairCancellable: Cancellable? = nil
 
     private var scannerResultCancellable: Cancellable? = nil
-    private var scannedDevices: [ScannedDevice] = []
+    private var knownScannedDevices: [UUID: ScannedDevice] = [:]
 
     private var flutterRunning = true
 
@@ -53,6 +53,8 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         case "devices":
             getDevices(call.arguments as! String, result:result)
             return
+        case "getConnectedDevices":
+            getConnectedDevices(call.arguments as! [AnyObject], result: result)
         case "startScanForDevice":
             scanForDevice(call.arguments as! [AnyObject], result: result)
             return
@@ -95,29 +97,51 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         }
     }
 
+  private func parseDeviceModel(from arguments: [AnyObject]) throws -> DeviceModel {
+    return DeviceModel(
+      id: arguments[0] as! String,
+      name: arguments[1] as! String,
+      brand: try mapStringToBrand(arguments[2] as! String),
+      kind: try mapStringToKind(arguments[3] as! String)
+    )
+  }
+
+  private func getConnectedDevices(_ arguments: [AnyObject], result: @escaping FlutterResult) {
+    do {
+      let deviceModel = try parseDeviceModel(from: arguments)
+      let devices = deviceManager.connected(deviceModel)
+
+      // Since we cannot pass reference over Dart channel, we have to keep a
+      // registry for later API calls to recover the scanned device instance
+      // expected by today's native SDK API.
+      devices.forEach { self.knownScannedDevices[$0.id] = $0 }
+
+      result(encode(devices.map(InternalScannedDevice.init)))
+    } catch let error {
+      result(FlutterError(error))
+    }
+  }
+
     private func scanForDevice(_ arguments: [AnyObject], result: @escaping FlutterResult){
         do {
-            let deviceModel = DeviceModel(
-                id: arguments[0] as! String,
-                name: arguments[1] as! String,
-                brand: try mapStringToBrand(arguments[2] as! String),
-                kind: try mapStringToKind(arguments[3] as! String)
-            )
+            let deviceModel = try parseDeviceModel(from: arguments)
 
             scannerResultCancellable?.cancel()
             scannerResultCancellable =  deviceManager.search(for:deviceModel)
-                .sink {[weak self] value in
-                       self?.scannedDevices.append(value)
-                       self?.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(id: value.id.uuidString, name: value.name, deviceModel: value.deviceModel)))
+                .sink { [weak self] value in
+                  guard let self = self else { return }
+
+                  // Since we cannot pass reference over Dart channel, we have to keep a
+                  // registry so that later API calls can recover the scanned device instance
+                  // expected by today's native SDK API.
+                  self.knownScannedDevices[value.id] = value
+
+                  self.channel.invokeMethod("sendScan", arguments: encode(InternalScannedDevice(value)))
                 }
 
             result(nil)
-        } catch VitalError.UnsupportedBrand(let errorMessage) {
-            result(encode(ErrorResult(code: "UnsupportedBrand", message: errorMessage)))
-        } catch VitalError.UnsupportedKind(let errorMessage) {
-            result(encode(ErrorResult(code: "UnsupportedKind", message: errorMessage)))
-        } catch {
-            result(encode(ErrorResult(code: "Unknown error")))
+        } catch let error {
+            channel.invokeMethod("sendScan", arguments: encode(FlutterError(error).encodeAsJson()))
         }
     }
 
@@ -127,54 +151,41 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func pair(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
-        let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
+      let rawScannedDeviceId = arguments[0] as! String
 
-        guard scannedDevice != nil else {
-            result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
-            return
-        }
+      guard
+        let scannedDeviceId = UUID(uuidString: rawScannedDeviceId),
+        let device = knownScannedDevices[scannedDeviceId]
+      else {
+        result(
+          FlutterError(
+            code: "PairError",
+            message: "Unknown device with ID \(rawScannedDeviceId). Consider reporting this issue if the ID has previously been returned by `scanForDevices` or `getConnectedDevices`.",
+            details: nil
+          )
+        )
+        return
+      }
 
-        pairCancellable?.cancel()
-        switch scannedDevice!.deviceModel.kind{
-            case .glucoseMeter:
-                pairCancellable = deviceManager
-                    .glucoseMeter(for: scannedDevice!)
-                    .pair(device: scannedDevice!)
-                    .sink(receiveCompletion: {[weak self] value in
-                        guard self?.flutterRunning ?? false else {
-                            return
-                        }
-
-                        self?.handlePairCompletion(value: value, channel: self?.channel)
-                    },
-                    receiveValue:{[weak self] value in
-                        guard self?.flutterRunning ?? false else {
-                            return
-                        }
-
-                        self?.handlePairValue(channel: self?.channel)
-                    })
-            case .bloodPressure:
-                pairCancellable = deviceManager
-                    .bloodPressureReader(for: scannedDevice!)
-                    .pair(device: scannedDevice!)
-                    .sink(receiveCompletion: {[weak self] value in
-                        guard self?.flutterRunning ?? false else {
-                            return
-                        }
-
-                        self?.handlePairCompletion(value: value, channel: self?.channel)
-                    },
-                    receiveValue:{[weak self] value in
-                        guard self?.flutterRunning ?? false else {
-                            return
-                        }
-
-                        self?.handlePairValue(channel: self?.channel)
-                    })
-        }
-        result(nil)
+      pairCancellable?.cancel()
+      switch device.deviceModel.kind{
+      case .glucoseMeter:
+        pairCancellable = deviceManager
+          .glucoseMeter(for: device)
+          .pair(device: device)
+          .sink { [weak self] value in
+            guard self?.flutterRunning ?? false else { return }
+            result(true)
+          } receiveValue: { _ in }
+      case .bloodPressure:
+        pairCancellable = deviceManager
+          .bloodPressureReader(for: device)
+          .pair(device: device)
+          .sink {[weak self] value in
+            guard self?.flutterRunning ?? false else { return }
+            result(true)
+          } receiveValue:{ _ in }
+      }
     }
 
     private func handlePairCompletion(value: Subscribers.Completion<any Error>, channel: FlutterMethodChannel?){
@@ -192,17 +203,19 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func startReadingGlucoseMeter(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
-        let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
-        
-        guard scannedDevice != nil else {
-            result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
+        let rawScannedDeviceId = arguments[0] as! String
+
+        guard
+          let scannedDeviceId = UUID(uuidString: rawScannedDeviceId),
+          let scannedDevice = knownScannedDevices[scannedDeviceId]
+        else {
+            result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(rawScannedDeviceId)")))
             return
         }
         
         glucoseMeterCancellable?.cancel()
-        glucoseMeterCancellable =  deviceManager.glucoseMeter(for :scannedDevice!)
-            .read(device: scannedDevice!)
+        glucoseMeterCancellable =  deviceManager.glucoseMeter(for: scannedDevice)
+            .read(device: scannedDevice)
             .sink (receiveCompletion: {[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
@@ -227,18 +240,20 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         result(nil)
     }
 
-    private func startReadingBloodPressure(_ arguments: [AnyObject], result: @escaping FlutterResult){
-        let scannedDeviceId = UUID(uuidString: arguments[0] as! String)!
-        let scannedDevice = scannedDevices.first(where: { $0.id == scannedDeviceId })
-        
-        guard scannedDevice != nil else {
-            result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(scannedDeviceId)")))
+    private func startReadingBloodPressure(_ arguments: [AnyObject], result: @escaping FlutterResult) {
+        let rawScannedDeviceId = arguments[0] as! String
+
+        guard
+          let scannedDeviceId = UUID(uuidString: rawScannedDeviceId),
+          let scannedDevice = knownScannedDevices[scannedDeviceId]
+        else {
+            result(encode(ErrorResult(code: "DeviceNotFound", message: "Device not found with id \(rawScannedDeviceId)")))
             return
         }
         
         bloodPressureCancellable?.cancel()
-        bloodPressureCancellable = deviceManager.bloodPressureReader(for :scannedDevice!)
-            .read(device: scannedDevice!)
+        bloodPressureCancellable = deviceManager.bloodPressureReader(for: scannedDevice)
+            .read(device: scannedDevice)
             .sink (receiveCompletion: {[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
@@ -267,7 +282,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         bloodPressureCancellable?.cancel()
         scannerResultCancellable?.cancel()
         pairCancellable?.cancel()
-        scannedDevices = []
+        knownScannedDevices = [:]
     }
 }
 
@@ -337,6 +352,12 @@ public struct InternalScannedDevice: Equatable, Encodable {
     self.name = name
     self.deviceModel = deviceModel
   }
+
+  init(_ device: ScannedDevice) {
+    self.id = device.id.uuidString
+    self.name = device.name
+    self.deviceModel = device.deviceModel
+  }
 }
 
 struct AnyEncodable: Encodable {
@@ -365,4 +386,21 @@ enum VitalError: Error {
   case UnsupportedProvider(String)
   case UnsupportedBrand(String)
   case UnsupportedKind(String)
+}
+
+extension FlutterError {
+    convenience init(_ error: Error) {
+        switch error {
+        case VitalError.UnsupportedBrand(let errorMessage):
+            self.init(code: "UnsupportedBrand", message: errorMessage, details: error)
+        case VitalError.UnsupportedKind(let errorMessage):
+            self.init(code: "UnsupportedKind", message: errorMessage, details: error)
+        default:
+            self.init(code: "UnknownError", message: nil, details: error)
+        }
+    }
+    
+    func encodeAsJson() -> String? {
+        encode(ErrorResult(code: code, message: message ?? ""))
+    }
 }

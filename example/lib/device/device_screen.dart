@@ -10,7 +10,7 @@ class DeviceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DeviceBloc bloc = context.watch<DeviceBloc>();
-    final device = bloc.device;
+    final device = bloc.deviceModel;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +37,10 @@ class DeviceScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
+              ),
+              Text(
+                bloc.deviceSource?.name ?? "",
+                style: Theme.of(context).textTheme.labelLarge,
               ),
               showResults(context, bloc),
             ],
@@ -74,7 +78,7 @@ class DeviceScreen extends StatelessWidget {
                           text: e.value.toString(),
                           style: valueTextStyle,
                           children: [
-                        TextSpan(text: " mg/dL", style: unitTextStyle)
+                        TextSpan(text: " ${e.unit}", style: unitTextStyle)
                       ])),
                   subtitle: const Divider(),
                   trailing: Column(
@@ -116,21 +120,26 @@ class DeviceScreen extends StatelessWidget {
                               text: e.systolic.value.toString(),
                               style: valueTextStyle,
                               children: [
-                            TextSpan(text: " mmHg", style: unitTextStyle)
+                            TextSpan(
+                                text: " ${e.systolic.unit}",
+                                style: unitTextStyle)
                           ])),
                       RichText(
                           text: TextSpan(
                               text: e.diastolic.value.toString(),
                               style: valueTextStyle,
                               children: [
-                            TextSpan(text: " mmHg", style: unitTextStyle)
+                            TextSpan(
+                                text: " ${e.diastolic.unit}",
+                                style: unitTextStyle)
                           ])),
                       RichText(
                           text: TextSpan(
                               text: e.pulse?.value.toString(),
                               style: valueTextStyle,
                               children: [
-                            TextSpan(text: " bpm", style: unitTextStyle)
+                            TextSpan(
+                                text: " ${e.pulse?.unit}", style: unitTextStyle)
                           ])),
                     ],
                   ),

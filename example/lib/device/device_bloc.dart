@@ -10,15 +10,16 @@ import 'package:vital_flutter_example/utils/disposer.dart';
 
 class DeviceBloc extends ChangeNotifier with Disposer {
   final DeviceManager _deviceManager;
-  final DeviceModel device;
+  final DeviceModel deviceModel;
 
   DeviceState state = DeviceState.searching;
+  DeviceSource? deviceSource;
   ScannedDevice? scannedDevice;
 
   List<QuantitySample> glucoseMeterResults = [];
   List<BloodPressureSample> bloodPressureMeterResults = [];
 
-  DeviceBloc(BuildContext context, this._deviceManager, this.device) {
+  DeviceBloc(BuildContext context, this._deviceManager, this.deviceModel) {
     _deviceManager.init();
     requestPermissions();
     scan(context);
@@ -34,21 +35,28 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void scan(BuildContext context) {
-    _deviceManager
-        .scanForDevice(device)
-        .firstWhere((event) => event.deviceModel == device)
-        .then((event) {
-      if (event.deviceModel == device) {
-        Fimber.i('Found device: ${event.deviceModel.name}');
-        state = DeviceState.pairing;
-        scannedDevice = event;
-        readData(context, event);
+    Future<ConnectedOrScanned> firstConnectedOrScannedDevice =
+        _deviceManager.getConnectedDevices(deviceModel).then((devices) {
+      if (devices.isNotEmpty) {
+        return ConnectedOrScanned(DeviceSource.paired, devices[0]);
+      } else {
+        return _deviceManager
+            .scanForDevice(deviceModel)
+            .firstWhere((event) => event.deviceModel == deviceModel)
+            .then((device) {
+          return ConnectedOrScanned(DeviceSource.scanned, device);
+        });
       }
-      notifyListeners();
-    }, onError: (error, stackTrace) {
-      Fimber.i(error.toString(), stacktrace: stackTrace);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error scanning: $error")));
+    });
+
+    firstConnectedOrScannedDevice.then((result) {
+      assert(result.device.deviceModel == deviceModel);
+      Fimber.i(
+          'Found ${result.source.name} device: ${result.device.deviceModel.name} ${result.device.id}');
+      state = DeviceState.pairing;
+      scannedDevice = result.device;
+      deviceSource = result.source;
+      readData(context, result.device);
       notifyListeners();
     });
 
@@ -162,4 +170,27 @@ extension DeviceStateExtension on DeviceState {
         return "Paired";
     }
   }
+}
+
+enum DeviceSource {
+  scanned,
+  paired,
+}
+
+extension DeviceSourceExtension on DeviceSource {
+  String get name {
+    switch (this) {
+      case DeviceSource.scanned:
+        return "Scanned";
+      case DeviceSource.paired:
+        return "Previously Paired";
+    }
+  }
+}
+
+class ConnectedOrScanned {
+  final DeviceSource source;
+  final ScannedDevice device;
+
+  ConnectedOrScanned(this.source, this.device);
 }

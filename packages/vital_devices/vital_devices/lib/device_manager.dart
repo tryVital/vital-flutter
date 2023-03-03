@@ -12,6 +12,10 @@ class DeviceManager {
     return devices.where((element) => element.brand == brand).toList();
   }
 
+  Future<List<ScannedDevice>> getConnectedDevices(DeviceModel deviceModel) {
+    return VitalDevicesPlatform.instance.getConnectedDevices(deviceModel);
+  }
+
   Stream<ScannedDevice> scanForDevice(DeviceModel deviceModel) {
     return VitalDevicesPlatform.instance.scanForDevice(deviceModel);
   }

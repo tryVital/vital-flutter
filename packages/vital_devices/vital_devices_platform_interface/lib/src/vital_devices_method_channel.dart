@@ -107,6 +107,24 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 
   @override
+  Future<List<ScannedDevice>> getConnectedDevices(DeviceModel deviceModel) {
+    return _channel.invokeMethod('getConnectedDevices', [
+      deviceModel.id,
+      deviceModel.name,
+      deviceModel.brand.name,
+      deviceModel.kind.name
+    ]).then((result) {
+      final error = _mapError(result);
+      if (error != null) {
+        throw error;
+      }
+
+      final jsonObjects = jsonDecode(result as String) as Iterable<dynamic>;
+      return jsonObjects.map((o) => ScannedDevice.fromMap(o)).toList();
+    });
+  }
+
+  @override
   Stream<ScannedDevice> scanForDevice(DeviceModel deviceModel) {
     return Stream.fromFuture(
       _checkPermissions().then(
