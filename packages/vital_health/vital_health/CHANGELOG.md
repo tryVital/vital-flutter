@@ -1,3 +1,7 @@
+## 1.3.0
+
+ - Bump to Vital iOS 0.7.17 and Vital Android 1.0.0-beta.7.
+
 ## 1.2.3
 
  - Update a dependency to the latest release.
