@@ -1,3 +1,7 @@
+## 1.4.0
+
+ - Bump "vital_core" to `1.4.0`.
+
 ## 1.3.0
 
  - Bump to Vital iOS 0.7.17 and Vital Android 1.0.0-beta.7

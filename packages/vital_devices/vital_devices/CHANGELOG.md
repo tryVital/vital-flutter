@@ -1,3 +1,7 @@
+## 1.2.0
+
+ - Bump "vital_devices" to `1.2.0`.
+
 ## 1.1.0
 
  - Bump to Vital iOS 0.7.17 and Vital Android 1.0.0-beta.7. Support the new DeviceManager.connected(DeviceModel) native SDK API. Fixed decoding issue of quantity sample JSON payloads coming from Android — Dart expects a value JSON number; a string was passed instead.
