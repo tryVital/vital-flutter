@@ -193,16 +193,14 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let region: String  = arguments[1] as! String
     let environment: String = arguments[2] as! String
 
-    NonthrowingTask {
-      do {
-        await VitalClient.configure(
-          apiKey: apiKey,
-          environment: try resolveEnvironment(region: region, environment: environment)
-        )
-        result(nil)
-      } catch let error {
-        result(encode(ErrorResult(from: error)))
-      }
+    do {
+      VitalClient.configure(
+        apiKey: apiKey,
+        environment: try resolveEnvironment(region: region, environment: environment)
+      )
+      result(nil)
+    } catch let error {
+      result(encode(ErrorResult(from: error)))
     }
   }
 
@@ -212,24 +210,22 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
 
-    NonthrowingTask {
-      do {
-        let mode = try mapToMode(modeString)
+    do {
+      let mode = try mapToMode(modeString)
 
-        await VitalHealthKitClient.configure(
-          .init(
-            backgroundDeliveryEnabled: backgroundDeliveryEnabled,
-            numberOfDaysToBackFill: numberOfDaysToBackFill,
-            logsEnabled: logsEnabled,
-            mode: mode
-          )
+      VitalHealthKitClient.configure(
+        .init(
+          backgroundDeliveryEnabled: backgroundDeliveryEnabled,
+          numberOfDaysToBackFill: numberOfDaysToBackFill,
+          logsEnabled: logsEnabled,
+          mode: mode
         )
+      )
 
-        result(nil)
+      result(nil)
 
-      } catch let error {
-        result(encode(ErrorResult(from: error)))
-      }
+    } catch let error {
+      result(encode(ErrorResult(from: error)))
     }
   }
 

@@ -8,9 +8,7 @@ import VitalHealthKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    Task {
-      await VitalHealthKitClient.automaticConfiguration()
-    }
+    VitalHealthKitClient.automaticConfiguration()
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
