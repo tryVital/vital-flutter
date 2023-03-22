@@ -513,8 +513,8 @@ private func mapResourceToWritableVitalResource(_ name: String) throws -> Writab
   }
 }
 
-private func mapProviderToVitalProvider(_ provider: String) throws -> Provider {
-  guard let provider = Provider(rawValue: provider) else {
+private func mapProviderToVitalProvider(_ provider: String) throws -> Provider.Slug {
+  guard let provider = Provider.Slug(rawValue: provider) else {
     throw VitalError.UnsupportedProvider(provider)
   }
 
