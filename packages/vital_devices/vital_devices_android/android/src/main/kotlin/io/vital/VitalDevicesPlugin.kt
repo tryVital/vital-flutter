@@ -97,27 +97,16 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                     withContext(Dispatchers.Default) {
                         vitalDeviceManager.pair(scannedDevice).collect {
                             withContext(Dispatchers.Main) {
-                                channel.invokeMethod("sendPair", it.toString())
+                                result.success(true)
                             }
                         }
                     }
-
-                    // Since the contract is delivery-once-then-complete, we assume the Dart `sendPair`
-                    // should have closed the Dart Stream/Future at this point.
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        channel.invokeMethod(
-                            "sendPair", JSONObject(
-                                mapOf(
-                                    "code" to "PairError",
-                                    "message" to e.message,
-                                )
-                            ).toString()
-                        )
+                        result.error("PairError", e.message, null)
                     }
                 }
             }
-            result.success(null)
         }
     }
 

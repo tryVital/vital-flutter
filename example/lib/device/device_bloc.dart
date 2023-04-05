@@ -56,7 +56,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       state = DeviceState.pairing;
       scannedDevice = result.device;
       deviceSource = result.source;
-      readData(context, result.device);
+      pair(context, result.device);
       notifyListeners();
     });
 
@@ -64,16 +64,16 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void pair(BuildContext context, ScannedDevice scannedDevice) {
-    _deviceManager.pair(scannedDevice).then((event) {
-      if (event) {
-        state = DeviceState.paired;
+    Fimber.i('Request to pair device: ${scannedDevice.deviceModel.name}');
 
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Successfully paired")));
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Failed to pair")));
-      }
+    _deviceManager.pair(scannedDevice).then((event) {
+      state = DeviceState.paired;
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Successfully paired")));
+      Fimber.i('Successfully paired device: ${scannedDevice.deviceModel.name}');
+
+      readData(context, scannedDevice);
 
       notifyListeners();
     }, onError: (error, stackTrace) {
@@ -92,7 +92,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
         // `readBloodPressureData` delivers all data in one batch, and then completes.
         _deviceManager.readBloodPressureData(scannedDevice).then(
             (List<BloodPressureSample> newReadings) {
-          state = DeviceState.paired;
+          state = DeviceState.readData;
 
           Fimber.i(
               'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
@@ -115,7 +115,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       case DeviceKind.glucoseMeter:
         _deviceManager.readGlucoseMeterData(scannedDevice).then(
             (List<QuantitySample> newReadings) {
-          state = DeviceState.paired;
+          state = DeviceState.readData;
 
           Fimber.i(
               'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
@@ -153,11 +153,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 }
 
-enum DeviceState {
-  searching,
-  pairing,
-  paired,
-}
+enum DeviceState { searching, pairing, paired, readData }
 
 extension DeviceStateExtension on DeviceState {
   String get name {
@@ -168,6 +164,8 @@ extension DeviceStateExtension on DeviceState {
         return "Pairing";
       case DeviceState.paired:
         return "Paired";
+      case DeviceState.readData:
+        return "Read Data";
     }
   }
 }
