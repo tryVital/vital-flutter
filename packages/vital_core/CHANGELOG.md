@@ -1,3 +1,7 @@
+## 1.5.3
+
+ - Bump "vital_core" to `1.5.3`.
+
 ## 1.5.2
 
  - Bump "vital_core" to `1.5.2`.
