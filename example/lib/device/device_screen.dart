@@ -17,37 +17,89 @@ class DeviceScreen extends StatelessWidget {
         title: Text(device.name),
       ),
       body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 12),
-              Image.network(
-                deviceImageUrl(device),
-                height: 72,
-                width: 72,
-              ),
-              Text(device.name,
-                  style: Theme.of(context).textTheme.headlineSmall),
-              Text(device.brand.name,
-                  style: Theme.of(context).textTheme.bodySmall),
-              const Divider(),
-              Text(
-                bloc.state.name,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              Text(
-                bloc.deviceSource?.name ?? "",
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              showResults(context, bloc),
-            ],
-          ),
-        ),
-      ),
+          child: SafeArea(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                        const SizedBox(height: 12),
+                        Image.network(
+                          deviceImageUrl(device),
+                          height: 72,
+                          width: 72,
+                        ),
+                        Text(device.name,
+                            style: Theme.of(context).textTheme.headlineSmall),
+                        Text(device.brand.name,
+                            style: Theme.of(context).textTheme.bodySmall),
+                        const Divider(),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            child:
+                                Row(mainAxisSize: MainAxisSize.min, children: [
+                              Expanded(
+                                  child: Text(bloc.scanSubscription != null
+                                      ? "BLE Scan: Active"
+                                      : "BLE Scan: Idle")),
+                              const Spacer(),
+                              Expanded(
+                                  child: OutlinedButton(
+                                onPressed: () {
+                                  if (bloc.scanSubscription != null) {
+                                    bloc.stopScanning(context);
+                                  } else {
+                                    bloc.scan(context);
+                                  }
+                                },
+                                child: Text(bloc.scanSubscription != null
+                                    ? 'Stop'
+                                    : 'Start'),
+                              ))
+                            ])),
+                        const Divider(),
+                      ] +
+                      showDevices(context, bloc, bloc.connectedDevices,
+                          "Connected Devices") +
+                      showDevices(context, bloc, bloc.scannedDevices,
+                          "Scanned Devices") +
+                      [showResults(context, bloc)]))),
     );
+  }
+
+  List<Widget> showDevices(BuildContext context, DeviceBloc bloc,
+      List<ScannedDevice> devices, String title) {
+    Iterable<Widget> rows = devices.map((d) {
+      return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Expanded(child: Text(d.name)),
+            const Spacer(),
+            Expanded(
+                child: OutlinedButton(
+              onPressed: () {
+                bloc.pair(context, d);
+              },
+              child: const Text('Pair'),
+            )),
+            Expanded(
+                child: OutlinedButton(
+              onPressed: () {
+                bloc.readData(context, d);
+              },
+              child: const Text('Read'),
+            ))
+          ]));
+    });
+
+    return <Widget>[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          )
+        ] +
+        rows.toList();
   }
 
   Widget showResults(BuildContext context, DeviceBloc bloc) {
@@ -58,9 +110,11 @@ class DeviceScreen extends StatelessWidget {
         textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold);
     final dateTextStyle = textTheme.bodyLarge;
 
-    switch (bloc.scannedDevice?.deviceModel.kind) {
-      case DeviceKind.glucoseMeter:
-        return Column(
+    List<Widget> widgets = [];
+
+    if (bloc.glucoseMeterResults.isNotEmpty) {
+      widgets += [
+        Column(
           children: [
             Text(
               "Glucose meter results: ${bloc.glucoseMeterResults.length}",
@@ -95,9 +149,13 @@ class DeviceScreen extends StatelessWidget {
               }).toList(),
             ),
           ],
-        );
-      case DeviceKind.bloodPressure:
-        return Column(
+        )
+      ];
+    }
+
+    if (bloc.bloodPressureMeterResults.isNotEmpty) {
+      widgets += [
+        Column(
           children: [
             const SizedBox(height: 32),
             Text(
@@ -158,10 +216,11 @@ class DeviceScreen extends StatelessWidget {
               }).toList(),
             ),
           ],
-        );
-      default:
-        return const SizedBox.shrink();
+        )
+      ];
     }
+
+    return Column(children: widgets);
   }
 }
 

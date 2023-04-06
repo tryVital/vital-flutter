@@ -94,17 +94,13 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
             mainScope = MainScope()
             mainScope?.launch {
                 try {
-                    withContext(Dispatchers.Default) {
-                        vitalDeviceManager.pair(scannedDevice).collect {
-                            withContext(Dispatchers.Main) {
-                                result.success(true)
-                            }
-                        }
+                    when (scannedDevice.deviceModel.kind) {
+                        Kind.GlucoseMeter -> vitalDeviceManager.glucoseMeter(context, scannedDevice).pair()
+                        Kind.BloodPressure -> vitalDeviceManager.bloodPressure(context, scannedDevice).pair()
                     }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        result.error("PairError", e.message, null)
-                    }
+                    result.success(true)
+                } catch (e: Throwable) {
+                    result.error(e::class.toString(), e.message, null)
                 }
             }
         }
@@ -120,33 +116,22 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
             mainScope = MainScope()
             mainScope?.launch {
                 try {
-                    withContext(Dispatchers.Default) {
-                        vitalDeviceManager.glucoseMeter(context, scannedDevice)
-                            .flowOn(Dispatchers.IO)
-                            .collect { samples ->
-                                withContext(Dispatchers.Main) {
-                                    channel.invokeMethod(
-                                        "sendGlucoseMeterReading",
-                                        JSONArray(samples.map { mapSample(it) }).toString()
-                                    )
-                                }
-                            }
+                    val meter = vitalDeviceManager.glucoseMeter(context, scannedDevice)
+                    val samples = meter.read()
 
-                            // Since the contract is delivery-once-then-complete, we assume the Dart `sendGlucoseMeterReading`
-                            // should have closed the Dart Stream/Future at this point.
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        channel.invokeMethod(
-                            "sendGlucoseMeterReading", JSONObject(
-                                mapOf(
-                                    "code" to "GlucoseMeterReadingError",
-                                    "message" to e.message,
-                                )
-                            ).toString()
-                        )
-                    }
-
+                    channel.invokeMethod(
+                        "sendGlucoseMeterReading",
+                        JSONArray(samples.map { mapSample(it) }).toString()
+                    )
+                } catch (e: Throwable) {
+                    channel.invokeMethod(
+                        "sendGlucoseMeterReading", JSONObject(
+                            mapOf(
+                                "code" to "GlucoseMeterReadingError",
+                                "message" to e.message,
+                            )
+                        ).toString()
+                    )
                 }
             }
 
@@ -164,39 +149,28 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
             mainScope = MainScope()
             mainScope?.launch {
                 try {
-                    withContext(Dispatchers.Default) {
-                        vitalDeviceManager.bloodPressure(context, scannedDevice)
-                            .flowOn(Dispatchers.IO)
-                            .collect { samples ->
-                                withContext(Dispatchers.Main) {
-                                    channel.invokeMethod(
-                                        "sendBloodPressureReading",
-                                        JSONArray(samples.map {
-                                            JSONObject().apply {
-                                                put("systolic", mapSample(it.systolic))
-                                                put("diastolic", mapSample(it.diastolic))
-                                                put("pulse", mapSample(it.pulse))
-                                            }
-                                        }).toString()
-                                    )
-                                }
+                    val meter = vitalDeviceManager.bloodPressure(context, scannedDevice)
+                    val samples = meter.read()
+
+                    channel.invokeMethod(
+                        "sendBloodPressureReading",
+                        JSONArray(samples.map {
+                            JSONObject().apply {
+                                put("systolic", mapSample(it.systolic))
+                                put("diastolic", mapSample(it.diastolic))
+                                put("pulse", mapSample(it.pulse))
                             }
-
-                            // Since the contract is delivery-once-then-complete, we assume the Dart `sendBloodPressureReading`
-                            // should have closed the Dart Stream/Future at this point.
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        channel.invokeMethod(
-                            "sendBloodPressureReading", JSONObject(
-                                mapOf(
-                                    "code" to "BloodPressureReadingError",
-                                    "message" to e.message,
-                                )
-                            ).toString()
-                        )
-                    }
-
+                        }).toString()
+                    )
+                } catch (e: Throwable) {
+                    channel.invokeMethod(
+                        "sendBloodPressureReading", JSONObject(
+                            mapOf(
+                                "code" to "BloodPressureReadingError",
+                                "message" to e.message,
+                            )
+                        ).toString()
+                    )
                 }
             }
 
