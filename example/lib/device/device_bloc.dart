@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:disposebag/disposebag.dart';
@@ -12,10 +13,11 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   final DeviceManager _deviceManager;
   final DeviceModel deviceModel;
 
-  DeviceState state = DeviceState.searching;
-  DeviceSource? deviceSource;
-  ScannedDevice? scannedDevice;
+  bool isScanning = false;
+  StreamSubscription? scanSubscription;
 
+  List<ScannedDevice> connectedDevices = [];
+  List<ScannedDevice> scannedDevices = [];
   List<QuantitySample> glucoseMeterResults = [];
   List<BloodPressureSample> bloodPressureMeterResults = [];
 
@@ -35,31 +37,27 @@ class DeviceBloc extends ChangeNotifier with Disposer {
   }
 
   void scan(BuildContext context) {
-    Future<ConnectedOrScanned> firstConnectedOrScannedDevice =
-        _deviceManager.getConnectedDevices(deviceModel).then((devices) {
-      if (devices.isNotEmpty) {
-        return ConnectedOrScanned(DeviceSource.paired, devices[0]);
-      } else {
-        return _deviceManager
-            .scanForDevice(deviceModel)
-            .firstWhere((event) => event.deviceModel == deviceModel)
-            .then((device) {
-          return ConnectedOrScanned(DeviceSource.scanned, device);
-        });
-      }
-    });
-
-    firstConnectedOrScannedDevice.then((result) {
-      assert(result.device.deviceModel == deviceModel);
-      Fimber.i(
-          'Found ${result.source.name} device: ${result.device.deviceModel.name} ${result.device.id}');
-      state = DeviceState.pairing;
-      scannedDevice = result.device;
-      deviceSource = result.source;
-      pair(context, result.device);
+    _deviceManager.getConnectedDevices(deviceModel).then((devices) {
+      connectedDevices = devices;
       notifyListeners();
     });
 
+    scanSubscription =
+        _deviceManager.scanForDevice(deviceModel).listen((newDevice) {
+      if (!scannedDevices.contains(newDevice)) {
+        scannedDevices.add(newDevice);
+        notifyListeners();
+      }
+    }, onError: (error) {
+      Fimber.i('Error when scanning for device: $error');
+    });
+
+    notifyListeners();
+  }
+
+  void stopScanning(BuildContext context) {
+    scanSubscription?.cancel();
+    scanSubscription = null;
     notifyListeners();
   }
 
@@ -67,13 +65,9 @@ class DeviceBloc extends ChangeNotifier with Disposer {
     Fimber.i('Request to pair device: ${scannedDevice.deviceModel.name}');
 
     _deviceManager.pair(scannedDevice).then((event) {
-      state = DeviceState.paired;
-
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Successfully paired")));
       Fimber.i('Successfully paired device: ${scannedDevice.deviceModel.name}');
-
-      readData(context, scannedDevice);
 
       notifyListeners();
     }, onError: (error, stackTrace) {
@@ -92,8 +86,6 @@ class DeviceBloc extends ChangeNotifier with Disposer {
         // `readBloodPressureData` delivers all data in one batch, and then completes.
         _deviceManager.readBloodPressureData(scannedDevice).then(
             (List<BloodPressureSample> newReadings) {
-          state = DeviceState.readData;
-
           Fimber.i(
               'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
@@ -115,8 +107,6 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       case DeviceKind.glucoseMeter:
         _deviceManager.readGlucoseMeterData(scannedDevice).then(
             (List<QuantitySample> newReadings) {
-          state = DeviceState.readData;
-
           Fimber.i(
               'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
@@ -151,44 +141,4 @@ class DeviceBloc extends ChangeNotifier with Disposer {
     _deviceManager.cleanUp();
     super.dispose();
   }
-}
-
-enum DeviceState { searching, pairing, paired, readData }
-
-extension DeviceStateExtension on DeviceState {
-  String get name {
-    switch (this) {
-      case DeviceState.searching:
-        return "Searching";
-      case DeviceState.pairing:
-        return "Pairing";
-      case DeviceState.paired:
-        return "Paired";
-      case DeviceState.readData:
-        return "Read Data";
-    }
-  }
-}
-
-enum DeviceSource {
-  scanned,
-  paired,
-}
-
-extension DeviceSourceExtension on DeviceSource {
-  String get name {
-    switch (this) {
-      case DeviceSource.scanned:
-        return "Scanned";
-      case DeviceSource.paired:
-        return "Previously Paired";
-    }
-  }
-}
-
-class ConnectedOrScanned {
-  final DeviceSource source;
-  final ScannedDevice device;
-
-  ConnectedOrScanned(this.source, this.device);
 }
