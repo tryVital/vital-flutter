@@ -175,7 +175,12 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
           .pair(device: device)
           .sink { [weak self] value in
             guard self?.flutterRunning ?? false else { return }
-            result(true)
+            switch value {
+            case .finished:
+              result(true)
+            case let .failure(error):
+              result(FlutterError(code: "PairError", message: error.localizedDescription, details: nil))
+            }
           } receiveValue: { _ in }
       case .bloodPressure:
         pairCancellable = deviceManager
@@ -183,7 +188,12 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
           .pair(device: device)
           .sink {[weak self] value in
             guard self?.flutterRunning ?? false else { return }
-            result(true)
+            switch value {
+            case .finished:
+              result(true)
+            case let .failure(error):
+              result(FlutterError(code: "PairError", message: error.localizedDescription, details: nil))
+            }
           } receiveValue:{ _ in }
       }
     }
@@ -221,7 +231,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
                     return
                 }
                 
-                switch(value.self){
+                switch value {
                 case .finished:
                     // Since the contract is delivery-once-then-complete, we assume the Dart `sendGlucoseMeterReading`
                     // should have closed the Dart Stream/Future at this point.

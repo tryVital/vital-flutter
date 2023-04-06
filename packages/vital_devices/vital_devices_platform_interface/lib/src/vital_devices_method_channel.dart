@@ -15,7 +15,6 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   final _scanSubject = PublishSubject<ScannedDevice>();
   final _glucoseReadSubject = PublishSubject<List<QuantitySample>>();
   final _bloodPressureSubject = PublishSubject<List<BloodPressureSample>>();
-  final _pairSubject = PublishSubject<bool>();
 
   @override
   void init() {
@@ -30,22 +29,6 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
               _scanSubject.addError(error);
             } else {
               _scanSubject.sink.add(ScannedDevice.fromMap(decodedArguments));
-            }
-          } catch (exception, stackTrace) {
-            Fimber.i(exception.toString(), stacktrace: stackTrace);
-            _scanSubject.addError(UnknownException("$exception $stackTrace"));
-          }
-          break;
-        case "sendPair":
-          try {
-            final decodedArguments = jsonDecode(call.arguments as String);
-            final error = _mapError(decodedArguments);
-
-            if (error != null) {
-              _scanSubject.addError(error);
-            } else {
-              _pairSubject.sink
-                  .add((call.arguments as String).toLowerCase() == "true");
             }
           } catch (exception, stackTrace) {
             Fimber.i(exception.toString(), stacktrace: stackTrace);
@@ -153,14 +136,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   Future<bool> pair(ScannedDevice scannedDevice) {
     return _checkPermissions()
         .then((value) => _channel.invokeMethod('pair', [scannedDevice.id]))
-        .then((outcome) {
-      if (outcome == null) {
-        // Forward either the first batch delivered, or the first error.
-        return _pairSubject.first;
-      } else {
-        throw UnknownException("Couldn't pair device: $outcome");
-      }
-    });
+        .then((outcome) => outcome == true);
   }
 
   @override
