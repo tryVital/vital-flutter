@@ -85,4 +85,20 @@ class VitalClient {
       return false;
     });
   }
+
+  Future<void> exchangeOAuthCode(
+      {required String userId,
+      required String provider,
+      required String authCode}) {
+    return linkService
+        // The Redirect URL here is just a placeholder value.
+        // linkService.exchangeOAuthCode requests the API not to redirect.
+        .createLink(userId, provider, "x-vital-noop://")
+        .then((tokenResponse) => linkService.exchangeOAuthCode(
+              provider: provider,
+              code: authCode,
+              linkToken: tokenResponse.body!.linkToken!,
+            ))
+        .then((value) => {});
+  }
 }
