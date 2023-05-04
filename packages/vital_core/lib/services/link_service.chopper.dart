@@ -145,7 +145,7 @@ class _$LinkService extends LinkService {
   }
 
   @override
-  Future<void> exchangeOAuthCode({
+  Future<Response<NoContent>> exchangeOAuthCode({
     required String provider,
     required String code,
     required String linkToken,
@@ -166,7 +166,24 @@ class _$LinkService extends LinkService {
       parameters: $params,
       headers: $headers,
     );
-    return client.send(
+    return client.send<NoContent, NoContent>(
+      $request,
+      requestConverter: JsonConverter.requestFactory,
+    );
+  }
+
+  @override
+  Future<Response<NoContent>> isTokenValid(
+      {required IsLinkTokenValidRequest request}) {
+    final $url = 'link/token/isValid';
+    final $body = request;
+    final $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<NoContent, NoContent>(
       $request,
       requestConverter: JsonConverter.requestFactory,
     );

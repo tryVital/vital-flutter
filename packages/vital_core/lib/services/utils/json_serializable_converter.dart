@@ -3,6 +3,8 @@ import 'package:chopper/chopper.dart';
 // ignore: prefer_generic_function_type_aliases
 typedef T JsonFactory<T>(Map<String, dynamic> json);
 
+class NoContent {}
+
 class JsonSerializableConverter extends JsonConverter {
   final Map<Type, JsonFactory> factories;
 
@@ -33,6 +35,10 @@ class JsonSerializableConverter extends JsonConverter {
 
   @override
   Response<ResultType> convertResponse<ResultType, Item>(Response response) {
+    if (ResultType == NoContent || response.statusCode == 204) {
+      return response.copyWith<ResultType>(body: null);
+    }
+
     // use [JsonConverter] to decode json
     final jsonRes = super.convertResponse(response);
 
