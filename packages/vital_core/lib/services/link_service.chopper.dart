@@ -183,9 +183,6 @@ class _$LinkService extends LinkService {
       client.baseUrl,
       body: $body,
     );
-    return client.send<NoContent, NoContent>(
-      $request,
-      requestConverter: JsonConverter.requestFactory,
-    );
+    return client.send<NoContent, NoContent>($request);
   }
 }

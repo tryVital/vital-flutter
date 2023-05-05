@@ -76,7 +76,6 @@ abstract class LinkService extends ChopperService {
   });
 
   @Post(path: 'link/token/isValid')
-  @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<NoContent>> isTokenValid({
     @Body() required IsLinkTokenValidRequest request,
   });

@@ -12,6 +12,12 @@ IsLinkTokenValidRequest _$IsLinkTokenValidRequestFromJson(
       linkToken: json['token'] as String,
     );
 
+Map<String, dynamic> _$IsLinkTokenValidRequestToJson(
+        IsLinkTokenValidRequest instance) =>
+    <String, dynamic>{
+      'token': instance.linkToken,
+    };
+
 CreateLinkResponse _$CreateLinkResponseFromJson(Map<String, dynamic> json) =>
     CreateLinkResponse(
       linkToken: json['link_token'] as String,

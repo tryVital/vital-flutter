@@ -395,63 +395,63 @@ packages:
       path: "../packages/vital_core"
       relative: true
     source: path
-    version: "1.5.2"
+    version: "1.5.4"
   vital_devices:
     dependency: "direct main"
     description:
       path: "../packages/vital_devices/vital_devices"
       relative: true
     source: path
-    version: "1.5.2"
+    version: "1.5.4"
   vital_devices_android:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_devices/vital_devices_android"
       relative: true
     source: path
-    version: "1.2.8"
+    version: "1.2.10"
   vital_devices_ios:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_devices/vital_devices_ios"
       relative: true
     source: path
-    version: "1.1.8"
+    version: "1.1.10"
   vital_devices_platform_interface:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_devices/vital_devices_platform_interface"
       relative: true
     source: path
-    version: "1.1.9"
+    version: "1.1.11"
   vital_health:
     dependency: "direct main"
     description:
       path: "../packages/vital_health/vital_health"
       relative: true
     source: path
-    version: "1.5.2"
+    version: "1.5.4"
   vital_health_android:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_health/vital_health_android"
       relative: true
     source: path
-    version: "1.2.8"
+    version: "1.2.10"
   vital_health_ios:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_health/vital_health_ios"
       relative: true
     source: path
-    version: "1.2.8"
+    version: "1.2.10"
   vital_health_platform_interface:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_health/vital_health_platform_interface"
       relative: true
     source: path
-    version: "1.2.8"
+    version: "1.2.10"
 sdks:
   dart: ">=2.18.0 <4.0.0"
   flutter: ">=3.3.0"

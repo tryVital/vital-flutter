@@ -35,8 +35,9 @@ class JsonSerializableConverter extends JsonConverter {
 
   @override
   Response<ResultType> convertResponse<ResultType, Item>(Response response) {
-    if (ResultType == NoContent || response.statusCode == 204) {
-      return response.copyWith<ResultType>(body: null);
+    if (ResultType == NoContent) {
+      return response.copyWith<NoContent>(body: NoContent())
+          as Response<ResultType>;
     }
 
     // use [JsonConverter] to decode json
