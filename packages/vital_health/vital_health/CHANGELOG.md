@@ -1,3 +1,7 @@
+## 1.5.5
+
+ - Bump "vital_health" to `1.5.5`.
+
 ## 1.5.4
 
  - Bump "vital_health" to `1.5.4`.
