@@ -2,13 +2,28 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'link.g.dart';
 
+@JsonSerializable()
+class IsLinkTokenValidRequest {
+  @JsonKey(name: 'token')
+  String linkToken;
+
+  IsLinkTokenValidRequest({
+    required this.linkToken,
+  });
+
+  factory IsLinkTokenValidRequest.fromJson(Map<String, dynamic> json) =>
+      _$IsLinkTokenValidRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IsLinkTokenValidRequestToJson(this);
+}
+
 @JsonSerializable(createToJson: false)
 class CreateLinkResponse {
   @JsonKey(name: 'link_token')
-  String? linkToken;
+  String linkToken;
 
   CreateLinkResponse({
-    this.linkToken,
+    required this.linkToken,
   });
 
   factory CreateLinkResponse.fromJson(Map<String, dynamic> json) =>

@@ -143,4 +143,46 @@ class _$LinkService extends LinkService {
       requestConverter: JsonConverter.requestFactory,
     );
   }
+
+  @override
+  Future<Response<NoContent>> exchangeOAuthCode({
+    required String provider,
+    required String code,
+    required String linkToken,
+  }) {
+    final $url = 'link/connect/${provider}';
+    final $params = <String, dynamic>{
+      'code': code,
+      'state': linkToken,
+    };
+    final $headers = {
+      'X-Vital-SDK-No-Redirect': '1',
+    };
+
+    final $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      headers: $headers,
+    );
+    return client.send<NoContent, NoContent>(
+      $request,
+      requestConverter: JsonConverter.requestFactory,
+    );
+  }
+
+  @override
+  Future<Response<NoContent>> isTokenValid(
+      {required IsLinkTokenValidRequest request}) {
+    final $url = 'link/token/isValid';
+    final $body = request;
+    final $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<NoContent, NoContent>($request);
+  }
 }

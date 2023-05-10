@@ -17,10 +17,10 @@ Measurement _$MeasurementFromJson(Map<String, dynamic> json) => Measurement(
 BloodPressureMeasurement _$BloodPressureMeasurementFromJson(
         Map<String, dynamic> json) =>
     BloodPressureMeasurement(
-      id: json['id'] as int,
+      id: json['id'] as int?,
       timestamp: DateTime.parse(json['timestamp'] as String),
-      systolic: json['systolic'] as double,
-      diastolic: json['diastolic'] as double,
+      systolic: (json['systolic'] as num).toDouble(),
+      diastolic: (json['diastolic'] as num).toDouble(),
       type: json['type'] as String?,
       unit: json['unit'] as String?,
     );

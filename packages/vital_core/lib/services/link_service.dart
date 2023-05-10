@@ -65,6 +65,21 @@ abstract class LinkService extends ChopperService {
     @Header('LinkToken') required String linkToken,
   });
 
+  @Get(
+      path: 'link/connect/{provider}',
+      headers: {"X-Vital-SDK-No-Redirect": "1"})
+  @FactoryConverter(request: JsonConverter.requestFactory)
+  Future<Response<NoContent>> exchangeOAuthCode({
+    @Path('provider') required String provider,
+    @Query('code') required String code,
+    @Query('state') required String linkToken,
+  });
+
+  @Post(path: 'link/token/isValid')
+  Future<Response<NoContent>> isTokenValid({
+    @Body() required IsLinkTokenValidRequest request,
+  });
+
   static LinkService create(
       http.Client httpClient, String baseUrl, String apiKey) {
     final client = ChopperClient(

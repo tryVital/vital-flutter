@@ -62,3 +62,13 @@ class UnknownException extends VitalException {
     return 'UnknownException{ code: $code, message: $message }';
   }
 }
+
+class VitalHTTPStatusException extends VitalException {
+  VitalHTTPStatusException(int code, String message)
+      : super("VitalHTTPStatusException", message);
+
+  @override
+  String toString() {
+    return 'VitalHTTPStatusException{ code: $code, message: $message }';
+  }
+}

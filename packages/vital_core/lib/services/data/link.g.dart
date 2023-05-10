@@ -6,9 +6,21 @@ part of 'link.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+IsLinkTokenValidRequest _$IsLinkTokenValidRequestFromJson(
+        Map<String, dynamic> json) =>
+    IsLinkTokenValidRequest(
+      linkToken: json['token'] as String,
+    );
+
+Map<String, dynamic> _$IsLinkTokenValidRequestToJson(
+        IsLinkTokenValidRequest instance) =>
+    <String, dynamic>{
+      'token': instance.linkToken,
+    };
+
 CreateLinkResponse _$CreateLinkResponseFromJson(Map<String, dynamic> json) =>
     CreateLinkResponse(
-      linkToken: json['link_token'] as String?,
+      linkToken: json['link_token'] as String,
     );
 
 OauthLinkResponse _$OauthLinkResponseFromJson(Map<String, dynamic> json) =>
