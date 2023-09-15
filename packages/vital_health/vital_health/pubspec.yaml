@@ -22,9 +22,9 @@ dependencies:
   fimber: ^0.6.6
   json_annotation: ^4.6.0
   vital_core: ^1.8.0
-  vital_health_platform_interface: ^1.2.12
-  vital_health_ios: ^1.2.12
-  vital_health_android: ^1.2.12
+  vital_health_platform_interface: ^1.8.0
+  vital_health_ios: ^1.8.0
+  vital_health_android: ^1.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,6 @@
 name: vital_devices_platform_interface
 description: The platform interface of Vital Devices.
-version: 1.1.13
+version: 1.8.0
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
