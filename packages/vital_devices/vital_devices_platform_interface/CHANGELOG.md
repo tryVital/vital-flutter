@@ -1,3 +1,7 @@
+## 1.9.0
+
+ - Bump "vital_devices_platform_interface" to `1.9.0`.
+
 ## 1.8.0
 
 ## 1.1.13

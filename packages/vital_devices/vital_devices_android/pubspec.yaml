@@ -1,6 +1,6 @@
 name: vital_devices_android
 description: The Android implementation of Vital Devices.
-version: 1.8.0
+version: 1.9.0
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
@@ -20,8 +20,8 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.1.0
-  vital_core: ^1.8.0
-  vital_devices_platform_interface: ^1.8.0
+  vital_core: ^1.9.0
+  vital_devices_platform_interface: ^1.9.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
