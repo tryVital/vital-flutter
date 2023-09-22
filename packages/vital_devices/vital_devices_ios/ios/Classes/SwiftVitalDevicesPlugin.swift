@@ -84,7 +84,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
     }
 
     private func getBrands(result: @escaping FlutterResult){
-        result(DevicesManager.brands().map({ mapBrandToString($0) }))
+        result(DevicesManager.brands().map({ $0.rawValue }))
     }
 
     private func getDevices(_ deviceBrand: String, result: @escaping FlutterResult) {
@@ -312,16 +312,6 @@ private func mapStringToKind(_ kindId: String) throws -> DeviceModel.Kind  {
     case "bloodPressure": return DeviceModel.Kind.bloodPressure
     case "glucoseMeter": return DeviceModel.Kind.glucoseMeter
     default: throw VitalError.UnsupportedKind(kindId)
-    }
-}
-
-private func mapBrandToString(_ brand: Brand) -> String {
-    switch brand {
-    case .omron: return "omron"
-    case .accuChek: return "accuChek"
-    case .contour: return "contour"
-    case .beurer: return "beurer"
-    case .libre: return "libre"
     }
 }
 
