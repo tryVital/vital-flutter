@@ -1,0 +1,22 @@
+name: vital_core_platform_interface
+description: The platform interface of Vital Core.
+version: 1.9.0
+homepage: https://tryvital.io/
+repository: https://github.com/tryVital/vital-flutter
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  permission_handler: ^10.2.0
+  rxdart: ^0.27.3
+  fimber: ^0.6.6
+  plugin_platform_interface: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0

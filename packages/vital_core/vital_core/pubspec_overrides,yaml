@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: vital_core_android,vital_core_ios,vital_core_platform_interface
+dependency_overrides:
+  vital_core_android:
+    path: ../vital_core_android
+  vital_core_ios:
+    path: ../vital_core_ios
+  vital_core_platform_interface:
+    path: ../vital_core_platform_interface
