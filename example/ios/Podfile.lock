@@ -5,6 +5,9 @@ PODS:
     - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
+  - vital_core_ios (0.0.10):
+    - Flutter
+    - VitalCore (~> 0.10.6)
   - vital_devices_ios (0.0.10):
     - Flutter
     - VitalDevices (~> 0.10.6)
@@ -22,6 +25,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - vital_core_ios (from `.symlinks/plugins/vital_core_ios/ios`)
   - vital_devices_ios (from `.symlinks/plugins/vital_devices_ios/ios`)
   - vital_health_ios (from `.symlinks/plugins/vital_health_ios/ios`)
 
@@ -39,6 +43,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  vital_core_ios:
+    :path: ".symlinks/plugins/vital_core_ios/ios"
   vital_devices_ios:
     :path: ".symlinks/plugins/vital_devices_ios/ios"
   vital_health_ios:
@@ -49,6 +55,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
+  vital_core_ios: 2911372dc03a356634eb7c2aff063fe793d7f2a2
   vital_devices_ios: c04cf2af0eff78b7df73cb2915cca8aa07cf5ac9
   vital_health_ios: cadcdd1903baf5b22b03f36800baaa08fdc6fe62
   VitalCore: a329ff350fb9d4e444bc6cd34b5c8a3e8754982d
