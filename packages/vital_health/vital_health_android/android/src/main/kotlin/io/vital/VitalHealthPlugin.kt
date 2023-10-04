@@ -3,9 +3,7 @@ package io.vital
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.health.connect.client.PermissionController
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.*
+import androidx.activity.result.contract.ActivityResultContract
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -20,8 +18,10 @@ import io.tryvital.client.VitalClient
 import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitalhealthconnect.VitalHealthConnectManager
 import io.tryvital.vitalhealthconnect.model.HealthConnectAvailability
-import io.tryvital.vitalhealthconnect.model.HealthResource
+import io.tryvital.vitalhealthconnect.model.PermissionOutcome
 import io.tryvital.vitalhealthconnect.model.SyncStatus
+import io.tryvital.vitalhealthconnect.model.VitalResource
+import io.tryvital.vitalhealthconnect.model.WritableVitalResource
 import io.tryvital.vitalhealthconnect.model.processedresource.ProcessedResourceData
 import io.tryvital.vitalhealthconnect.model.processedresource.QuantitySample
 import io.tryvital.vitalhealthconnect.model.processedresource.SummaryData
@@ -30,7 +30,6 @@ import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
-import kotlin.reflect.KClass
 
 /** VitalHealthPlugin */
 class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
@@ -40,58 +39,59 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private lateinit var context: Context
     private lateinit var channel: MethodChannel
 
-    private var vitalClient: VitalClient? = null
-    private var vitalHealthConnectManager: VitalHealthConnectManager? = null
+    private val vitalClient: VitalClient
+        get() = VitalClient.getOrCreate(context)
+
+    private val vitalHealthConnectManager: VitalHealthConnectManager
+        get() = VitalHealthConnectManager.getOrCreate(context)
+
     private var activity: Activity? = null
 
-    private var askForResourcesResult: Result? = null
-    private var askedHealthPermissions: Set<HealthPermission>? = null
+    private var activeAskRequest: Pair<ActivityResultContract<Unit, Deferred<PermissionOutcome>>, Result>? = null
 
-    private var mainScope: CoroutineScope? = null
-    private var statusScope: CoroutineScope? = null
-    private var writeScope: CoroutineScope? = null
-    private var readScope: CoroutineScope? = null
+    private var taskScope = CoroutineScope(SupervisorJob())
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        taskScope.cancel()
+        taskScope = CoroutineScope(SupervisorJob())
+
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_health_connect")
         context = flutterPluginBinding.applicationContext
         channel.setMethodCallHandler(this)
+
+        startStatusUpdate()
     }
 
     private fun startStatusUpdate() {
-        statusScope?.cancel()
-        statusScope = MainScope()
-        statusScope?.launch {
+        taskScope.launch {
             try {
-                withContext(Dispatchers.Default) {
-                    vitalHealthConnectManager?.status?.collect {
-                        withContext(Dispatchers.Main) {
-                            when (it) {
-                                is SyncStatus.ResourceSyncFailed -> channel.invokeMethod(
-                                    "status",
-                                    listOf("failedSyncing", it.resource.name)
-                                )
-                                is SyncStatus.ResourceNothingToSync -> channel.invokeMethod(
-                                    "status",
-                                    listOf("nothingToSync", it.resource.name)
-                                )
-                                is SyncStatus.ResourceSyncing -> channel.invokeMethod(
-                                    "status",
-                                    listOf("syncing", it.resource.name)
-                                )
-                                is SyncStatus.ResourceSyncingComplete -> channel.invokeMethod(
-                                    "status",
-                                    listOf("successSyncing", it.resource.name)
-                                )
-                                SyncStatus.SyncingCompleted -> channel.invokeMethod(
-                                    "status",
-                                    listOf("syncingCompleted")
-                                )
-                                SyncStatus.Unknown -> channel.invokeMethod(
-                                    "status",
-                                    listOf("unknown")
-                                )
-                            }
+                vitalHealthConnectManager?.status?.collect {
+                    withContext(Dispatchers.Main) {
+                        when (it) {
+                            is SyncStatus.ResourceSyncFailed -> channel.invokeMethod(
+                                "status",
+                                listOf("failedSyncing", it.resource.name)
+                            )
+                            is SyncStatus.ResourceNothingToSync -> channel.invokeMethod(
+                                "status",
+                                listOf("nothingToSync", it.resource.name)
+                            )
+                            is SyncStatus.ResourceSyncing -> channel.invokeMethod(
+                                "status",
+                                listOf("syncing", it.resource.name)
+                            )
+                            is SyncStatus.ResourceSyncingComplete -> channel.invokeMethod(
+                                "status",
+                                listOf("successSyncing", it.resource.name)
+                            )
+                            SyncStatus.SyncingCompleted -> channel.invokeMethod(
+                                "status",
+                                listOf("syncingCompleted")
+                            )
+                            SyncStatus.Unknown -> channel.invokeMethod(
+                                "status",
+                                listOf("unknown")
+                            )
                         }
                     }
                 }
@@ -107,7 +107,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
-        statusScope?.cancel()
+        taskScope.cancel()
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -143,46 +143,42 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     private fun askForResources(call: MethodCall, result: Result) {
+        if (synchronized(this) { activeAskRequest != null }) {
+            return result.error("VitalHealthError", "another ask request is in progress", null)
+        }
+
+        val activity = this.activity ?: return result.error("VitalHealthError", "No active Android Activity", null)
+
         val readResources = call.argument<List<String>>("readResources") ?: emptyList()
         val writeResources = call.argument<List<String>>("writeResources") ?: emptyList()
 
-        val requestPermissionActivityContract =
-            PermissionController.createRequestPermissionResultContract()
-        val healthPermissions = readResources.map { mapReadResourceToHealthRecord(it) }.flatten()
-            .map { HealthPermission.createReadPermission(it) }.toSet().plus(
-                writeResources.map { mapWriteResourceToHealthRecord(it) }.flatten()
-                    .map { HealthPermission.createWritePermission(it) }.toSet()
-            )
+        val contract = vitalHealthConnectManager.createPermissionRequestContract(
+            readResources = readResources.mapNotNullTo(mutableSetOf()) { runCatching { VitalResource.valueOf(it) }.getOrNull() },
+            writeResources = writeResources.mapNotNullTo(mutableSetOf()) { runCatching { WritableVitalResource.valueOf(it) }.getOrNull() },
+        )
 
-        askForResourcesResult = result
-        askedHealthPermissions = healthPermissions
-        activity?.startActivityForResult(
-            requestPermissionActivityContract.createIntent(
-                context,
-                healthPermissions
-            ), 666
+        synchronized(this) {
+            activeAskRequest = Pair(contract, result)
+        }
+
+        activity.startActivityForResult(
+            contract.createIntent(context, Unit), 1984
         )
     }
 
     override fun onActivityResult(p0: Int, p1: Int, p2: Intent?): Boolean {
-        if (p0 == 666) {
-            mainScope?.cancel()
-            mainScope = MainScope()
-            mainScope!!.launch {
-                val grantedPermissions =
-                    vitalHealthConnectManager!!.getGrantedPermissions(context).toSet()
+        if (p0 == 1984) {
+            val activeAskRequest = synchronized(this) { this.activeAskRequest ?: return false }
 
-                val notGrantedPermissions = (askedHealthPermissions
-                    ?: emptySet()).filter { !grantedPermissions.contains(it) }
+            taskScope.launch {
+                val (contract, result) = activeAskRequest
+                contract.parseResult(p1, p2).await()
 
-                if (notGrantedPermissions.isEmpty()) {
-                    askForResourcesResult?.success(true)
-                } else {
-                    vitalClient?.vitalLogger?.logI("Not granted permissions: $notGrantedPermissions")
-                    askForResourcesResult?.success(false)
+                result.success(true)
+
+                synchronized(this) {
+                    this@VitalHealthPlugin.activeAskRequest = null
                 }
-                askedHealthPermissions = null
-                askForResourcesResult = null
             }
             return true
         }
@@ -190,371 +186,266 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     private fun writeHealthData(call: MethodCall, result: Result) {
-        if (vitalHealthConnectManager == null) {
-            result.error(
-                "ClientSetup",
-                "VitalHealthConnect is not configured",
-                null
+        result.execute(taskScope) {
+            vitalHealthConnectManager.writeRecord(
+                WritableVitalResource.valueOf(
+                    call.argument<String>("resource")!!
+                ),
+                startDate = Instant.ofEpochMilli(call.argument("startDate")!!),
+                endDate = Instant.ofEpochMilli(call.argument("endDate")!!),
+                value = call.argument("value")!!,
             )
-            return
-        }
-
-        writeScope?.cancel()
-        writeScope = MainScope()
-        writeScope!!.launch {
-            try {
-                vitalHealthConnectManager!!.addHealthResource(
-                    mapStringToHealthResource(
-                        call.argument<String>(
-                            "resource"
-                        )!!
-                    )!!,
-                    startDate = Instant.ofEpochMilli(call.argument("startDate")!!),
-                    endDate = Instant.ofEpochMilli(call.argument("endDate")!!),
-                    value = call.argument("value")!!,
-                )
-            } catch (e: Exception) {
-                result.error(
-                    "Unknown",
-                    e.message,
-                    e
-                )
-            }
+            return@execute null
         }
     }
 
     private fun read(call: MethodCall, result: Result) {
-        if (vitalHealthConnectManager == null) {
-            result.error(
-                "ClientSetup",
-                "VitalHealthConnect is not configured",
-                null
+        result.execute(taskScope) {
+            val readResult = vitalHealthConnectManager.read(
+                VitalResource.valueOf(
+                    call.argument<String>("resource")!!
+                ),
+                startTime = Instant.ofEpochMilli(call.argument("startDate")!!),
+                endTime = Instant.ofEpochMilli(call.argument("endDate")!!),
             )
-            return
-        }
 
-        readScope?.cancel()
-        readScope = MainScope()
-        readScope!!.launch {
-            try {
-                val readResult = vitalHealthConnectManager!!.read(
-                    mapStringToHealthResource(
-                        call.argument<String>(
-                            "resource"
-                        )!!
-                    )!!,
-                    startDate = Instant.ofEpochMilli(call.argument("startDate")!!),
-                    endDate = Instant.ofEpochMilli(call.argument("endDate")!!),
-                )
-
-                when (readResult) {
-                    is ProcessedResourceData.Summary -> {
-                        when (readResult.summaryData) {
-                            is SummaryData.Profile -> {
-                                result.success(
-                                    JSONObject(
-                                        mapOf(
-                                            "biologicalSex" to (readResult.summaryData as SummaryData.Profile).biologicalSex,
-                                            "dateOfBirth" to (readResult.summaryData as SummaryData.Profile).dateOfBirth.time,
-                                            "heightInCm" to (readResult.summaryData as SummaryData.Profile).heightInCm,
-                                        )
-                                    ).toString()
+            return@execute when (readResult) {
+                is ProcessedResourceData.Summary -> {
+                    when (readResult.summaryData) {
+                        is SummaryData.Profile -> {
+                            JSONObject(
+                                mapOf(
+                                    "biologicalSex" to (readResult.summaryData as SummaryData.Profile).biologicalSex,
+                                    "dateOfBirth" to (readResult.summaryData as SummaryData.Profile).dateOfBirth.time,
+                                    "heightInCm" to (readResult.summaryData as SummaryData.Profile).heightInCm,
                                 )
-                            }
-                            is SummaryData.Body -> {
-                                result.success(
-                                    JSONObject(
-                                        mapOf(
-                                            "bodyMass" to JSONArray((readResult.summaryData as SummaryData.Body).bodyMass.map {
-                                                mapSampleToJson(it)
-                                            }),
-                                            "bodyFatPercentage" to JSONArray((readResult.summaryData as SummaryData.Body).bodyFatPercentage.map {
-                                                mapSampleToJson(it)
-                                            }),
-                                        )
-                                    ).toString()
-                                )
-                            }
-                            is SummaryData.Activities -> {
-                                result.success(
-                                    JSONObject(
-                                        mapOf(
-                                            "activities" to JSONArray((readResult.summaryData as SummaryData.Activities).samples.map {
-                                                JSONObject().apply {
-                                                    put(
-                                                        "activeEnergyBurned",
-                                                        JSONArray(it.activeEnergyBurned.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "basalEnergyBurned",
-                                                        JSONArray(it.basalEnergyBurned.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "steps",
-                                                        JSONArray(it.steps.map { mapSampleToJson(it) })
-                                                    )
-                                                    put(
-                                                        "distanceWalkingRunning",
-                                                        JSONArray(it.distanceWalkingRunning.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "vo2Max",
-                                                        JSONArray(it.vo2Max.map { mapSampleToJson(it) })
-                                                    )
-                                                    put(
-                                                        "floorsClimbed",
-                                                        JSONArray(it.floorsClimbed.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                }
-                                            }),
-                                        )
-                                    ).toString()
-                                )
-                            }
-                            is SummaryData.Workouts -> {
-                                result.success(
-                                    JSONObject(
-                                        mapOf(
-                                            "workouts" to JSONArray((readResult.summaryData as SummaryData.Workouts).samples.map {
-                                                JSONObject().apply {
-                                                    put("id", it.id)
-                                                    put("startDate", it.startDate.time)
-                                                    put("endDate", it.endDate.time)
-                                                    put("sourceBundle", it.sourceBundle)
-                                                    put("deviceModel", it.deviceModel)
-                                                    put("sport", it.sport)
-                                                    put(
-                                                        "caloriesInKiloJules",
-                                                        it.caloriesInKiloJules
-                                                    )
-                                                    put("distanceInMeter", it.distanceInMeter)
-                                                    put(
-                                                        "heartRate",
-                                                        JSONArray(it.heartRate.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "respiratoryRate",
-                                                        JSONArray(it.respiratoryRate.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                }
-                                            }),
-                                        )
-                                    ).toString()
-                                )
-                            }
-                            is SummaryData.Sleeps -> {
-                                result.success(
-                                    JSONObject(
-                                        mapOf(
-                                            "sleeps" to JSONArray((readResult.summaryData as SummaryData.Sleeps).samples.map {
-                                                JSONObject().apply {
-                                                    put("id", it.id)
-                                                    put("startDate", it.startDate.time)
-                                                    put("endDate", it.endDate.time)
-                                                    put("sourceBundle", it.sourceBundle)
-                                                    put("deviceModel", it.deviceModel)
-                                                    put(
-                                                        "heartRate",
-                                                        JSONArray(it.heartRate.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "restingHeartRate",
-                                                        JSONArray(it.restingHeartRate.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "heartRateVariability",
-                                                        JSONArray(it.heartRateVariability.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "oxygenSaturation",
-                                                        JSONArray(it.oxygenSaturation.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put(
-                                                        "respiratoryRate",
-                                                        JSONArray(it.respiratoryRate.map {
-                                                            mapSampleToJson(it)
-                                                        })
-                                                    )
-                                                    put("sleepStages", JSONObject().apply {
-                                                        put(
-                                                            "awakeSleepSamples",
-                                                            it.stages.awakeSleepSamples.map {
-                                                                mapSampleToJson(it)
-                                                            })
-                                                        put(
-                                                            "deepSleepSamples",
-                                                            it.stages.deepSleepSamples.map {
-                                                                mapSampleToJson(it)
-                                                            })
-                                                        put(
-                                                            "lightSleepSamples",
-                                                            it.stages.lightSleepSamples.map {
-                                                                mapSampleToJson(it)
-                                                            })
-                                                        put(
-                                                            "remSleepSamples",
-                                                            it.stages.remSleepSamples.map {
-                                                                mapSampleToJson(it)
-                                                            })
-                                                        put(
-                                                            "outOfBedSleepSamples",
-                                                            it.stages.outOfBedSleepSamples.map {
-                                                                mapSampleToJson(it)
-                                                            })
-                                                        put(
-                                                            "unknownSleepSamples",
-                                                            it.stages.unknownSleepSamples.map {
-                                                                mapSampleToJson(it)
-                                                            })
-                                                    })
-                                                }
-                                            }),
-                                        )
-                                    ).toString()
-                                )
-                            }
+                            ).toString()
                         }
-                    }
-                    is ProcessedResourceData.TimeSeries -> {
-                        when (readResult.timeSeriesData) {
-                            is TimeSeriesData.Glucose -> result.success(
-                                JSONObject(
-                                    mapOf(
-                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.Glucose).samples.map {
-                                            mapSampleToJson(it)
-                                        }),
-                                    )
-                                ).toString()
-                            )
-                            is TimeSeriesData.BloodPressure -> {
-                                result.success(
-                                    JSONObject(
-                                        mapOf(
-                                            "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.BloodPressure).samples.map {
-                                                JSONObject().apply {
-                                                    put("systolic", mapSampleToJson(it.systolic))
-                                                    put("diastolic", mapSampleToJson(it.diastolic))
-                                                    put(
-                                                        "pulse",
-                                                        it.pulse?.let { it1 -> mapSampleToJson(it1) })
-                                                }
-                                            })
-                                        )
-                                    ).toString()
+
+                        is SummaryData.Body -> {
+                            JSONObject(
+                                mapOf(
+                                    "bodyMass" to JSONArray((readResult.summaryData as SummaryData.Body).bodyMass.map {
+                                        mapSampleToJson(it)
+                                    }),
+                                    "bodyFatPercentage" to JSONArray((readResult.summaryData as SummaryData.Body).bodyFatPercentage.map {
+                                        mapSampleToJson(it)
+                                    }),
                                 )
-                            }
-                            is TimeSeriesData.HeartRate -> result.success(
-                                JSONObject(
-                                    mapOf(
-                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.HeartRate).samples.map {
-                                            mapSampleToJson(it)
-                                        }),
-                                    )
-                                ).toString()
-                            )
-                            is TimeSeriesData.HeartRateVariabilityRmssd -> result.success(
-                                JSONObject(
-                                    mapOf(
-                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.HeartRateVariabilityRmssd).samples.map {
-                                            mapSampleToJson(it)
-                                        }),
-                                    )
-                                ).toString()
-                            )
-                            is TimeSeriesData.Water -> result.success(
-                                JSONObject(
-                                    mapOf(
-                                        "timeSeries" to JSONArray((readResult.timeSeriesData as TimeSeriesData.Water).samples.map {
-                                            mapSampleToJson(it)
-                                        }),
-                                    )
-                                ).toString()
-                            )
+                            ).toString()
+                        }
+
+                        is SummaryData.Activities -> {
+                            JSONObject(
+                                mapOf(
+                                    "activities" to JSONArray((readResult.summaryData as SummaryData.Activities).activities.map {
+                                        JSONObject().apply {
+                                            put(
+                                                "activeEnergyBurned",
+                                                JSONArray(it.activeEnergyBurned.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "basalEnergyBurned",
+                                                JSONArray(it.basalEnergyBurned.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "steps",
+                                                JSONArray(it.steps.map { mapSampleToJson(it) })
+                                            )
+                                            put(
+                                                "distanceWalkingRunning",
+                                                JSONArray(it.distanceWalkingRunning.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "vo2Max",
+                                                JSONArray(it.vo2Max.map { mapSampleToJson(it) })
+                                            )
+                                            put(
+                                                "floorsClimbed",
+                                                JSONArray(it.floorsClimbed.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                        }
+                                    }),
+                                )
+                            ).toString()
+                        }
+
+                        is SummaryData.Workouts -> {
+                            JSONObject(
+                                mapOf(
+                                    "workouts" to JSONArray((readResult.summaryData as SummaryData.Workouts).samples.map {
+                                        JSONObject().apply {
+                                            put("id", it.id)
+                                            put("startDate", it.startDate.time)
+                                            put("endDate", it.endDate.time)
+                                            put("sourceBundle", it.sourceBundle)
+                                            put("deviceModel", it.deviceModel)
+                                            put("sport", it.sport)
+                                            put(
+                                                "caloriesInKiloJules",
+                                                it.caloriesInKiloJules
+                                            )
+                                            put("distanceInMeter", it.distanceInMeter)
+                                            put(
+                                                "heartRate",
+                                                JSONArray(it.heartRate.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "respiratoryRate",
+                                                JSONArray(it.respiratoryRate.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                        }
+                                    }),
+                                )
+                            ).toString()
+                        }
+
+                        is SummaryData.Sleeps -> {
+                            JSONObject(
+                                mapOf(
+                                    "sleeps" to JSONArray((readResult.summaryData as SummaryData.Sleeps).samples.map {
+                                        JSONObject().apply {
+                                            put("id", it.id)
+                                            put("startDate", it.startDate.time)
+                                            put("endDate", it.endDate.time)
+                                            put("sourceBundle", it.sourceBundle)
+                                            put("deviceModel", it.deviceModel)
+                                            put(
+                                                "heartRate",
+                                                JSONArray(it.heartRate.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "restingHeartRate",
+                                                JSONArray(it.restingHeartRate.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "heartRateVariability",
+                                                JSONArray(it.heartRateVariability.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "oxygenSaturation",
+                                                JSONArray(it.oxygenSaturation.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put(
+                                                "respiratoryRate",
+                                                JSONArray(it.respiratoryRate.map {
+                                                    mapSampleToJson(it)
+                                                })
+                                            )
+                                            put("sleepStages", JSONObject().apply {
+                                                put(
+                                                    "awakeSleepSamples",
+                                                    it.stages.awakeSleepSamples.map {
+                                                        mapSampleToJson(it)
+                                                    })
+                                                put(
+                                                    "deepSleepSamples",
+                                                    it.stages.deepSleepSamples.map {
+                                                        mapSampleToJson(it)
+                                                    })
+                                                put(
+                                                    "lightSleepSamples",
+                                                    it.stages.lightSleepSamples.map {
+                                                        mapSampleToJson(it)
+                                                    })
+                                                put(
+                                                    "remSleepSamples",
+                                                    it.stages.remSleepSamples.map {
+                                                        mapSampleToJson(it)
+                                                    })
+                                                put(
+                                                    "outOfBedSleepSamples",
+                                                    it.stages.outOfBedSleepSamples.map {
+                                                        mapSampleToJson(it)
+                                                    })
+                                                put(
+                                                    "unknownSleepSamples",
+                                                    it.stages.unknownSleepSamples.map {
+                                                        mapSampleToJson(it)
+                                                    })
+                                            })
+                                        }
+                                    }),
+                                )
+                            ).toString()
                         }
                     }
                 }
-            } catch (e: Exception) {
-                result.error(
-                    "Unknown",
-                    e.message,
-                    e
-                )
+
+                is ProcessedResourceData.TimeSeries -> {
+                    when (val data = readResult.timeSeriesData) {
+                        is TimeSeriesData.QuantitySamples ->
+                            JSONObject(
+                                mapOf(
+                                    "timeSeries" to JSONArray(data.samples.map {
+                                        mapSampleToJson(it)
+                                    }),
+                                )
+                            ).toString()
+
+                        is TimeSeriesData.BloodPressure -> {
+                            JSONObject(
+                                mapOf(
+                                    "timeSeries" to JSONArray(data.samples.map {
+                                        JSONObject().apply {
+                                            put("systolic", mapSampleToJson(it.systolic))
+                                            put("diastolic", mapSampleToJson(it.diastolic))
+                                            put(
+                                                "pulse",
+                                                it.pulse?.let { it1 -> mapSampleToJson(it1) })
+                                        }
+                                    })
+                                )
+                            ).toString()
+                        }
+                    }
+                }
             }
         }
 
     }
 
     private fun syncData(call: MethodCall, result: Result) {
-        if (vitalHealthConnectManager == null) {
-            result.error(
-                "ClientSetup",
-                "VitalHealthConnect is not configured",
-                null
-            )
-            return
-        }
-
-        mainScope?.cancel()
-        mainScope = MainScope()
-        mainScope!!.launch {
+        result.execute(taskScope) {
             val resources = call.argument<List<String>>("resources") ?: emptyList()
 
-            vitalHealthConnectManager!!.syncData(
-                resources.mapNotNull { mapStringToHealthResource(it) }.toSet()
+            vitalHealthConnectManager.syncData(
+                resources.mapNotNull { runCatching { VitalResource.valueOf(it) }.getOrNull() }.toSet().ifEmpty { null }
             )
+            return@execute null
         }
     }
 
     private fun setUserId(call: MethodCall, result: Result) {
-        if (vitalHealthConnectManager == null) {
-            result.error(
-                "ClientSetup",
-                "VitalHealthConnect is not configured",
-                null
-            )
-            return
-        }
-
-        mainScope?.cancel()
-        mainScope = MainScope()
-        mainScope!!.launch {
-            vitalHealthConnectManager!!.setUserId(call.argument<String?>("userId")!!)
-            result.success(null)
+        result.execute(taskScope) {
+            VitalClient.setUserId(context, call.argument<String?>("userId")!!)
+            return@execute null
         }
     }
 
     private fun configureHealthConnect(call: MethodCall, result: Result) {
-        if (vitalClient == null) {
-            return result.error("ClientSetup", "VitalClient is not configured", null)
-        }
-
-        val manager = VitalHealthConnectManager.create(
-            context,
-            vitalClient!!.apiKey,
-            vitalClient!!.region,
-            vitalClient!!.environment
-        )
-        val availability = manager.isAvailable(context)
+        val manager = VitalHealthConnectManager.getOrCreate(context)
+        val availability = VitalHealthConnectManager.isAvailable(context)
 
         if (availability != HealthConnectAvailability.Installed) {
             return result.error(
@@ -564,32 +455,26 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             )
         }
 
-        vitalHealthConnectManager = manager
-
-        mainScope?.cancel()
-        mainScope = MainScope().apply {
-            launch {
-                manager.configureHealthConnectClient(
-                    logsEnabled = call.argument<Boolean?>("logsEnabled")!!,
-                    syncOnAppStart = call.argument<Boolean?>("syncOnAppStart")!!,
-                    numberOfDaysToBackFill = call.argument<Int?>("numberOfDaysToBackFill")!!,
-                )
-                result.success(null)
-            }
+        result.execute(taskScope) {
+            manager.configureHealthConnectClient(
+                logsEnabled = call.argument<Boolean?>("logsEnabled")!!,
+                syncOnAppStart = call.argument<Boolean?>("syncOnAppStart")!!,
+                numberOfDaysToBackFill = call.argument<Int?>("numberOfDaysToBackFill")!!,
+            )
+            return@execute null
         }
-
-        startStatusUpdate()
     }
 
     private fun configureClient(call: MethodCall, result: Result) {
-        vitalClient = VitalClient(
-            context,
-            stringToRegion(call.argument("region")!!),
-            stringToEnvironment(call.argument("environment")!!),
-            call.argument<String>("apiKey")!!
-        )
-
-        result.success(null)
+        result.execute(taskScope) {
+            VitalClient.configure(
+                context,
+                Region.valueOf(call.argument<String>("region")!!.uppercase()),
+                Environment.valueOf(call.argument<String>("environment")!!.replaceFirstChar { it.uppercase() }),
+                call.argument<String>("apiKey")!!
+            )
+            return@execute null
+        }
     }
 
     private fun cleanUp(result: Result) {
@@ -615,79 +500,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 }
 
-private fun stringToRegion(region: String): Region {
-    when (region) {
-        "eu" -> return Region.EU
-        "us" -> return Region.US
-    }
-
-    throw Exception("Unsupported region $region")
-}
-
-private fun stringToEnvironment(environment: String): Environment {
-    when (environment) {
-        "production" -> return Environment.Production
-        "sandbox" -> return Environment.Sandbox
-        "dev" -> return Environment.Dev
-    }
-
-    throw Exception("Unsupported environment $environment")
-}
-
-private fun mapReadResourceToHealthRecord(resource: String): List<KClass<out Record>> {
-    when (resource) {
-        "profile" -> return listOf(HeightRecord::class, WeightRecord::class)
-        "body" -> return listOf(BodyFatRecord::class)
-        "workout" -> return listOf(ExerciseSessionRecord::class)
-        "activity" -> return listOf(
-            ActiveCaloriesBurnedRecord::class,
-            BasalMetabolicRateRecord::class,
-            StepsRecord::class,
-            DistanceRecord::class,
-            FloorsClimbedRecord::class,
-            Vo2MaxRecord::class
-        )
-        "sleep" -> return listOf(SleepSessionRecord::class)
-        "glucose" -> return listOf(BloodGlucoseRecord::class)
-        "bloodPressure" -> return listOf(BloodPressureRecord::class)
-        "heartRate" -> return listOf(HeartRateRecord::class)
-        "heartRateVariability" -> return listOf(HeartRateVariabilityRmssdRecord::class)
-        "steps" -> return listOf(StepsRecord::class)
-        "activeEnergyBurned" -> return listOf(ActiveCaloriesBurnedRecord::class)
-        "basalEnergyBurned" -> return listOf(BasalMetabolicRateRecord::class)
-        "water" -> return listOf(HydrationRecord::class)
-    }
-    return listOf()
-}
-
-private fun mapWriteResourceToHealthRecord(resource: String): List<KClass<out Record>> {
-    when (resource) {
-        "water" -> return listOf(HydrationRecord::class)
-    }
-
-    return listOf()
-}
-
-
-private fun mapStringToHealthResource(resource: String): HealthResource? {
-    return when (resource) {
-        "profile" -> return HealthResource.Profile
-        "body" -> return HealthResource.Body
-        "workout" -> return HealthResource.Workout
-        "activity" -> return HealthResource.Activity
-        "sleep" -> return HealthResource.Sleep
-        "glucose" -> return HealthResource.Glucose
-        "bloodPressure" -> return HealthResource.BloodPressure
-        "heartRate" -> return HealthResource.HeartRate
-        "heartRateVariability" -> return HealthResource.HeartRateVariability
-        "steps" -> return HealthResource.Steps
-        "activeEnergyBurned" -> return HealthResource.ActiveEnergyBurned
-        "basalEnergyBurned" -> return HealthResource.BasalEnergyBurned
-        "water" -> return HealthResource.Water
-        else -> null
-    }
-}
-
 private fun mapSampleToJson(it: QuantitySample): JSONObject {
     return JSONObject().apply {
         put("id", it.id)
@@ -702,4 +514,12 @@ private fun mapSampleToJson(it: QuantitySample): JSONObject {
     }
 }
 
+private inline fun Result.execute(scope: CoroutineScope, crossinline action: suspend () -> Any?) = scope.launch {
+    try {
+        val result = action()
+        success(result)
+    } catch (e: Throwable) {
+        error("VitalHealthError", "${e::class.simpleName} ${e.message}", null)
+    }
+}
 

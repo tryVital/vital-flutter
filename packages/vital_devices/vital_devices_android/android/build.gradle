@@ -2,8 +2,8 @@ group 'io.vital.devices'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
-    ext.vital_sdk_version = '1.0.0-beta.9'
+    ext.kotlin_version = '1.8.10'
+    ext.vital_sdk_version = '1.0.0-beta.21'
     repositories {
         google()
         mavenCentral()

@@ -158,7 +158,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                             JSONObject().apply {
                                 put("systolic", mapSample(it.systolic))
                                 put("diastolic", mapSample(it.diastolic))
-                                put("pulse", mapSample(it.pulse))
+                                put("pulse", it.pulse?.let { mapSample(it) })
                             }
                         }).toString()
                     )

@@ -2,9 +2,9 @@ group 'io.vital.health'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
-    ext.vital_sdk_version = '1.0.0-beta.9'
-    ext.health_connect_version = '1.0.0-alpha08'
+    ext.kotlin_version = '1.8.10'
+    ext.vital_sdk_version = '1.0.0-beta.21'
+    ext.health_connect_version = '1.0.0-alpha11'
 
     repositories {
         google()
