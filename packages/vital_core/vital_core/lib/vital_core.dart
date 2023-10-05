@@ -18,6 +18,8 @@ import 'package:vital_core/services/workout_service.dart';
 
 export 'environment.dart';
 export 'region.dart';
+export 'core.dart';
+export 'provider.dart';
 
 class VitalClient {
   late final http.Client _httpClient;
