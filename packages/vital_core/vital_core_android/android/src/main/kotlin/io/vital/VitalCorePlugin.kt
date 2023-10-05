@@ -58,8 +58,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
 
         when (call.method) {
             "setUserId" -> {
-                val arguments = call.arguments as? Map<*, *> ?: return reportInvalidArguments()
-                val userId = arguments["user_id"] as? String ?: return reportInvalidArguments()
+                val userId = call.arguments as? String ?: return reportInvalidArguments()
 
                 VitalClient.setUserId(context, userId)
                 result.success(null)

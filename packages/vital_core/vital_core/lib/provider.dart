@@ -97,6 +97,16 @@ enum ProviderSlug {
   polar,
   omron;
 
+  static ProviderSlug? fromString(String rawValue) {
+    try {
+      return ProviderSlug.values
+          .firstWhere((element) => element.toString() == rawValue);
+    } catch (err) {
+      assert(err is StateError);
+      return null;
+    }
+  }
+
   @override
   String toString() {
     switch (this) {

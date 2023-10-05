@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:vital_core_platform_interface/vital_core_platform_interface.dart';
 
-const _channel = MethodChannel('vital_devices');
+const _channel = MethodChannel('vital_core');
 
 class VitalCoreMethodChannel extends VitalCorePlatform {
   @override

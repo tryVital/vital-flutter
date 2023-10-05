@@ -26,15 +26,16 @@ The Vital SDK is split into three main components: `vital_core`, `vital_health` 
 3. To use Vital Health client you need to call configure first:
 
 ```dart
-final HealthServices healthServices = HealthServices(
-  apiKey: apiKey,
-  region: region,
-  environment: Environment.sandbox,
+import 'package:vital_core/vital_core.dart' as vital_core;
+import 'package:vital_health/vital_health.dart' as vital_health;
+
+await vital_core.configure(
+  apiKey,
+  Environment.sandbox,
+  Region.us
 );
 
-await healthServices.configureClient();
-
-await healthkServices.configureHealth(HealthConfig(
+await vital_health.configure(HealthConfig(
     iosConfig: IosHealthConfig(
       backgroundDeliveryEnabled: true,
     ),
@@ -47,13 +48,13 @@ await healthkServices.configureHealth(HealthConfig(
 4. Set User ID
 
 ```dart
-healthServices.setUserId('eba7c0a2-dc01-49f5-a361-...);
+vital_core.setUserId('eba7c0a2-dc01-49f5-a361-...);
 ```
 
 5. Ask user for permissions to collect/write Health data.
 
 ```dart
-healthServices.ask(
+vital_health.askForPermission(
   [
     HealthResource.profile,
     HealthResource.body,
@@ -69,19 +70,19 @@ healthServices.ask(
 6. Sync data
 
 ```dart
-healthServices.syncData();
+vital_health.syncData();
 ```
 
 7. Observe sync status using status stream
 
 ```dart
-Stream<SyncStatus> status = healthServices.status;
+Stream<SyncStatus> status = vital_health.status;
 ```
 
-8. When your user logs out you need to call cleanup on the health service 
+8. When your user logs out, you can call `cleanUp()` to reset the SDK state. This resets both the Vital Health and the Vital Core SDK.
     
 ```dart
-healthServices.cleanUp();
+vital_health.cleanUp();
 ```
 ## Documentation
 

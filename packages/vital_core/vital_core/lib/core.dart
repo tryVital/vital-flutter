@@ -17,14 +17,14 @@ Future<void> setUserId(String userId) {
 
 Future<void> configure(String apiKey, Environment environment, Region region) {
   return VitalCorePlatform.instance
-      .configure(apiKey, environment.toString(), region.toString());
+      .configure(apiKey, environment.name, region.name);
 }
 
 Future<void> signIn(String signInToken) {
   return VitalCorePlatform.instance.signIn(signInToken);
 }
 
-Future<bool> hasUserConnectedTo(ManualProviderSlug provider) {
+Future<bool> hasUserConnectedTo(ProviderSlug provider) {
   return VitalCorePlatform.instance.hasUserConnectedTo(provider.toString());
 }
 
@@ -35,7 +35,7 @@ Future<List<VitalProvider>> userConnectedSources() {
   });
 }
 
-Future<void> createConnectedSourceIfNotExist(ProviderSlug provider) {
+Future<void> createConnectedSourceIfNotExist(ManualProviderSlug provider) {
   return VitalCorePlatform.instance
       .createConnectedSourceIfNotExist(provider.toString());
 }

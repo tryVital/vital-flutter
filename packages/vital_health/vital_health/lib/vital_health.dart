@@ -1,3 +1,4 @@
+export 'package:vital_health/health.dart';
 export 'package:vital_health/health_services.dart';
 export 'package:vital_health_platform_interface/src/data/health_config.dart';
 export 'package:vital_health_platform_interface/src/data/permission_outcome.dart';
