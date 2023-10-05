@@ -15,9 +15,12 @@ import io.tryvital.client.services.data.ManualProviderSlug
 import io.tryvital.client.services.data.ProviderSlug
 import io.tryvital.client.userConnectedSources
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.addJsonObject
@@ -29,6 +32,8 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
     private lateinit var channel: MethodChannel
     private lateinit var taskScope: CoroutineScope
+
+    private var statusJob: Job? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         taskScope = CoroutineScope(SupervisorJob())
@@ -57,6 +62,11 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
         }
 
         when (call.method) {
+            "currentUserId" -> {
+                VitalClient.getOrCreate(context)
+                result.success(VitalClient.currentUserId)
+            }
+
             "setUserId" -> {
                 val userId = call.arguments as? String ?: return reportInvalidArguments()
 
@@ -89,10 +99,14 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 taskScope.launch {
                     try {
                         VitalClient.signIn(context, signInToken)
-                        result.success(null)
+                        withContext(Dispatchers.Main) {
+                            result.success(null)
+                        }
 
                     } catch (e: Throwable) {
-                        reportError(e)
+                        withContext(Dispatchers.Main) {
+                            reportError(e)
+                        }
                     }
                 }
             }
@@ -126,10 +140,14 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
 
                         val jsonString = Json.encodeToString(JsonArray.serializer(), jsonArray)
                         // NOTE: Dart end expects a JSON string
-                        result.success(jsonString)
+                        withContext(Dispatchers.Main) {
+                            result.success(jsonString)
+                        }
 
                     } catch (e: Throwable) {
-                        reportError(e)
+                        withContext(Dispatchers.Main) {
+                            reportError(e)
+                        }
                     }
                 }
             }
@@ -143,10 +161,15 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 taskScope.launch {
                     try {
                         VitalClient.getOrCreate(context).createConnectedSourceIfNotExist(provider)
-                        result.success(null)
+
+                        withContext(Dispatchers.Main) {
+                            result.success(null)
+                        }
 
                     } catch (e: Throwable) {
-                        reportError(e)
+                        withContext(Dispatchers.Main) {
+                            reportError(e)
+                        }
                     }
                 }
             }
@@ -161,10 +184,14 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                     try {
                         val userId = VitalClient.getOrCreate(context).checkUserId()
                         VitalClient.getOrCreate(context).userService.deregisterProvider(userId, provider)
-                        result.success(null)
+                        withContext(Dispatchers.Main) {
+                            result.success(null)
+                        }
 
                     } catch (e: Throwable) {
-                        reportError(e)
+                        withContext(Dispatchers.Main) {
+                            reportError(e)
+                        }
                     }
                 }
             }
@@ -176,6 +203,26 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 } catch (e: Throwable) {
                     reportError(e)
                 }
+            }
+
+            "clientStatus" -> {
+                VitalClient.getOrCreate(context)
+                // lowerCamelCase to match iOS.
+                val statuses = VitalClient.status.map { status -> status.name.replaceFirstChar { it.lowercase() } }
+                result.success(statuses)
+            }
+
+            "subscribeToStatusChanges" -> {
+                statusJob = taskScope.launch(Dispatchers.Main) {
+                    VitalClient.statusChanged(context).collect {
+                        channel.invokeMethod("statusDidChange", null)
+                    }
+                }
+            }
+
+            "unsubscribeFromStatusChanges" -> {
+                statusJob?.cancel()
+                statusJob = null
             }
 
             else -> {

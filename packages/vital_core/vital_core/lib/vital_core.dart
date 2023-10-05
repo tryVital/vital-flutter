@@ -20,6 +20,7 @@ export 'environment.dart';
 export 'region.dart';
 export 'core.dart';
 export 'provider.dart';
+export 'client_status.dart';
 
 class VitalClient {
   late final http.Client _httpClient;

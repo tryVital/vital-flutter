@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,10 @@ import 'package:vital_flutter_example/user/user_screen.dart';
 
 import 'package:vital_core/vital_core.dart' as vital_core;
 
+StreamSubscription? clientStatusSubscription;
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Fimber.plantTree(DebugTree());
 
   final vitalClient = vital_core.VitalClient()
@@ -27,6 +32,15 @@ void main() {
     );
 
   final DeviceManager deviceManager = DeviceManager();
+
+  // Print initial SDK status, and then listen for any change.
+  vital_core.clientStatus().then(
+      (status) => Fimber.i("vital_core launch status: ${status.join(", ")}"));
+  vital_core
+      .currentUserId()
+      .then((userId) => Fimber.i("vital_core launch userId: $userId"));
+  clientStatusSubscription = vital_core.clientStatusStream.listen(
+      (status) => Fimber.i("vital_core status changed: ${status.join(", ")}"));
 
   runApp(
       VitalSampleApp(vitalClient: vitalClient, deviceManager: deviceManager));
