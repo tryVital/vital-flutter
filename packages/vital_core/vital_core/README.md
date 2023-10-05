@@ -16,6 +16,11 @@ The Vital SDK is split into three main components: `vital_core`, `vital_health` 
 
 ## Usage
 
+To run JSON code generation:
+```
+dart run build_runner build
+```
+
 Initialise client with region, environment and api key
 
 ```dart
