@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:vital_core/client_status.dart';
 import 'package:vital_core/environment.dart';
 import 'package:vital_core/region.dart';
 import 'package:vital_core/provider.dart';
@@ -10,6 +11,24 @@ import 'package:vital_core_platform_interface/vital_core_platform_interface.dart
 //
 // > https://dart.dev/effective-dart/design#avoid-defining-a-class-that-contains-only-static-members
 // > AVOID defining a class that contains only static members
+
+Future<Set<ClientStatus>> clientStatus() {
+  return VitalCorePlatform.instance.clientStatus().then((substatuses) =>
+      substatuses
+          .map((s) => ClientStatus.fromString(s))
+          .whereType<ClientStatus>()
+          .toSet());
+}
+
+Stream<Set<ClientStatus>> get clientStatusStream {
+  return VitalCorePlatform.instance
+      .clientStatusChanged()
+      .asyncMap((event) => clientStatus());
+}
+
+Future<String?> currentUserId() {
+  return VitalCorePlatform.instance.currentUserId();
+}
 
 Future<void> setUserId(String userId) {
   return VitalCorePlatform.instance.setUserId(userId);

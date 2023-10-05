@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:vital_core_platform_interface/src/vital_core_method_channel.dart';
 
@@ -17,8 +15,14 @@ class VitalCorePlatform extends PlatformInterface {
 
   static VitalCorePlatform get instance => _instance;
 
-  void init() {
-    throw UnimplementedError('init() has not been implemented.');
+  Future<List<String>> clientStatus() {
+    throw UnimplementedError();
+  }
+
+  Stream<void> clientStatusChanged() => throw UnimplementedError();
+
+  Future<String?> currentUserId() {
+    throw UnimplementedError();
   }
 
   Future<void> setUserId(String userId) {

@@ -1,18 +1,52 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:vital_core_platform_interface/vital_core_platform_interface.dart';
 
 const _channel = MethodChannel('vital_core');
 
 class VitalCoreMethodChannel extends VitalCorePlatform {
-  @override
-  void init() {
+  late final StreamController<void> _statusDidChange = StreamController(
+    onListen: () async {
+      await _channel.invokeMethod('subscribeToStatusChanges');
+    },
+    onCancel: () async {
+      await _channel.invokeMethod('unsubscribeFromStatusChanges');
+    },
+  );
+
+  late final _statusDidChangeBroadcast =
+      _statusDidChange.stream.asBroadcastStream();
+
+  VitalCoreMethodChannel() {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
+        case "statusDidChange":
+          _statusDidChange.add(null);
+          break;
+
         default:
           break;
       }
       return null;
     });
+  }
+
+  @override
+  Future<List<String>> clientStatus() {
+    return _channel
+        .invokeListMethod<String>("clientStatus")
+        .then((value) => value ?? []);
+  }
+
+  @override
+  Stream<void> clientStatusChanged() {
+    return _statusDidChangeBroadcast;
+  }
+
+  @override
+  Future<String?> currentUserId() {
+    return _channel.invokeMethod<String>("currentUserId");
   }
 
   @override

@@ -1,11 +1,14 @@
 import Flutter
 import UIKit
 import VitalCore
+import Combine
 
 public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
   private let channel: FlutterMethodChannel
 
   private var flutterRunning = true
+  private var statusCancellable: AnyCancellable?
+  private let lock = NSLock()
 
   init(_ channel: FlutterMethodChannel){
     self.channel = channel
@@ -22,15 +25,19 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    flutterRunning = false
+    lock.withLock {
+      flutterRunning = false
+    }
   }
 
   public func applicationWillTerminate(_ application: UIApplication) {
-    flutterRunning = false
+    lock.withLock {
+      flutterRunning = false
+    }
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    Task {
+    Task { @MainActor in
       func reportInvalidArguments(context: String = "") {
         result(
           FlutterError(
@@ -52,6 +59,9 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
       }
 
       switch call.method {
+      case "currentUserId":
+        result(VitalClient.currentUserId)
+
       case "setUserId":
         guard let argument = call.arguments as? String, let userId = UUID(uuidString: argument) else {
           return reportInvalidArguments()
@@ -162,6 +172,41 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
       case "cleanUp":
         await VitalClient.shared.cleanUp()
         result(nil)
+
+      case "clientStatus":
+        var values = [String]()
+        let status = VitalClient.status
+        if status.contains(.signedIn) {
+          values.append("signedIn")
+        }
+        if status.contains(.useApiKey) {
+          values.append("useApiKey")
+        }
+        if status.contains(.useSignInToken) {
+          values.append("useSignInToken")
+        }
+        if status.contains(.configured) {
+          values.append("configured")
+        }
+        if status.contains(.pendingReauthentication) {
+          values.append("pendingReauthentication")
+        }
+        result(values)
+
+      case "subscribeToStatusChanges":
+        lock.withLock {
+          statusCancellable = VitalClient.statusDidChange
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [channel] in
+              channel.invokeMethod("statusDidChange", arguments: "")
+            })
+        }
+
+      case "unsubscribeFromStatusChanges":
+        lock.withLock {
+          statusCancellable?.cancel()
+          statusCancellable = nil
+        }
 
       default:
         result(
