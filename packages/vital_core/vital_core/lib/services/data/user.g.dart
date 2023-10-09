@@ -66,6 +66,13 @@ CreateUserResponse _$CreateUserResponseFromJson(Map<String, dynamic> json) =>
       clientUserId: json['client_user_id'] as String?,
     );
 
+CreateSignInTokenResponse _$CreateSignInTokenResponseFromJson(
+        Map<String, dynamic> json) =>
+    CreateSignInTokenResponse(
+      userId: json['user_id'] as String,
+      signInToken: json['sign_in_token'] as String,
+    );
+
 DeleteUserResponse _$DeleteUserResponseFromJson(Map<String, dynamic> json) =>
     DeleteUserResponse(
       success: json['success'] as bool? ?? false,

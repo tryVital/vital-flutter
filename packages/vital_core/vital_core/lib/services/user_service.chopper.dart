@@ -55,6 +55,20 @@ class _$UserService extends UserService {
   }
 
   @override
+  Future<Response<CreateSignInTokenResponse>> createSignInToken(String userId) {
+    final $url = '/user/${userId}/sign_in_token';
+    final $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<CreateSignInTokenResponse, CreateSignInTokenResponse>(
+      $request,
+      requestConverter: JsonConverter.requestFactory,
+    );
+  }
+
+  @override
   Future<Response<DeleteUserResponse>> deleteUser(String userId) {
     final $url = 'user/${userId}';
     final $request = Request(

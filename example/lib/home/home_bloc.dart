@@ -1,14 +1,28 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:vital_core/services/data/user.dart';
-import 'package:vital_core/vital_core.dart';
+import 'package:vital_core/vital_core.dart' as vital_core;
 
-class HomeBloc {
-  final VitalClient client;
+class HomeBloc extends ChangeNotifier {
+  final vital_core.VitalClient client;
 
   final StreamController<List<User>> usersController = StreamController();
 
-  HomeBloc(this.client);
+  StreamSubscription? subscription;
+  String? currentUserId;
+
+  HomeBloc(this.client) {
+    subscription = vital_core.clientStatusStream.listen((status) async {
+      syncSDKState();
+    });
+    syncSDKState();
+  }
+
+  void syncSDKState() async {
+    currentUserId = await vital_core.currentUserId();
+    notifyListeners();
+  }
 
   Stream<List<User>> getUsers() {
     refresh();

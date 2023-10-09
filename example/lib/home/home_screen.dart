@@ -9,7 +9,8 @@ class UsersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeBloc bloc = Provider.of(context);
+    final HomeBloc bloc = context.watch<HomeBloc>();
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Vital SDK example app'),
@@ -52,11 +53,12 @@ class UsersPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               itemBuilder: ((context, index) => UserWidget(
                     user: users[index],
+                    isCurrentSDKUser: users[index].userId == bloc.currentUserId,
                     linkAction: () => bloc.launchLink(users[index]),
                     deleteAction: () => bloc.deleteUser(users[index]),
                     onTap: () {
-                      Navigator.of(context).pushNamed(Routes.user,
-                          arguments: users[index]);
+                      Navigator.of(context)
+                          .pushNamed(Routes.user, arguments: users[index]);
                     },
                   )),
               itemCount: users.length,
@@ -73,10 +75,12 @@ class UserWidget extends StatelessWidget {
   final VoidCallback? linkAction;
   final VoidCallback? deleteAction;
   final VoidCallback? onTap;
+  final bool isCurrentSDKUser;
 
   const UserWidget({
     super.key,
     required this.user,
+    required this.isCurrentSDKUser,
     this.linkAction,
     this.deleteAction,
     this.onTap,
@@ -87,43 +91,59 @@ class UserWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 56,
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.person,
-              color: Colors.grey,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                user.clientUserId ?? '',
-                style: const TextStyle(fontSize: 18.0),
-              ),
-            ),
-            if (linkAction != null) ...[
+        child: Column(children: [
+          Row(
+            children: [
+              const Icon(Icons.person, color: Colors.grey, size: 20),
               const SizedBox(width: 12),
-              IconButton(
-                onPressed: linkAction,
-                icon: const Icon(
-                  Icons.copy,
-                  color: Colors.grey,
+              Expanded(
+                child: Text(
+                  user.clientUserId ?? '',
+                  style: const TextStyle(fontSize: 18.0),
                 ),
-              )
+              ),
+              if (linkAction != null && isCurrentSDKUser) ...[
+                const SizedBox(width: 12),
+                IconButton(
+                  onPressed: linkAction,
+                  icon: const Icon(
+                    Icons.copy,
+                    color: Colors.grey,
+                  ),
+                )
+              ],
+              if (deleteAction != null) ...[
+                const SizedBox(width: 12),
+                IconButton(
+                  onPressed: deleteAction,
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.grey,
+                  ),
+                ),
+              ]
             ],
-            if (deleteAction != null) ...[
-              const SizedBox(width: 12),
-              IconButton(
-                onPressed: deleteAction,
-                icon: const Icon(
-                  Icons.delete,
-                  color: Colors.grey,
+          ),
+          if (isCurrentSDKUser)
+            Row(
+              children: const [
+                SizedBox(width: 32),
+                Icon(
+                  Icons.arrow_upward,
+                  color: Colors.green,
+                  size: 14,
                 ),
-              ),
-            ]
-          ],
-        ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    "Current SDK User",
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+              ],
+            ),
+        ]),
       ),
     );
   }

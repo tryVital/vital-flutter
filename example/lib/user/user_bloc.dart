@@ -1,23 +1,68 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart' as vital_core;
 import 'package:vital_flutter_example/secrets.dart';
 import 'package:vital_health/vital_health.dart' as vital_health;
 
+enum SDKAuthMode { signInTokenDemo, apiKey }
+
 class UserBloc extends ChangeNotifier {
   final User user;
+  final vital_core.VitalClient vitalClient;
+  StreamSubscription? subscription;
 
-  Stream<String> get status =>
+  bool isCurrentSDKUser = false;
+  bool isSDKConfigured = false;
+
+  Stream<String> get healthSyncStatus =>
       vital_health.syncStatus.map((event) => event.status.name);
 
-  UserBloc(this.user) {
-    _connectHealthPlatform();
+  UserBloc(this.user, this.vitalClient) {
+    subscription = vital_core.clientStatusStream.listen((status) {
+      syncSDKStatus(status);
+    });
+    vital_core.clientStatus().then((status) => syncSDKStatus(status));
   }
 
-  void _connectHealthPlatform() async {
-    await vital_core.configure(apiKey, environment, region);
-    await vital_core.setUserId(user.userId!);
+  void syncSDKStatus(Set<vital_core.ClientStatus> status) async {
+    isCurrentSDKUser = await vital_core.currentUserId() == user.userId;
+    isSDKConfigured = status.contains(vital_core.ClientStatus.configured);
 
+    notifyListeners();
+  }
+
+  void configureSDK(SDKAuthMode authMode) async {
+    if (isSDKConfigured) {
+      return;
+    }
+
+    // The following configuration only needs to be done once until your
+    // end user signs out.
+    //
+    // For iOS, remember to call `automaticConfiguration()` in your native
+    // app delegate, so that Vital SDK can consistently reload settings during
+    // app launch before everything else happens.
+
+    // [1] Configure Vital Core SDK
+    switch (authMode) {
+      case SDKAuthMode.apiKey:
+        await vital_core.configure(apiKey, environment, region);
+        await vital_core.setUserId(user.userId!);
+        break;
+
+      case SDKAuthMode.signInTokenDemo:
+        CreateSignInTokenResponse response = await vitalClient.userService
+            .createSignInToken(user.userId!)
+            .then((resp) => resp.isSuccessful
+                ? resp.body!
+                : throw Exception("HTTP error ${resp.statusCode}"));
+        await vital_core.signIn(response.signInToken);
+        break;
+    }
+
+    // [2] Configure Vital Health SDK
     await vital_health.configure(
       config: const vital_health.HealthConfig(
         iosConfig: vital_health.IosHealthConfig(
@@ -25,6 +70,10 @@ class UserBloc extends ChangeNotifier {
         ),
       ),
     );
+  }
+
+  void resetSDK() async {
+    await vital_health.cleanUp();
   }
 
   void askForHealthResources() {
