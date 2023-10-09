@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'profile_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$ProfileService extends ProfileService {
+// ignore_for_file: type=lint
+final class _$ProfileService extends ProfileService {
   _$ProfileService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -21,9 +21,11 @@ class _$ProfileService extends ProfileService {
     String userId,
     String? provider,
   ) {
-    final $url = 'summary/profile/${userId}';
-    final $params = <String, dynamic>{'provider': provider};
-    final $request = Request(
+    final Uri $url = Uri.parse('summary/profile/${userId}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'provider': provider
+    };
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -37,9 +39,11 @@ class _$ProfileService extends ProfileService {
     String userId,
     String? provider,
   ) {
-    final $url = 'summary/profile/${userId}/raw';
-    final $params = <String, dynamic>{'provider': provider};
-    final $request = Request(
+    final Uri $url = Uri.parse('summary/profile/${userId}/raw');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'provider': provider
+    };
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'body_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$BodyService extends BodyService {
+// ignore_for_file: type=lint
+final class _$BodyService extends BodyService {
   _$BodyService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -23,13 +23,13 @@ class _$BodyService extends BodyService {
     DateTime? endDate,
     String? provider,
   ) {
-    final $url = '/summary/body/${userId}';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('/summary/body/${userId}');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,

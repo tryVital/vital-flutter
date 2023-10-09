@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'testkits_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$TestkitsService extends TestkitsService {
+// ignore_for_file: type=lint
+final class _$TestkitsService extends TestkitsService {
   _$TestkitsService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -21,13 +21,12 @@ class _$TestkitsService extends TestkitsService {
     CreateOrderRequest request, {
     String skipAddressValidation = 'false',
   }) {
-    final $url = 'testkit/orders';
-    final $headers = {
+    final Uri $url = Uri.parse('testkit/orders');
+    final Map<String, String> $headers = {
       'skip-address-validation': skipAddressValidation,
     };
-
     final $body = request;
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -39,8 +38,8 @@ class _$TestkitsService extends TestkitsService {
 
   @override
   Future<Response<TestkitsResponse>> getAllTestkits() {
-    final $url = 'testkit/';
-    final $request = Request(
+    final Uri $url = Uri.parse('testkit/');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -50,8 +49,8 @@ class _$TestkitsService extends TestkitsService {
 
   @override
   Future<Response<OrderData>> getOrderStatus(String orderId) {
-    final $url = 'testkit/orders/${orderId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('testkit/orders/${orderId}');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -61,8 +60,8 @@ class _$TestkitsService extends TestkitsService {
 
   @override
   Future<Response<OrderData>> getOrder(String orderId) {
-    final $url = 'testkit/orders/${orderId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('testkit/orders/${orderId}');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -78,15 +77,15 @@ class _$TestkitsService extends TestkitsService {
     int page = 1,
     int size = 50,
   }) {
-    final $url = 'testkit/orders';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('testkit/orders');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'status': status,
       'page': page,
       'size': size,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -97,8 +96,8 @@ class _$TestkitsService extends TestkitsService {
 
   @override
   Future<Response<OrderResponse>> cancelOrder(String orderId) {
-    final $url = 'testkit/orders/${orderId}/cancel';
-    final $request = Request(
+    final Uri $url = Uri.parse('testkit/orders/${orderId}/cancel');
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,

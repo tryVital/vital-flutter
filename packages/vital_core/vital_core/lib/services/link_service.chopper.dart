@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'link_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$LinkService extends LinkService {
+// ignore_for_file: type=lint
+final class _$LinkService extends LinkService {
   _$LinkService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -22,13 +22,13 @@ class _$LinkService extends LinkService {
     String provider,
     String redirectUrl,
   ) {
-    final $url = 'link/token';
+    final Uri $url = Uri.parse('link/token');
     final $body = <String, dynamic>{
       'user_id': userId,
       'provider': provider,
       'redirect_url': redirectUrl,
     };
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -48,17 +48,16 @@ class _$LinkService extends LinkService {
     required String redirectUrl,
     required String linkToken,
   }) {
-    final $url = 'link/provider/password/${provider}';
-    final $headers = {
+    final Uri $url = Uri.parse('link/provider/password/${provider}');
+    final Map<String, String> $headers = {
       'LinkToken': linkToken,
     };
-
     final $body = <String, dynamic>{
       'username': username,
       'password': password,
       'redirect_url': redirectUrl,
     };
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -76,12 +75,12 @@ class _$LinkService extends LinkService {
     String userId,
     String provider,
   ) {
-    final $url = 'link/provider/manual/{provider}';
+    final Uri $url = Uri.parse('link/provider/manual/{provider}');
     final $body = <String, dynamic>{
       'user_id': userId,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -100,16 +99,15 @@ class _$LinkService extends LinkService {
     String? region,
     String linkToken,
   ) {
-    final $url = 'link/provider/email/${provider}';
-    final $headers = {
+    final Uri $url = Uri.parse('link/provider/email/${provider}');
+    final Map<String, String> $headers = {
       'x-vital-link-token': linkToken,
     };
-
     final $body = <String, dynamic>{
       'email': email,
       'region': region,
     };
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -127,12 +125,11 @@ class _$LinkService extends LinkService {
     required String provider,
     required String linkToken,
   }) {
-    final $url = 'link/provider/oauth/${provider}';
-    final $headers = {
+    final Uri $url = Uri.parse('link/provider/oauth/${provider}');
+    final Map<String, String> $headers = {
       'LinkToken': linkToken,
     };
-
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -150,16 +147,15 @@ class _$LinkService extends LinkService {
     required String code,
     required String linkToken,
   }) {
-    final $url = 'link/connect/${provider}';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('link/connect/${provider}');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'code': code,
       'state': linkToken,
     };
-    final $headers = {
+    final Map<String, String> $headers = {
       'X-Vital-SDK-No-Redirect': '1',
     };
-
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -175,9 +171,9 @@ class _$LinkService extends LinkService {
   @override
   Future<Response<NoContent>> isTokenValid(
       {required IsLinkTokenValidRequest request}) {
-    final $url = 'link/token/isValid';
+    final Uri $url = Uri.parse('link/token/isValid');
     final $body = request;
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,

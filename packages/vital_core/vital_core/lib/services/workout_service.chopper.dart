@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'workout_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$WorkoutService extends WorkoutService {
+// ignore_for_file: type=lint
+final class _$WorkoutService extends WorkoutService {
   _$WorkoutService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -23,13 +23,13 @@ class _$WorkoutService extends WorkoutService {
     DateTime? endDate,
     String? provider,
   }) {
-    final $url = 'summary/workouts/${userId}';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/workouts/${userId}');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -45,13 +45,13 @@ class _$WorkoutService extends WorkoutService {
     DateTime? endDate,
     String? provider,
   ) {
-    final $url = 'summary/workouts/${userId}/raw';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/workouts/${userId}/raw');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -62,8 +62,8 @@ class _$WorkoutService extends WorkoutService {
 
   @override
   Future<Response<WorkoutStreamResponse>> getWorkoutStream(String workoutId) {
-    final $url = 'timeseries/workouts/${workoutId}/stream';
-    final $request = Request(
+    final Uri $url = Uri.parse('timeseries/workouts/${workoutId}/stream');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,

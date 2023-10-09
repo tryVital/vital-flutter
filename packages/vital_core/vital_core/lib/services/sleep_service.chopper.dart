@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'sleep_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$SleepService extends SleepService {
+// ignore_for_file: type=lint
+final class _$SleepService extends SleepService {
   _$SleepService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -23,13 +23,13 @@ class _$SleepService extends SleepService {
     String? endDate,
     String? provider,
   ) {
-    final $url = 'summary/sleep/${userId}';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/sleep/${userId}');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -45,13 +45,13 @@ class _$SleepService extends SleepService {
     String? endDate,
     String? provider,
   ) {
-    final $url = 'summary/sleep/${userId}/stream';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/sleep/${userId}/stream');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -67,13 +67,13 @@ class _$SleepService extends SleepService {
     String? endDate,
     String? provider,
   ) {
-    final $url = 'summary/sleep/${userId}/raw';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/sleep/${userId}/raw');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -84,8 +84,8 @@ class _$SleepService extends SleepService {
 
   @override
   Future<Response<SleepStreamResponse>> getSleepStream(String sleepId) {
-    final $url = 'timeseries/sleep/${sleepId}/stream';
-    final $request = Request(
+    final Uri $url = Uri.parse('timeseries/sleep/${sleepId}/stream');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,

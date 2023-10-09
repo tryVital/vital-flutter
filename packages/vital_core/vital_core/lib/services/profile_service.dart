@@ -21,7 +21,7 @@ abstract class ProfileService extends ChopperService {
       @Path('user_id') String userId, @Query('provider') String? provider);
 
   static ProfileService create(
-      http.Client httpClient, String baseUrl, String apiKey) {
+      http.Client httpClient, Uri baseUrl, String apiKey) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,

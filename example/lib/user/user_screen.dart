@@ -28,8 +28,10 @@ class UserScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text("Copied to clipboard")));
-                          Clipboard.setData(
-                              ClipboardData(text: bloc.user.userId));
+                          if (bloc.user.clientUserId != null) {
+                            Clipboard.setData(
+                                ClipboardData(text: bloc.user.userId!));
+                          }
                         },
                         child: ListTile(
                           title: const Text('Id'),
@@ -41,8 +43,10 @@ class UserScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text("Copied to clipboard")));
-                          Clipboard.setData(
-                              ClipboardData(text: bloc.user.clientUserId));
+                          if (bloc.user.clientUserId != null) {
+                            Clipboard.setData(
+                                ClipboardData(text: bloc.user.clientUserId!));
+                          }
                         },
                         child: ListTile(
                           title: const Text('Client User Id'),
@@ -54,8 +58,10 @@ class UserScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text("Copied to clipboard")));
-                          Clipboard.setData(
-                              ClipboardData(text: bloc.user.teamId));
+                          if (bloc.user.clientUserId != null) {
+                            Clipboard.setData(
+                                ClipboardData(text: bloc.user.teamId!));
+                          }
                         },
                         child: ListTile(
                           title: const Text('Team Id'),
