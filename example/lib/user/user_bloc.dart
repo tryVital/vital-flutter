@@ -53,11 +53,19 @@ class UserBloc extends ChangeNotifier {
         break;
 
       case SDKAuthMode.signInTokenDemo:
+        // IMPORTANT:
+        //
+        // Calling `POST /v2/user/{id}/sign_in_token` from example app is ONLY
+        // for illustration purpose. In practice, this should be called by
+        // your backend service on behalf of your consumer apps, so that your
+        // Vital API Key is kept strictly as a server-side secret.
+        //
         CreateSignInTokenResponse response = await vitalClient.userService
             .createSignInToken(user.userId!)
             .then((resp) => resp.isSuccessful
                 ? resp.body!
                 : throw Exception("HTTP error ${resp.statusCode}"));
+
         await vital_core.signIn(response.signInToken);
         break;
     }
