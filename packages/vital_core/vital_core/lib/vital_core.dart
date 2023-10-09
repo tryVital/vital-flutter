@@ -24,7 +24,7 @@ export 'client_status.dart';
 
 class VitalClient {
   late final http.Client _httpClient;
-  late final String _baseUrl;
+  late final Uri _baseUrl;
   late final String _apiKey;
 
   // ignore: unused_field
@@ -60,7 +60,7 @@ class VitalClient {
     _environment = environment;
   }
 
-  String _resolveUrl(Region region, Environment environment) {
+  Uri _resolveUrl(Region region, Environment environment) {
     final urls = {
       Region.eu: {
         Environment.production: 'https://api.eu.tryvital.io',
@@ -73,7 +73,7 @@ class VitalClient {
         Environment.sandbox: 'https://api.sandbox.tryvital.io',
       }
     };
-    return '${urls[region]![environment]!}/v2';
+    return Uri.parse('${urls[region]![environment]!}/v2');
   }
 
   Future<bool> linkProvider(User user, String provider, String callback) {

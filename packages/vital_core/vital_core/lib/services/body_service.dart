@@ -21,7 +21,7 @@ abstract class BodyService extends ChopperService {
   );
 
   static BodyService create(
-      http.Client httpClient, String baseUrl, String apiKey) {
+      http.Client httpClient, Uri baseUrl, String apiKey) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,

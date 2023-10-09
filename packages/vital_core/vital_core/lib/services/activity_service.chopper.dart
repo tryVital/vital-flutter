@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'activity_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$ActivityService extends ActivityService {
+// ignore_for_file: type=lint
+final class _$ActivityService extends ActivityService {
   _$ActivityService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -23,13 +23,13 @@ class _$ActivityService extends ActivityService {
     String? endDate,
     String? provider,
   ) {
-    final $url = 'summary/activity/${userId}';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/activity/${userId}');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -48,13 +48,13 @@ class _$ActivityService extends ActivityService {
     DateTime? endDate,
     String? provider,
   ) {
-    final $url = 'summary/activity/${userId}/raw';
-    final $params = <String, dynamic>{
+    final Uri $url = Uri.parse('summary/activity/${userId}/raw');
+    final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
       'provider': provider,
     };
-    final $request = Request(
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of vital;
+part of 'user_service.dart';
 
 // **************************************************************************
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$UserService extends UserService {
+// ignore_for_file: type=lint
+final class _$UserService extends UserService {
   _$UserService([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -18,8 +18,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<GetAllUsersResponse>> getAll() {
-    final $url = 'user/';
-    final $request = Request(
+    final Uri $url = Uri.parse('user/');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -29,8 +29,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<User>> getUser(String userId) {
-    final $url = 'user/${userId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('user/${userId}');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -40,9 +40,9 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<CreateUserResponse>> createUser(String clientUserId) {
-    final $url = '/user/key';
+    final Uri $url = Uri.parse('/user/key');
     final $body = <String, dynamic>{'client_user_id': clientUserId};
-    final $request = Request(
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -56,8 +56,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<CreateSignInTokenResponse>> createSignInToken(String userId) {
-    final $url = '/user/${userId}/sign_in_token';
-    final $request = Request(
+    final Uri $url = Uri.parse('/user/${userId}/sign_in_token');
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
@@ -70,8 +70,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<DeleteUserResponse>> deleteUser(String userId) {
-    final $url = 'user/${userId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('user/${userId}');
+    final Request $request = Request(
       'DELETE',
       $url,
       client.baseUrl,
@@ -81,8 +81,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<User>> resolveUser(String clientUserId) {
-    final $url = '/user/key/${clientUserId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('/user/key/${clientUserId}');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -92,8 +92,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<ProvidersResponse>> getProviders(String userId) {
-    final $url = '/user/providers/${userId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('/user/providers/${userId}');
+    final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
@@ -106,8 +106,8 @@ class _$UserService extends UserService {
     String userId,
     String provider,
   ) {
-    final $url = '/user/${userId}/${provider}';
-    final $request = Request(
+    final Uri $url = Uri.parse('/user/${userId}/${provider}');
+    final Request $request = Request(
       'DELETE',
       $url,
       client.baseUrl,
@@ -118,8 +118,8 @@ class _$UserService extends UserService {
 
   @override
   Future<Response<RefreshResponse>> refreshUser(String userId) {
-    final $url = '/user/refresh/${userId}';
-    final $request = Request(
+    final Uri $url = Uri.parse('/user/refresh/${userId}');
+    final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
