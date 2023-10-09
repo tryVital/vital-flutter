@@ -478,6 +478,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     private fun cleanUp(result: Result) {
+        vitalHealthConnectManager.cleanUp()
         result.success(null)
     }
 
