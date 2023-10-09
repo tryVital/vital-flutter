@@ -38,7 +38,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         taskScope = CoroutineScope(SupervisorJob())
 
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_devices")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_core")
         context = flutterPluginBinding.applicationContext
         channel.setMethodCallHandler(this)
     }
