@@ -114,6 +114,22 @@ class CreateUserResponse {
 }
 
 @JsonSerializable(createToJson: false)
+class CreateSignInTokenResponse {
+  @JsonKey(name: 'user_id')
+  String userId;
+  @JsonKey(name: 'sign_in_token')
+  String signInToken;
+
+  CreateSignInTokenResponse({
+    required this.userId,
+    required this.signInToken,
+  });
+
+  factory CreateSignInTokenResponse.fromJson(Map<String, dynamic> json) =>
+      _$CreateSignInTokenResponseFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
 class DeleteUserResponse {
   bool success;
   String? error;

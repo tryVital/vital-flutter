@@ -66,7 +66,7 @@ class VitalSampleApp extends StatelessWidget {
         ),
         initialRoute: Routes.home,
         routes: {
-          Routes.home: (_) => Provider(
+          Routes.home: (_) => ChangeNotifierProvider(
                 create: (_) => HomeBloc(
                   vitalClient,
                 ),
@@ -87,6 +87,7 @@ class VitalSampleApp extends StatelessWidget {
           Routes.user: (context) => ChangeNotifierProvider(
                 create: (_) => UserBloc(
                   ModalRoute.of(context)!.settings.arguments as User,
+                  vitalClient,
                 ),
                 child: const UserScreen(),
               ),

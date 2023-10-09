@@ -27,6 +27,13 @@ abstract class UserService extends ChopperService {
   Future<Response<CreateUserResponse>> createUser(
       @Field('client_user_id') String clientUserId);
 
+  @Post(path: '/user/{user_id}/sign_in_token')
+  @FactoryConverter(
+    request: JsonConverter.requestFactory,
+  )
+  Future<Response<CreateSignInTokenResponse>> createSignInToken(
+      @Path('user_id') String userId);
+
   @Delete(path: 'user/{user_id}')
   Future<Response<DeleteUserResponse>> deleteUser(
       @Path('user_id') String userId);
@@ -65,6 +72,7 @@ abstract class UserService extends ChopperService {
           DeleteUserResponse: DeleteUserResponse.fromJson,
           DeregisterProviderResponse: DeregisterProviderResponse.fromJson,
           GetAllUsersResponse: GetAllUsersResponse.fromJson,
+          CreateSignInTokenResponse: CreateSignInTokenResponse.fromJson,
         }));
 
     return _$UserService(client);
