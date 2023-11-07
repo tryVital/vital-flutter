@@ -95,7 +95,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 withContext(Dispatchers.Main) {
                     channel.invokeMethod(
                         "unknown", listOf("failedSyncing")

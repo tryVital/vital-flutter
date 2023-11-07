@@ -191,7 +191,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
                     )
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             withContext(Dispatchers.Main) {
                 channel.invokeMethod(
                     "sendScan", JSONObject(
@@ -213,7 +213,7 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
             devices.forEach { knownScannedDevices[it.address] = it }
 
             result.success(JSONArray(devices.map { it.toJsonObject() }).toString())
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             result.error("UnknownError", e.message, e)
         }
     }
