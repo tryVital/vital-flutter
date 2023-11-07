@@ -1,8 +1,16 @@
 import 'dart:async';
 
+import 'package:fimber/fimber.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart' as vital_core;
+
+class UserListError {
+  final int statusCode;
+  final String message;
+
+  UserListError(this.statusCode, this.message);
+}
 
 class HomeBloc extends ChangeNotifier {
   final vital_core.VitalClient client;
@@ -31,8 +39,13 @@ class HomeBloc extends ChangeNotifier {
 
   void refresh() {
     unawaited(client.userService.getAll().then((response) {
-      if (response.body != null) {
-        usersController.sink.add(response.body!.users);
+      if (response.isSuccessful) {
+        if (response.body != null) {
+          usersController.sink.add(response.body!.users);
+        }
+      } else {
+        usersController.sink.addError(
+            UserListError(response.statusCode, response.error.toString()));
       }
     }));
   }
