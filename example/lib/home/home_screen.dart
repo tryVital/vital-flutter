@@ -42,6 +42,36 @@ class UsersPage extends StatelessWidget {
     return StreamBuilder(
       stream: bloc.getUsers(),
       builder: (context, AsyncSnapshot<List<User>?> snapshot) {
+        if (snapshot.error != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  String message;
+                  if (snapshot.error is UserListError) {
+                    UserListError error = snapshot.error as UserListError;
+                    message = "${error.statusCode}: ${error.message}";
+                  } else {
+                    message = snapshot.error.toString();
+                  }
+
+                  return AlertDialog(
+                    title: const Text("Error"),
+                    content: Text(message),
+                    actions: [
+                      TextButton(
+                        child: const Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                });
+          });
+          return Container();
+        }
+
         final users = snapshot.data;
         if (users == null) {
           return const Center(child: CircularProgressIndicator.adaptive());
