@@ -86,12 +86,6 @@ class VitalDevicesPlatform extends PlatformInterface {
       brand: Brand.accuChek,
       kind: DeviceKind.glucoseMeter,
     ),
-    DeviceModel(
-      id: Platform.isIOS ? "\$vital_ble_simulator\$" : "_vital_ble_simulator_",
-      name: "Vital BLE Simulator",
-      brand: Brand.accuChek,
-      kind: DeviceKind.glucoseMeter,
-    ),
     const DeviceModel(
       id: "accuchek_guide_active",
       name: "Accu-Chek Active",
@@ -110,11 +104,19 @@ class VitalDevicesPlatform extends PlatformInterface {
       brand: Brand.beurer,
       kind: DeviceKind.bloodPressure,
     ),
-    const DeviceModel(
-      id: "libre1",
-      name: "Freestyle Libre 1",
-      brand: Brand.libre,
+    DeviceModel(
+      id: Platform.isIOS ? "\$vital_ble_simulator\$" : "_vital_ble_simulator_",
+      name: "Vital BLE Simulator",
+      brand: Brand.accuChek,
       kind: DeviceKind.glucoseMeter,
     ),
+    // TODO: VIT-4957 Flutter SDK: Expose Libre1 Reader
+    //
+    // const DeviceModel(
+    //   id: "libre1",
+    //   name: "Freestyle Libre 1",
+    //   brand: Brand.libre,
+    //   kind: DeviceKind.glucoseMeter,
+    // ),
   ];
 }
