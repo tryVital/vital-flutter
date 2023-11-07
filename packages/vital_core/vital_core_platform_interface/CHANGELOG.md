@@ -1,3 +1,7 @@
+## 2.0.1
+
+ - Bump "vital_core_platform_interface" to `2.0.1`.
+
 ## 2.0.0
 
 ## 1.9.0
