@@ -1,6 +1,6 @@
 name: vital_core_android
 description: The Android implementation of Vital Core.
-version: 2.0.1
+version: 2.0.2
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 

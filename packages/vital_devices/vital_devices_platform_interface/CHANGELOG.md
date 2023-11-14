@@ -1,3 +1,7 @@
+## 2.0.2
+
+ - Bump "vital_devices_platform_interface" to `2.0.2`.
+
 ## 2.0.1
 
 ## 2.0.0

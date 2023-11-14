@@ -1,3 +1,5 @@
+## 2.0.2
+
 ## 2.0.1
 
  - Bump "vital_health_ios" to `2.0.1`.

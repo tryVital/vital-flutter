@@ -1,3 +1,7 @@
+## 2.0.2
+
+ - Bump "vital_core_android" to `2.0.2`.
+
 ## 2.0.1
 
  - Bump "vital_core_android" to `2.0.1`.
