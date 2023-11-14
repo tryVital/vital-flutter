@@ -73,8 +73,17 @@ class UserScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (bloc.isCurrentSDKUser) ...currentUserWidgets(context, bloc),
-              if (!bloc.isCurrentSDKUser)
+              if (bloc.initialSyncDone && bloc.isCurrentSDKUser)
+                ...currentUserWidgets(context, bloc),
+              if (bloc.initialSyncDone &&
+                  bloc.isCurrentSDKUser &&
+                  bloc.isHealthDataAvailable)
+                ...healthDataWidgets(context, bloc),
+              if (bloc.initialSyncDone &&
+                  bloc.isCurrentSDKUser &&
+                  !bloc.isHealthDataAvailable)
+                ...healthDataUnavailableWidgets(context, bloc),
+              if (bloc.initialSyncDone && !bloc.isCurrentSDKUser)
                 ...noncurrentUserWidgets(context, bloc)
             ],
           ),
@@ -126,6 +135,22 @@ class UserScreen extends StatelessWidget {
       Text("Signed in as current SDK user.",
           style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 16),
+    ];
+  }
+
+  List<Widget> healthDataUnavailableWidgets(
+      BuildContext context, UserBloc bloc) {
+    return [
+      Text("Health Data Sync",
+          style: Theme.of(context).textTheme.headlineSmall),
+      Text("Health Connect is not installed on this device.",
+          style: Theme.of(context).textTheme.bodyMedium),
+      const SizedBox(height: 16),
+    ];
+  }
+
+  List<Widget> healthDataWidgets(BuildContext context, UserBloc bloc) {
+    return [
       Text("Health Data Sync",
           style: Theme.of(context).textTheme.headlineSmall),
       ListTile(

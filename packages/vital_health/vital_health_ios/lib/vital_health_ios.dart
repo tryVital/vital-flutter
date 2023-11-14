@@ -35,6 +35,11 @@ class VitalHealthIos extends VitalHealthPlatform {
   var _healthKitConfigured = false;
 
   @override
+  Future<bool> isAvailable() async {
+    return true;
+  }
+
+  @override
   Future<void> configureClient(
       String apiKey, Region region, Environment environment) async {
     Fimber.d('Healthkit configure $apiKey, $region $environment');
@@ -555,7 +560,7 @@ QuantitySample? _sampleFromSwiftJson(Map<dynamic, dynamic>? json) {
           isUtc: true),
       endDate: DateTime.fromMillisecondsSinceEpoch(endMillisecondsSinceEpoch,
           isUtc: true),
-          type: json['type'] as String?,
+      type: json['type'] as String?,
     );
   } catch (e, stacktrace) {
     Fimber.i("Error parsing sample: $e $stacktrace");

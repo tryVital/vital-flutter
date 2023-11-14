@@ -10,6 +10,12 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 
 Stream<SyncStatus> get syncStatus => VitalHealthPlatform.instance.status;
 
+/// Android: Whether Health Connect is available on the current device.
+/// iOS: Always return `true`.
+Future<bool> isAvailable() async {
+  return await VitalHealthPlatform.instance.isAvailable();
+}
+
 Future<void> configure({
   HealthConfig config = const HealthConfig(),
 }) async {

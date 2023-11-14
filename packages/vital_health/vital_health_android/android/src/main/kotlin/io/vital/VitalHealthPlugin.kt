@@ -65,7 +65,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun startStatusUpdate() {
         taskScope.launch {
             try {
-                vitalHealthConnectManager?.status?.collect {
+                vitalHealthConnectManager.status?.collect {
                     withContext(Dispatchers.Main) {
                         when (it) {
                             is SyncStatus.ResourceSyncFailed -> channel.invokeMethod(
@@ -137,6 +137,11 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             }
             "read" -> {
                 read(call, result)
+            }
+            "isAvailable" -> {
+                result.success(
+                    VitalHealthConnectManager.isAvailable(context) == HealthConnectAvailability.Installed
+                )
             }
             else -> throw Exception("Unsupported method ${call.method}")
         }
