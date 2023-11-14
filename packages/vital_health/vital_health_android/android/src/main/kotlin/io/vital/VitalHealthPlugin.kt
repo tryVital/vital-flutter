@@ -143,6 +143,11 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     private fun askForResources(call: MethodCall, result: Result) {
+        val availability = VitalHealthConnectManager.isAvailable(context)
+        if (availability != HealthConnectAvailability.Installed) {
+            return result.error("VitalHealthError", "Health Connect is not available: $availability", null)
+        }
+
         if (synchronized(this) { activeAskRequest != null }) {
             return result.error("VitalHealthError", "another ask request is in progress", null)
         }
