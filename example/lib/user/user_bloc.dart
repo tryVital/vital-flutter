@@ -15,6 +15,8 @@ class UserBloc extends ChangeNotifier {
 
   bool isCurrentSDKUser = false;
   bool isSDKConfigured = false;
+  bool isHealthDataAvailable = false;
+  bool initialSyncDone = false;
 
   Stream<String> get healthSyncStatus =>
       vital_health.syncStatus.map((event) => event.status.name);
@@ -29,6 +31,8 @@ class UserBloc extends ChangeNotifier {
   void syncSDKStatus(Set<vital_core.ClientStatus> status) async {
     isCurrentSDKUser = await vital_core.currentUserId() == user.userId;
     isSDKConfigured = status.contains(vital_core.ClientStatus.configured);
+    isHealthDataAvailable = await vital_health.isAvailable();
+    initialSyncDone = true;
 
     notifyListeners();
   }

@@ -19,6 +19,9 @@ class VitalHealthPlatform extends PlatformInterface {
   Stream<SyncStatus> get status =>
       throw UnimplementedError('status() has not been implemented.');
 
+  Future<bool> isAvailable() =>
+      throw UnimplementedError('isAvailable() has not been implemented.');
+
   Future<void> configureClient(
           String apiKey, Region region, Environment environment) =>
       throw UnimplementedError('configureClient() has not been implemented.');

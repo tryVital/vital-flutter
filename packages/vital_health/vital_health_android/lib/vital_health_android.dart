@@ -19,6 +19,11 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   final _statusSubject = PublishSubject<SyncStatus>();
 
   @override
+  Future<bool> isAvailable() async {
+    return await _channel.invokeMethod('isAvailable');
+  }
+
+  @override
   Future<void> configureClient(
       String apiKey, Region region, Environment environment) async {
     Fimber.d('Health Connect configure $apiKey, $region $environment');
