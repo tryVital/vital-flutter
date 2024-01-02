@@ -3,7 +3,10 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '1.8.10'
+
+    // NOTE: Please update `packages/vital_core/vital_core/lib/services/utils/vital_interceptor.dart` as well.
     ext.vital_sdk_version = '1.0.0-beta.23'
+
     repositories {
         google()
         mavenCentral()
