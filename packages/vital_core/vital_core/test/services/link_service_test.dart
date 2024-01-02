@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:vital_core/region.dart';
 import 'package:vital_core/services/link_service.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,8 @@ void main() {
       final httpClient =
           linkClient('POST', '/link/token', fakeCreateLinkResponse);
 
-      final sut = LinkService.create(httpClient, '', apiKey);
+      final sut = LinkService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response =
           await sut.createLink(userId, 'strava', 'callback://vital');
 
@@ -28,7 +30,8 @@ void main() {
       final httpClient = linkClient(
           'GET', '/link/provider/oauth/strava', fakeLinkOauthProviderResponse);
 
-      final sut = LinkService.create(httpClient, '', apiKey);
+      final sut = LinkService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.oauthProvider(
         provider: 'strava',
         linkToken: linkToken,
@@ -45,7 +48,8 @@ void main() {
       final httpClient = linkClient(
           'POST', '/link/provider/email/strava', fakeEmailLinkResponse);
 
-      final sut = LinkService.create(httpClient, '', apiKey);
+      final sut = LinkService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.emailProvider(
         provider: 'strava',
         email: 'test@test.com',
@@ -62,7 +66,8 @@ void main() {
       final httpClient = linkClient(
           'POST', '/link/provider/password/strava', fakeEmailLinkResponse);
 
-      final sut = LinkService.create(httpClient, '', apiKey);
+      final sut = LinkService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.passwordProvider(
         provider: 'strava',
         username: 'username',
@@ -80,7 +85,7 @@ void main() {
 
 MockClient linkClient(String method, String path, String response) {
   return MockClient((http.Request req) async {
-    expect(req.url.toString(), path);
+    expect(req.url.toString(), contains(path));
     expect(req.method, method);
     expect(req.headers['x-vital-api-key'], apiKey);
     return http.Response(

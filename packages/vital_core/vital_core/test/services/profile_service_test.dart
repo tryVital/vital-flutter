@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:vital_core/services/profile_service.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +15,8 @@ void main() {
     test('Get profile', () async {
       final httpClient = profileClient(fakeProfileResponse);
 
-      final sut = ProfileService.create(httpClient, '', apiKey);
+      final sut = ProfileService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getProfile(userId, null);
 
       final profile = response.body!;
@@ -28,7 +30,8 @@ void main() {
     test('Get profile nulls', () async {
       final httpClient = profileClient(fakeProfileResponseNulls);
 
-      final sut = ProfileService.create(httpClient, '', apiKey);
+      final sut = ProfileService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getProfile(userId, null);
 
       final profile = response.body!;
@@ -42,7 +45,7 @@ void main() {
 
 MockClient profileClient(String response) {
   return MockClient((http.Request req) async {
-    expect(req.url.toString(), '/summary/profile/user_id_1');
+    expect(req.url.toString(), contains('/summary/profile/user_id_1'));
     expect(req.method, 'GET');
     expect(req.headers['x-vital-api-key'], apiKey);
     return http.Response(

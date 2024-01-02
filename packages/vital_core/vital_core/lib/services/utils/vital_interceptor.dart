@@ -23,14 +23,15 @@ class VitalInterceptor extends HeadersInterceptor {
   Future<Request> onRequest(Request request) async {
     String versionKey, versionValue, authKey, authValue;
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       versionKey = "X-Vital-iOS-SDK-Version";
       versionValue = "0.10.8";
-    } else if (Platform.isAndroid) {
+    } else if (Platform.isAndroid || Platform.isLinux) {
       versionKey = "X-Vital-Android-SDK-Version";
       versionValue = "1.0.0-beta.23";
     } else {
-      throw Exception("Unsupported Flutter platform");
+      throw Exception(
+          "Unsupported Flutter platform: ${Platform.operatingSystem}");
     }
 
     if (useAccessToken) {

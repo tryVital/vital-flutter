@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 import 'package:vital_core/services/workout_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -13,7 +14,7 @@ void main() {
   group('Workouts service', () {
     test('Get workouts', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/summary/workouts/user_id_1'));
+        expect(req.url.toString(), contains('/summary/workouts/user_id_1'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         expect(req.url.queryParameters['start_date'], startsWith('2022-07-01'));
@@ -25,7 +26,8 @@ void main() {
         );
       });
 
-      final sut = WorkoutService.create(httpClient, '', apiKey);
+      final sut = WorkoutService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getWorkouts(
         userId,
         DateTime.parse('2022-07-01'),
@@ -44,7 +46,8 @@ void main() {
 
     test('Get workout stream', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), '/timeseries/workouts/$workoutId/stream');
+        expect(req.url.toString(),
+            contains('/timeseries/workouts/$workoutId/stream'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -54,7 +57,8 @@ void main() {
         );
       });
 
-      final sut = WorkoutService.create(httpClient, '', apiKey);
+      final sut = WorkoutService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getWorkoutStream(workoutId);
       final stream = response.body!;
       expect(stream.lat[0], 12.123456);
@@ -69,7 +73,8 @@ void main() {
 
     test('Get workout stream nulls', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), '/timeseries/workouts/$workoutId/stream');
+        expect(req.url.toString(),
+            contains('/timeseries/workouts/$workoutId/stream'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -79,7 +84,8 @@ void main() {
         );
       });
 
-      final sut = WorkoutService.create(httpClient, '', apiKey);
+      final sut = WorkoutService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getWorkoutStream(workoutId);
       final stream = response.body!;
       expect(stream.altitude.length, 0);
