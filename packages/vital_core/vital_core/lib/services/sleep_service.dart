@@ -3,7 +3,6 @@ library vital;
 import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:vital_core/services/data/sleep.dart';
-import 'package:vital_core/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_core/services/utils/http_logging_interceptor.dart';
 import 'package:vital_core/services/utils/json_serializable_converter.dart';
 import 'package:http/http.dart' as http;
@@ -71,13 +70,13 @@ abstract class SleepService extends ChopperService {
       @Path('sleep_id') String sleepId);
 
   static SleepService create(
-      http.Client httpClient, Uri baseUrl, String apiKey) {
+      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,
       interceptors: [
         HttpRequestLoggingInterceptor(),
-        HttpApiKeyInterceptor(apiKey)
+        authInterceptor,
       ],
       converter: const JsonSerializableConverter({
         SleepResponse: SleepResponse.fromJson,

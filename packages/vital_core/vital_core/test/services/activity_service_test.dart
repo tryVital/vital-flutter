@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:vital_core/services/activity_service.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,7 @@ void main() {
   group('Activity service', () {
     test('Get activities', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/summary/activity/user_id_1'));
+        expect(req.url.toString(), contains('/summary/activity/user_id_1'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         expect(req.url.queryParameters['start_date'], startsWith('2022-07-01'));
@@ -25,7 +26,8 @@ void main() {
         );
       });
 
-      final sut = ActivityService.create(httpClient, '', apiKey);
+      final sut = ActivityService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getActivity(userId,
           DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:vital_core/services/data/vitals.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 import 'package:vital_core/services/vitals_service.dart';
 
 void main() {
@@ -17,7 +18,8 @@ void main() {
         final httpClient =
             createVitalsClient('/timeseries/$userId/cholesterol/${type.name}');
 
-        final sut = VitalsService.create(httpClient, '', apiKey);
+        final sut = VitalsService.create(httpClient,
+            Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
         final response = await sut.getCholesterol(
           type,
           userId,
@@ -31,7 +33,8 @@ void main() {
     test('Get glucose', () async {
       final httpClient = createVitalsClient('/timeseries/$userId/glucose');
 
-      final sut = VitalsService.create(httpClient, '', apiKey);
+      final sut = VitalsService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getGlucose(
         userId,
         DateTime.parse('2022-07-01'),
@@ -44,7 +47,7 @@ void main() {
 
 MockClient createVitalsClient(String path) {
   return MockClient((http.Request req) async {
-    expect(req.url.toString(), startsWith(path));
+    expect(req.url.toString(), contains(path));
     expect(req.method, 'GET');
     expect(req.headers['x-vital-api-key'], apiKey);
     expect(req.url.queryParameters['start_date'], startsWith('2022-07-01'));

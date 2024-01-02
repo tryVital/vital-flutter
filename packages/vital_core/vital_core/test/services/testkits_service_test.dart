@@ -5,6 +5,7 @@ import 'package:vital_core/services/data/testkits.dart';
 import 'package:vital_core/services/testkits_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ void main() {
   group('Testkits service', () {
     test('Get all orders', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/testkit/orders'));
+        expect(req.url.toString(), contains('/testkit/orders'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         expect(req.url.queryParameters['start_date'], startsWith('2022-07-01'));
@@ -28,7 +29,8 @@ void main() {
         );
       });
 
-      final sut = TestkitsService.create(httpClient, '', apiKey);
+      final sut = TestkitsService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getAllOrders(
           DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 
@@ -39,7 +41,7 @@ void main() {
 
     test('Get all testkits', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/testkit/'));
+        expect(req.url.toString(), contains('/testkit/'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -49,7 +51,8 @@ void main() {
         );
       });
 
-      final sut = TestkitsService.create(httpClient, '', apiKey);
+      final sut = TestkitsService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getAllTestkits();
 
       expect(response.body!.testkits.length, 2);
@@ -63,7 +66,7 @@ void main() {
 
     test('Create order', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), '/testkit/orders');
+        expect(req.url.toString(), contains('/testkit/orders'));
         expect(req.method, 'POST');
         expect(req.headers['x-vital-api-key'], apiKey);
         final request = CreateOrderRequest.fromJson(json.decode(req.body));
@@ -79,7 +82,8 @@ void main() {
         );
       });
 
-      final sut = TestkitsService.create(httpClient, '', apiKey);
+      final sut = TestkitsService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.createOrder(
           CreateOrderRequest(
             testkitId: '71d54fff-70e1-4f74-937e-5a185b925d0d',
@@ -108,7 +112,7 @@ void main() {
 
     test('Cancel order', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), '/testkit/orders/id_1/cancel');
+        expect(req.url.toString(), contains('/testkit/orders/id_1/cancel'));
         expect(req.method, 'POST');
         expect(req.headers['x-vital-api-key'], apiKey);
 
@@ -119,7 +123,8 @@ void main() {
         );
       });
 
-      final sut = TestkitsService.create(httpClient, '', apiKey);
+      final sut = TestkitsService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.cancelOrder('id_1');
 
       expect(response.body!.status, 'success');

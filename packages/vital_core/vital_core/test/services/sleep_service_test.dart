@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:vital_core/services/data/sleep.dart';
 import 'package:vital_core/services/sleep_service.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,8 @@ void main() {
           '/summary/sleep/user_id_1', fakeSleepDataResponse,
           validation: validateDateRange);
 
-      final sut = SleepService.create(httpClient, '', apiKey);
+      final sut = SleepService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getSleepData(userId,
           DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 
@@ -31,7 +33,8 @@ void main() {
           '/summary/sleep/user_id_1/stream', fakeSleepStreamSeriesResponse,
           validation: validateDateRange);
 
-      final sut = SleepService.create(httpClient, '', apiKey);
+      final sut = SleepService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getSleepStreamSeries(userId,
           DateTime.parse('2022-07-01'), DateTime.parse('2022-07-21'), null);
 
@@ -46,7 +49,8 @@ void main() {
       final httpClient = sleepClient(
           '/timeseries/sleep/stream_id_1/stream', fakeSleepStreamResponse);
 
-      final sut = SleepService.create(httpClient, '', apiKey);
+      final sut = SleepService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getSleepStream(streamId);
 
       final sleepStream = response.body!;
@@ -58,7 +62,7 @@ void main() {
 MockClient sleepClient(String path, String response,
     {Function(http.Request)? validation}) {
   return MockClient((http.Request req) async {
-    expect(req.url.toString(), startsWith(path));
+    expect(req.url.toString(), contains(path));
     expect(req.method, 'GET');
     validation?.call(req);
     expect(req.headers['x-vital-api-key'], apiKey);

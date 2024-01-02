@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/services/user_service.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +15,7 @@ void main() {
   group('User service', () {
     test('Get all users', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/'));
+        expect(req.url.toString(), contains('/user/'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -24,7 +25,8 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getAll();
       final users = response.body!.users;
       expect(users.length, 2);
@@ -36,7 +38,7 @@ void main() {
 
     test('Get user', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/$userId'));
+        expect(req.url.toString(), contains('/user/$userId'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -46,14 +48,15 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getUser(userId);
       validateFirstUser(response.body!);
     });
 
     test('Resolve user', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/key/User%20Name'));
+        expect(req.url.toString(), contains('/user/key/User%20Name'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -63,14 +66,15 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.resolveUser(userName);
       validateFirstUser(response.body!);
     });
 
     test('Get providers', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/providers/$userId'));
+        expect(req.url.toString(), contains('/user/providers/$userId'));
         expect(req.method, 'GET');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -80,7 +84,8 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getProviders(userId);
       final provider = response.body!.providers[0];
       expect(provider.name, 'Fitbit');
@@ -89,7 +94,7 @@ void main() {
 
     test('Get refresh user', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/refresh/$userId'));
+        expect(req.url.toString(), contains('/user/refresh/$userId'));
         expect(req.method, 'POST');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -99,7 +104,8 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.refreshUser(userId);
       expect(response.body!.refreshedSources.length, 5);
       expect(response.body!.failedSources.length, 3);
@@ -107,7 +113,7 @@ void main() {
 
     test('Create user', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/key'));
+        expect(req.url.toString(), contains('/user/key'));
         expect(req.method, 'POST');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -117,7 +123,8 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.createUser(userName);
       final user = response.body!;
       expect(user.userId, userId);
@@ -127,7 +134,7 @@ void main() {
 
     test('Delete user', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/$userId'));
+        expect(req.url.toString(), contains('/user/$userId'));
         expect(req.method, 'DELETE');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -137,14 +144,15 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.deleteUser(userId);
       expect(response.body!.success, true);
     });
 
     test('Deregister provider', () async {
       final httpClient = MockClient((http.Request req) async {
-        expect(req.url.toString(), startsWith('/user/$userId/strava'));
+        expect(req.url.toString(), contains('/user/$userId/strava'));
         expect(req.method, 'DELETE');
         expect(req.headers['x-vital-api-key'], apiKey);
         return http.Response(
@@ -154,7 +162,8 @@ void main() {
         );
       });
 
-      final sut = UserService.create(httpClient, '', apiKey);
+      final sut = UserService.create(httpClient,
+          Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.deregisterProvider(userId, 'strava');
       expect(response.body!.success, true);
     });

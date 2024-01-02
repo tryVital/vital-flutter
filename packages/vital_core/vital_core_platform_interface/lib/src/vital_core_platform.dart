@@ -56,4 +56,12 @@ class VitalCorePlatform extends PlatformInterface {
   Future<void> cleanUp() {
     throw UnimplementedError();
   }
+
+  Future<String> getAccessToken() {
+    throw UnimplementedError();
+  }
+
+  Future<void> refreshToken() {
+    throw UnimplementedError();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:chopper/chopper.dart';
 import 'package:fimber/fimber.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -13,6 +14,7 @@ import 'package:vital_core/services/profile_service.dart';
 import 'package:vital_core/services/sleep_service.dart';
 import 'package:vital_core/services/testkits_service.dart';
 import 'package:vital_core/services/user_service.dart';
+import 'package:vital_core/services/utils/vital_interceptor.dart';
 import 'package:vital_core/services/vitals_service.dart';
 import 'package:vital_core/services/workout_service.dart';
 
@@ -25,7 +27,7 @@ export 'client_status.dart';
 class VitalClient {
   late final http.Client _httpClient;
   late final Uri _baseUrl;
-  late final String _apiKey;
+  late final RequestInterceptor _authInterceptor;
 
   // ignore: unused_field
   late final Region _region;
@@ -34,20 +36,34 @@ class VitalClient {
   late final Environment _environment;
 
   late final activityService =
-      ActivityService.create(_httpClient, _baseUrl, _apiKey);
-  late final bodyService = BodyService.create(_httpClient, _baseUrl, _apiKey);
-  late final linkService = LinkService.create(_httpClient, _baseUrl, _apiKey);
+      ActivityService.create(_httpClient, _baseUrl, _authInterceptor);
+  late final bodyService =
+      BodyService.create(_httpClient, _baseUrl, _authInterceptor);
+  late final linkService =
+      LinkService.create(_httpClient, _baseUrl, _authInterceptor);
   late final profileService =
-      ProfileService.create(_httpClient, _baseUrl, _apiKey);
-  late final sleepService = SleepService.create(_httpClient, _baseUrl, _apiKey);
+      ProfileService.create(_httpClient, _baseUrl, _authInterceptor);
+  late final sleepService =
+      SleepService.create(_httpClient, _baseUrl, _authInterceptor);
   late final testkitsService =
-      TestkitsService.create(_httpClient, _baseUrl, _apiKey);
-  late final userService = UserService.create(_httpClient, _baseUrl, _apiKey);
+      TestkitsService.create(_httpClient, _baseUrl, _authInterceptor);
+  late final userService =
+      UserService.create(_httpClient, _baseUrl, _authInterceptor);
   late final vitalsService =
-      VitalsService.create(_httpClient, _baseUrl, _apiKey);
+      VitalsService.create(_httpClient, _baseUrl, _authInterceptor);
   late final workoutService =
-      WorkoutService.create(_httpClient, _baseUrl, _apiKey);
+      WorkoutService.create(_httpClient, _baseUrl, _authInterceptor);
 
+  // Unnamed constructor for source compatibility.
+  VitalClient();
+
+  /// Access Vital APIs through a Vital API Key. Not recommended for usage in
+  /// production mobile apps.
+  ///
+  /// When adopting the Vital Sign-In Token scheme, use `VitalClient.forSignedInUser(...)`
+  /// instead, which would perform Vital API requests on behalf of the signed-in user.
+  ///
+  /// https://docs.tryvital.io/wearables/sdks/authentication#vital-sign-in-token
   void init({
     required Region region,
     required Environment environment,
@@ -55,7 +71,29 @@ class VitalClient {
   }) {
     _httpClient = http.Client();
     _baseUrl = _resolveUrl(region, environment);
-    _apiKey = apiKey;
+    _authInterceptor = VitalInterceptor(false, apiKey);
+    _region = region;
+    _environment = environment;
+  }
+
+  /// Access Vital APIs on behalf of the signed-in Vital user.
+  ///
+  /// Note that only resources owned by the signed-in Vital user would be
+  /// accessible by the Vital SDK. There are also restricted methods that are
+  /// inaccessible when being authenticated as an individual user,
+  /// e.g., user deletion.
+  ///
+  /// This only works for applications that have adopted the Vital Sign-In Token
+  /// scheme.
+  ///
+  /// https://docs.tryvital.io/wearables/sdks/authentication#vital-sign-in-token
+  VitalClient.forSignedInUser({
+    required Region region,
+    required Environment environment,
+  }) {
+    _httpClient = http.Client();
+    _baseUrl = _resolveUrl(region, environment);
+    _authInterceptor = VitalInterceptor(true, null);
     _region = region;
     _environment = environment;
   }

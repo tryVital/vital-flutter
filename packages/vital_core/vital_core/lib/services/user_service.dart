@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
-import 'package:vital_core/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_core/services/utils/http_logging_interceptor.dart';
 
 import 'data/user.dart';
@@ -56,13 +55,13 @@ abstract class UserService extends ChopperService {
   Future<Response<RefreshResponse>> refreshUser(@Path('user_id') String userId);
 
   static UserService create(
-      http.Client httpClient, Uri baseUrl, String apiKey) {
+      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,
         interceptors: [
           HttpRequestLoggingInterceptor(),
-          HttpApiKeyInterceptor(apiKey)
+          authInterceptor,
         ],
         converter: const JsonSerializableConverter({
           User: User.fromJson,

@@ -173,6 +173,22 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
         await VitalClient.shared.cleanUp()
         result(nil)
 
+      case "getAccessToken":
+        do {
+          let accessToken = try await VitalClient.getAccessToken()
+          result(accessToken)
+        } catch let error {
+          reportError(error)
+        }
+
+      case "refreshToken":
+        do {
+          try await VitalClient.refreshToken()
+          result(nil)
+        } catch let error {
+          reportError(error)
+        }
+
       case "clientStatus":
         var values = [String]()
         let status = VitalClient.status

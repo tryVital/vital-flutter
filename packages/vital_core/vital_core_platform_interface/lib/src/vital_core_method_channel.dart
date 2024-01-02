@@ -94,4 +94,16 @@ class VitalCoreMethodChannel extends VitalCorePlatform {
   Future<void> cleanUp() {
     return _channel.invokeMethod("cleanUp");
   }
+
+  @override
+  Future<String> getAccessToken() {
+    return _channel
+        .invokeMethod("getAccessToken")
+        .then((value) => value as String);
+  }
+
+  @override
+  Future<void> refreshToken() {
+    return _channel.invokeMethod("refreshToken");
+  }
 }

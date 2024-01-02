@@ -1,10 +1,14 @@
 import 'dart:async';
 
+import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vital_core/services/data/link.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart' as vital_core;
+import 'package:vital_core/vital_core.dart';
 import 'package:vital_flutter_example/secrets.dart';
 import 'package:vital_health/vital_health.dart' as vital_health;
+import 'package:chopper/chopper.dart';
 
 enum SDKAuthMode { signInTokenDemo, apiKey }
 
@@ -18,6 +22,8 @@ class UserBloc extends ChangeNotifier {
   bool isHealthDataAvailable = false;
   bool initialSyncDone = false;
 
+  bool hasDisposed = false;
+
   Stream<String> get healthSyncStatus =>
       vital_health.syncStatus.map((event) => event.status.name);
 
@@ -28,13 +34,25 @@ class UserBloc extends ChangeNotifier {
     vital_core.clientStatus().then((status) => syncSDKStatus(status));
   }
 
+  @override
+  void dispose() {
+    if (subscription != null) {
+      subscription!.cancel();
+    }
+
+    hasDisposed = true;
+    super.dispose();
+  }
+
   void syncSDKStatus(Set<vital_core.ClientStatus> status) async {
     isCurrentSDKUser = await vital_core.currentUserId() == user.userId;
     isSDKConfigured = status.contains(vital_core.ClientStatus.configured);
     isHealthDataAvailable = await vital_health.isAvailable();
     initialSyncDone = true;
 
-    notifyListeners();
+    if (!hasDisposed) {
+      notifyListeners();
+    }
   }
 
   void configureSDK(SDKAuthMode authMode) async {
@@ -86,6 +104,21 @@ class UserBloc extends ChangeNotifier {
 
   void resetSDK() async {
     await vital_health.cleanUp();
+  }
+
+  void createLinkToken() async {
+    VitalClient client =
+        VitalClient.forSignedInUser(environment: environment, region: region);
+    String userId = (await vital_core.currentUserId())!;
+
+    Response<CreateLinkResponse> resp =
+        await client.linkService.createLink(userId, "fitbit", "x-vital-app://");
+
+    if (resp.error != null) {
+      Fimber.i("Create Link Token Failed: ${resp.error}");
+    } else {
+      Fimber.i("Create Link Token OK: ${resp.body?.linkToken}");
+    }
   }
 
   void askForHealthResources() {

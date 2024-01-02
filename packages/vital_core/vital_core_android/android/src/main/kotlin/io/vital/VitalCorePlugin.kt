@@ -205,6 +205,24 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
+            "getAccessToken" -> {
+                try {
+                    val accessToken = VitalClient.getAccessToken(context)
+                    result.success(accessToken)
+                } catch (e: Throwable) {
+                    reportError(e)
+                }
+            }
+
+            "refreshToken" -> {
+                try {
+                    VitalClient.refreshToken(context)
+                    result.success(null)
+                } catch (e: Throwable) {
+                    reportError(e)
+                }
+            }
+
             "clientStatus" -> {
                 VitalClient.getOrCreate(context)
                 // lowerCamelCase to match iOS.
