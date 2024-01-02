@@ -66,3 +66,11 @@ Future<void> deregisterProvider(ProviderSlug provider) {
 Future<void> cleanUp() {
   return VitalCorePlatform.instance.cleanUp();
 }
+
+Future<String> getAccessToken() {
+  return VitalCorePlatform.instance.getAccessToken();
+}
+
+Future<void> refreshToken() {
+  return VitalCorePlatform.instance.refreshToken();
+}

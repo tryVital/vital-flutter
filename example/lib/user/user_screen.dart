@@ -135,6 +135,15 @@ class UserScreen extends StatelessWidget {
       Text("Signed in as current SDK user.",
           style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 16),
+      Text("Vital Link", style: Theme.of(context).textTheme.headlineSmall),
+      ListTile(
+        title: const Text('Create Link Token'),
+        trailing: OutlinedButton(
+          onPressed: () => bloc.createLinkToken(),
+          child: const Text('Print to Log'),
+        ),
+      ),
+      const SizedBox(height: 16),
     ];
   }
 

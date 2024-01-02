@@ -3,7 +3,6 @@ library vital;
 import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:vital_core/services/data/testkits.dart';
-import 'package:vital_core/services/utils/http_api_key_interceptor.dart';
 import 'package:vital_core/services/utils/http_logging_interceptor.dart';
 import 'package:vital_core/services/utils/json_serializable_converter.dart';
 import 'package:http/http.dart' as http;
@@ -65,13 +64,13 @@ abstract class TestkitsService extends ChopperService {
   Future<Response<OrderResponse>> cancelOrder(@Path('order_id') String orderId);
 
   static TestkitsService create(
-      http.Client httpClient, Uri baseUrl, String apiKey) {
+      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,
         interceptors: [
           HttpRequestLoggingInterceptor(),
-          HttpApiKeyInterceptor(apiKey)
+          authInterceptor,
         ],
         converter: const JsonSerializableConverter({
           OrdersResponse: OrdersResponse.fromJson,
