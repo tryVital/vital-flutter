@@ -10,7 +10,9 @@ import io.tryvital.client.Environment
 import io.tryvital.client.Region
 import io.tryvital.client.VitalClient
 import io.tryvital.client.createConnectedSourceIfNotExist
+import io.tryvital.client.getAccessToken
 import io.tryvital.client.hasUserConnectedTo
+import io.tryvital.client.refreshToken
 import io.tryvital.client.services.data.ManualProviderSlug
 import io.tryvital.client.services.data.ProviderSlug
 import io.tryvital.client.userConnectedSources
@@ -206,20 +208,24 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "getAccessToken" -> {
-                try {
-                    val accessToken = VitalClient.getAccessToken(context)
-                    result.success(accessToken)
-                } catch (e: Throwable) {
-                    reportError(e)
+                taskScope.launch {
+                    try {
+                        val accessToken = VitalClient.getAccessToken(context)
+                        result.success(accessToken)
+                    } catch (e: Throwable) {
+                        reportError(e)
+                    }
                 }
             }
 
             "refreshToken" -> {
-                try {
-                    VitalClient.refreshToken(context)
-                    result.success(null)
-                } catch (e: Throwable) {
-                    reportError(e)
+                taskScope.launch {
+                    try {
+                        VitalClient.refreshToken(context)
+                        result.success(null)
+                    } catch (e: Throwable) {
+                        reportError(e)
+                    }
                 }
             }
 
