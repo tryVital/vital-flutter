@@ -11,6 +11,7 @@ import 'package:vital_core/services/data/link.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/services/link_service.dart';
 import 'package:vital_core/services/profile_service.dart';
+import 'package:vital_core/services/providers_service.dart';
 import 'package:vital_core/services/sleep_service.dart';
 import 'package:vital_core/services/testkits_service.dart';
 import 'package:vital_core/services/user_service.dart';
@@ -43,6 +44,8 @@ class VitalClient {
       LinkService.create(_httpClient, _baseUrl, _authInterceptor);
   late final profileService =
       ProfileService.create(_httpClient, _baseUrl, _authInterceptor);
+  late final providersService =
+      ProvidersService.create(_httpClient, _baseUrl, _authInterceptor);
   late final sleepService =
       SleepService.create(_httpClient, _baseUrl, _authInterceptor);
   late final testkitsService =
