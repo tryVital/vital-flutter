@@ -64,6 +64,10 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
         }
 
         when (call.method) {
+            "sdkVersion" -> {
+                result.success(VitalClient.sdkVersion)
+            }
+
             "currentUserId" -> {
                 VitalClient.getOrCreate(context)
                 result.success(VitalClient.currentUserId)

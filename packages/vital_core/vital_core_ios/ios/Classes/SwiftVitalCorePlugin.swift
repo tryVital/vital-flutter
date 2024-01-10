@@ -59,6 +59,9 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
       }
 
       switch call.method {
+      case "sdkVersion":
+        result(VitalClient.sdkVersion)
+
       case "currentUserId":
         result(VitalClient.currentUserId)
 

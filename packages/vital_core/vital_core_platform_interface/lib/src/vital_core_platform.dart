@@ -64,4 +64,8 @@ class VitalCorePlatform extends PlatformInterface {
   Future<void> refreshToken() {
     throw UnimplementedError();
   }
+
+  Future<String> sdkVersion() {
+    throw UnimplementedError();
+  }
 }
