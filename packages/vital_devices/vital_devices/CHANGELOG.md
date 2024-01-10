@@ -1,3 +1,7 @@
+## 3.0.0
+
+ - Bump "vital_devices" to `3.0.0`.
+
 ## 2.1.0
 
  - Bump "vital_devices" to `2.1.0`.
