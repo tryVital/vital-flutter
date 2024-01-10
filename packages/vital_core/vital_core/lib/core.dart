@@ -74,3 +74,7 @@ Future<String> getAccessToken() {
 Future<void> refreshToken() {
   return VitalCorePlatform.instance.refreshToken();
 }
+
+Future<String> sdkVersion() {
+  return VitalCorePlatform.instance.sdkVersion();
+}

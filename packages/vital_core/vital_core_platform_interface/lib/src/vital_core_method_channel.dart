@@ -106,4 +106,11 @@ class VitalCoreMethodChannel extends VitalCorePlatform {
   Future<void> refreshToken() {
     return _channel.invokeMethod("refreshToken");
   }
+
+  @override
+  Future<String> sdkVersion() {
+    return _channel
+        .invokeMethod<String>("sdkVersion")
+        .then((value) => value as String);
+  }
 }
