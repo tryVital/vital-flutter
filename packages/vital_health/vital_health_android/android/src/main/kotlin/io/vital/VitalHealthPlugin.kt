@@ -65,7 +65,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private fun startStatusUpdate() {
         taskScope.launch {
             try {
-                vitalHealthConnectManager.status?.collect {
+                vitalHealthConnectManager.status.collect {
                     withContext(Dispatchers.Main) {
                         when (it) {
                             is SyncStatus.ResourceSyncFailed -> channel.invokeMethod(

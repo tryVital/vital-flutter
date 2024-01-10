@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.example.vital_flutter_example">
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
@@ -61,14 +60,5 @@
         <meta-data
                 android:name="flutterEmbedding"
                 android:value="2"/>
-
-        <provider
-                android:name="androidx.startup.InitializationProvider"
-                android:authorities="${applicationId}.androidx-startup"
-                android:exported="false"
-                tools:node="merge">
-            <meta-data  android:name="io.tryvital.vitalhealthconnect.VitalHealthInitializer"
-                        android:value="androidx.startup" />
-        </provider>
     </application>
 </manifest>
