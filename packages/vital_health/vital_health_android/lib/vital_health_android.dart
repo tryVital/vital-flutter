@@ -93,15 +93,26 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   Future<PermissionOutcome> ask(List<HealthResource> readResources,
       List<HealthResourceWrite> writeResources) async {
     try {
-      final result =
+      final outcome =
           await _channel.invokeMethod('askForResources', <String, dynamic>{
         "readResources": readResources.map((e) => e.name).toList(),
         "writeResources": writeResources.map((e) => e.name).toList(),
       });
 
-      return result
-          ? PermissionOutcome.success()
-          : PermissionOutcome.failure(result);
+      if (outcome == null) {
+        return PermissionOutcome.success();
+      } else {
+        final error = jsonDecode(outcome);
+        final code = error['code'];
+        final message = error['message'];
+        if (code == 'healthKitNotAvailable') {
+          return PermissionOutcome.healthKitNotAvailable(message);
+        } else if (code == 'UnsupportedResource') {
+          return PermissionOutcome.failure('Unsupported Resource: $message');
+        } else {
+          return PermissionOutcome.failure('Unknown error');
+        }
+      }
     } on Exception catch (e) {
       throw _mapException(e);
     }

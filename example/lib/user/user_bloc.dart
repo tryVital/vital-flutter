@@ -133,8 +133,9 @@ class UserBloc extends ChangeNotifier {
     }
   }
 
-  void askForHealthResources() {
-    vital_health.askForPermission([
+  void askForHealthResources() async {
+    vital_health.PermissionOutcome outcome =
+        await vital_health.askForPermission([
       vital_health.HealthResource.profile,
       vital_health.HealthResource.body,
       vital_health.HealthResource.activity,
@@ -150,6 +151,8 @@ class UserBloc extends ChangeNotifier {
       vital_health.HealthResourceWrite.caffeine,
       vital_health.HealthResourceWrite.mindfulSession
     ]);
+
+    Fimber.i("Ask Outcome: $outcome");
   }
 
   Future<void> sync() async {
