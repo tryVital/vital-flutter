@@ -1,3 +1,7 @@
+## 3.0.4
+
+ - Bump "vital_health_android" to `3.0.4`.
+
 ## 3.0.3
 
 ## 3.0.2
