@@ -3,7 +3,11 @@ package io.vital
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.view.KeyEventDispatcher.Component
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -30,6 +34,7 @@ import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
+import java.util.concurrent.atomic.AtomicReference
 
 /** VitalHealthPlugin */
 class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
@@ -158,6 +163,9 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         }
 
         val activity = this.activity ?: return result.error("VitalHealthError", "No active Android Activity", null)
+        if (activity !is ComponentActivity) {
+            return result.error("VitalHealthError", "The MainActivity of your Flutter host app must be a `FlutterFragmentActivity` subclass for the permission request flow to function properly.", null)
+        }
 
         val readResources = call.argument<List<String>>("readResources") ?: emptyList()
         val writeResources = call.argument<List<String>>("writeResources") ?: emptyList()
@@ -171,9 +179,27 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             activeAskRequest = Pair(contract, result)
         }
 
-        activity.startActivityForResult(
-            contract.createIntent(context, Unit), 1984
-        )
+        val registry = activity.activityResultRegistry
+        val launcherRef = AtomicReference<ActivityResultLauncher<*>>(null)
+        val launcher = registry.register("io.tryvital.health.ask", contract, ActivityResultCallback { result ->
+            val continuation = synchronized(this) {
+                val currentValue = activeAskRequest
+                activeAskRequest = null
+                return@synchronized currentValue
+            }
+
+            val launcher = launcherRef.getAndSet(null)
+            launcher?.unregister()
+
+            if (continuation != null) {
+                taskScope.launch {
+                    result.await()
+                    continuation.second.success(null)
+                }
+            }
+        })
+        launcherRef.set(launcher)
+        launcher.launch(Unit)
     }
 
     override fun onActivityResult(p0: Int, p1: Int, p2: Intent?): Boolean {
