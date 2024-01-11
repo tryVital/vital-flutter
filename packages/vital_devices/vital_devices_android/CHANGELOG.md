@@ -1,3 +1,7 @@
+## 3.0.3
+
+ - Bump "vital_devices_android" to `3.0.3`.
+
 ## 3.0.2
 
  - Bump "vital_devices_android" to `3.0.2`.
