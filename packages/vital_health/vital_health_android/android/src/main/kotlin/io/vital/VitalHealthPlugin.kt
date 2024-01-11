@@ -530,7 +530,7 @@ private inline fun Result.execute(scope: CoroutineScope, crossinline action: sus
         val result = action()
         success(result)
     } catch (e: Throwable) {
-        error("VitalHealthError", "${e::class.simpleName} ${e.message}", null)
+        error("VitalHealthError", "${e::class.simpleName} ${e.message}", e.stackTraceToString())
     }
 }
 

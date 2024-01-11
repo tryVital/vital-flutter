@@ -60,7 +60,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
         }
 
         fun reportError(error: Throwable) {
-            result.error("VitalCoreError", "${error::class.simpleName} ${error.message}", null)
+            result.error("VitalCoreError", "${error::class.simpleName} ${error.message}", error.stackTraceToString())
         }
 
         when (call.method) {
