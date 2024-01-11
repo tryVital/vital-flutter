@@ -60,4 +60,8 @@ dependencies {
     implementation "com.github.tryVital.vital-android:VitalClient:$vital_sdk_version"
     implementation "com.github.tryVital.vital-android:VitalHealthConnect:$vital_sdk_version"
     implementation "androidx.health.connect:connect-client:$health_connect_version"
+
+    // Require at minimum 1.3.4 to workaround Fragment ActivityResultRegistry issue
+    // > java.lang.IllegalArgumentException: Can only use lower 16 bits for requestCode
+    implementation "androidx.fragment:fragment:1.3.4"
 }
