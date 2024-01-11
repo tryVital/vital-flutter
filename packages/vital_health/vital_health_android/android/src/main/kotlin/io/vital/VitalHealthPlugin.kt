@@ -193,8 +193,23 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
             if (continuation != null) {
                 taskScope.launch {
-                    result.await()
-                    continuation.second.success(null)
+                    val response = when (result.await()) {
+                        // Null = success
+                        is PermissionOutcome.Success -> null
+                        is PermissionOutcome.Failure -> JSONObject(
+                            mapOf(
+                                "code" to "failure",
+                                "message" to "",
+                            )
+                        ).toString()
+                        is PermissionOutcome.HealthConnectUnavailable -> JSONObject(
+                            mapOf(
+                                "code" to "healthKitNotAvailable",
+                                "message" to "Health Connect is not available"
+                            )
+                        ).toString()
+                    }
+                    continuation.second.success(response)
                 }
             }
         })
