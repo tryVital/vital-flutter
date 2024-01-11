@@ -5,6 +5,7 @@ import 'dart:ffi';
 
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
+import 'package:vital_core/provider.dart';
 import 'package:vital_core/region.dart';
 import 'package:vital_core/services/data/link.dart';
 import 'package:vital_core/services/utils/http_logging_interceptor.dart';
@@ -17,10 +18,10 @@ abstract class LinkService extends ChopperService {
   @Post(path: 'link/token')
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<CreateLinkResponse>> createLink(
-    @Field('user_id') String userId,
-    @Field('provider') String provider,
-    @Field('redirect_url') String redirectUrl,
-  );
+      @Field('user_id') String userId,
+      @Field('provider') String? provider,
+      @Field('redirect_url') String redirectUrl,
+      {@Field('filter_on_providers') List<String>? filterOnProviders});
 
   @Post(path: 'link/provider/password/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)

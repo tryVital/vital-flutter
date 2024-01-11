@@ -143,6 +143,13 @@ class UserScreen extends StatelessWidget {
           child: const Text('Print to Log'),
         ),
       ),
+      ListTile(
+        title: const Text('Link Widget URL'),
+        trailing: OutlinedButton(
+          onPressed: () => bloc.createLinkWidgetUrl(),
+          child: const Text('Print to Log'),
+        ),
+      ),
       const SizedBox(height: 16),
     ];
   }

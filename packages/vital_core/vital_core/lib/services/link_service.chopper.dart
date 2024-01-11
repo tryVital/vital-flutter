@@ -19,14 +19,16 @@ final class _$LinkService extends LinkService {
   @override
   Future<Response<CreateLinkResponse>> createLink(
     String userId,
-    String provider,
-    String redirectUrl,
-  ) {
+    String? provider,
+    String redirectUrl, {
+    List<String>? filterOnProviders,
+  }) {
     final Uri $url = Uri.parse('link/token');
     final $body = <String, dynamic>{
       'user_id': userId,
       'provider': provider,
       'redirect_url': redirectUrl,
+      'filter_on_providers': filterOnProviders,
     };
     final Request $request = Request(
       'POST',

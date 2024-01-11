@@ -121,6 +121,18 @@ class UserBloc extends ChangeNotifier {
     }
   }
 
+  void createLinkWidgetUrl() async {
+    VitalClient client =
+        VitalClient.forSignedInUser(environment: environment, region: region);
+
+    try {
+      Uri widgetUrl = await client.linkWidgetUrl(redirectUrl: "x-vital-app://");
+      Fimber.i("Link Widget URL: $widgetUrl");
+    } catch (err) {
+      Fimber.e("Get Link Widget URL Failed: $err");
+    }
+  }
+
   void askForHealthResources() {
     vital_health.askForPermission([
       vital_health.HealthResource.profile,

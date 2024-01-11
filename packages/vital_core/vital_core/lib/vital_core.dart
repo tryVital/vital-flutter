@@ -2,8 +2,10 @@ import 'package:chopper/chopper.dart';
 import 'package:fimber/fimber.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:vital_core/core.dart' as core;
 import 'package:vital_core/environment.dart';
 import 'package:vital_core/exceptions.dart';
+import 'package:vital_core/provider.dart';
 import 'package:vital_core/region.dart';
 import 'package:vital_core/services/activity_service.dart';
 import 'package:vital_core/services/body_service.dart';
@@ -115,6 +117,52 @@ class VitalClient {
       }
     };
     return Uri.parse('${urls[region]![environment]!}/v2');
+  }
+
+  Future<Uri> linkWidgetUrl(
+      {required String redirectUrl,
+      List<ProviderSlug>? filterOnProviders}) async {
+    String? userId = await core.currentUserId();
+    if (userId == null) {
+      throw Exception("SDK is not signed in.");
+    }
+
+    List<String>? rawfilterOnProviders =
+        filterOnProviders?.map((slug) => slug.toString()).toList();
+
+    Response<CreateLinkResponse> response = await linkService.createLink(
+        userId, null, redirectUrl,
+        filterOnProviders: rawfilterOnProviders);
+
+    if (response.isSuccessful) {
+      String host, env;
+
+      switch (_environment) {
+        case Environment.dev:
+          host = "link.dev.tryvital.io";
+          env = "sandbox";
+          break;
+        case Environment.sandbox:
+          host = "link.tryvital.io";
+          env = "sandbox";
+          break;
+        case Environment.production:
+          host = "link.tryvital.io";
+          env = "production";
+          break;
+      }
+
+      CreateLinkResponse resp = response.body!;
+      Uri widgetUrl =
+          Uri(scheme: "https", host: host, path: "/", queryParameters: {
+        "token": resp.linkToken,
+        "env": env,
+        "region": _region.name,
+      });
+      return widgetUrl;
+    } else {
+      throw Exception("Link token creation failed: ${response.error}");
+    }
   }
 
   Future<bool> linkProvider(User user, String provider, String callback) {
