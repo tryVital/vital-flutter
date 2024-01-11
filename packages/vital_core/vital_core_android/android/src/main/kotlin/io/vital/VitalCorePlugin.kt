@@ -93,6 +93,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                         Environment.valueOf(rawEnvironment.replaceFirstChar { it.uppercase() }),
                         apiKey,
                     )
+                    result.success(null)
                 } catch (e: Throwable) {
                     reportError(e)
                 }
