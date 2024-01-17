@@ -21,30 +21,17 @@ class VitalInterceptor extends HeadersInterceptor {
 
   @override
   Future<Request> onRequest(Request request) async {
-    String versionKey, authKey, authValue;
-    String versionValue = await vital_core.sdkVersion();
-
-    if (Platform.isIOS || Platform.isMacOS) {
-      versionKey = "X-Vital-iOS-SDK-Version";
-    } else if (Platform.isAndroid || Platform.isLinux) {
-      versionKey = "X-Vital-Android-SDK-Version";
-    } else {
-      throw Exception(
-          "Unsupported Flutter platform: ${Platform.operatingSystem}");
-    }
+    Map<String, String> headers;
 
     if (useAccessToken) {
-      String accessToken = await vital_core.getAccessToken();
-      authKey = "Authorization";
-      authValue = "Bearer $accessToken";
+      headers = await vital_core.getVitalAPIHeaders();
     } else {
-      authKey = "X-Vital-API-Key";
-      authValue = apiKey!;
+      headers = {
+        "X-Vital-API-Key": apiKey!,
+        "X-Vital-SDK-Note": "flutter,apikey"
+      };
     }
 
-    return applyHeaders(request, {
-      authKey: authValue,
-      versionKey: versionValue,
-    });
+    return applyHeaders(request, headers);
   }
 }

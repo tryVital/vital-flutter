@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:vital_core/client_status.dart';
 import 'package:vital_core/environment.dart';
@@ -77,4 +78,24 @@ Future<void> refreshToken() {
 
 Future<String> sdkVersion() {
   return VitalCorePlatform.instance.sdkVersion();
+}
+
+Future<Map<String, String>> getVitalAPIHeaders() async {
+  Map<String, String> headers = {};
+
+  String versionKey;
+
+  if (Platform.isIOS || Platform.isMacOS) {
+    versionKey = "X-Vital-iOS-SDK-Version";
+  } else if (Platform.isAndroid || Platform.isLinux) {
+    versionKey = "X-Vital-Android-SDK-Version";
+  } else {
+    throw Exception(
+        "Unsupported Flutter platform: ${Platform.operatingSystem}");
+  }
+
+  headers["Authorization"] = "Bearer ${await getAccessToken()}";
+  headers[versionKey] = await sdkVersion();
+
+  return headers;
 }
