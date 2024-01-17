@@ -1,4 +1,4 @@
-package io.vital
+package io.vital.health
 
 import android.app.Activity
 import android.content.Context
@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.core.view.KeyEventDispatcher.Component
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding

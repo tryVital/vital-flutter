@@ -1,4 +1,4 @@
-package io.vital
+package io.vital.core
 
 import android.content.Context
 import io.flutter.embedding.engine.plugins.FlutterPlugin
