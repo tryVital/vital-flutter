@@ -13,7 +13,7 @@ flutter:
     implements: vital_health
     platforms:
       android:
-        package: io.vital
+        package: io.vital.health
         pluginClass: VitalHealthPlugin
         dartPluginClass: VitalHealthAndroid
 

@@ -13,7 +13,7 @@ flutter:
     implements: vital_core
     platforms:
       android:
-        package: io.vital
+        package: io.vital.core
         pluginClass: VitalCorePlugin
 
 dependencies:

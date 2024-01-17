@@ -13,7 +13,7 @@ flutter:
     implements: vital_devices
     platforms:
       android:
-        package: io.vital
+        package: io.vital.devices
         pluginClass: VitalDevicesPlugin
 
 dependencies:
