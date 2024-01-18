@@ -2,8 +2,8 @@ group 'io.vital.core'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.8.10'
-    ext.vital_sdk_version = '1.0.0-beta.26'
+    ext.kotlin_version = '1.8.22'
+    ext.vital_sdk_version = '1.0.0-beta.27'
 
     repositories {
         google()
@@ -52,8 +52,8 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
     implementation "com.github.tryVital.vital-android:VitalClient:$vital_sdk_version"
 }
