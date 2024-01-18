@@ -181,8 +181,6 @@ class UserBloc extends ChangeNotifier {
     final result = await vital_health.read(healthResource,
         DateTime.now().subtract(const Duration(days: 10)), DateTime.now());
 
-    if (kDebugMode) {
-      print(result);
-    }
+    Fimber.i("Read $healthResource: $result");
   }
 }
