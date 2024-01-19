@@ -1,3 +1,5 @@
+## 3.0.9
+
 ## 3.0.8
 
  - Bump "vital_devices_ios" to `3.0.8`.
