@@ -128,6 +128,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
 
             scannerResultCancellable?.cancel()
             scannerResultCancellable =  deviceManager.search(for:deviceModel)
+                .receive(on: DispatchQueue.main)
                 .sink { [weak self] value in
                   guard let self = self else { return }
 
@@ -173,6 +174,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         pairCancellable = deviceManager
           .glucoseMeter(for: device)
           .pair(device: device)
+          .receive(on: DispatchQueue.main)
           .sink { [weak self] value in
             guard self?.flutterRunning ?? false else { return }
             switch value {
@@ -186,6 +188,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         pairCancellable = deviceManager
           .bloodPressureReader(for: device)
           .pair(device: device)
+          .receive(on: DispatchQueue.main)
           .sink {[weak self] value in
             guard self?.flutterRunning ?? false else { return }
             switch value {
@@ -196,20 +199,6 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
             }
           } receiveValue:{ _ in }
       }
-    }
-
-    private func handlePairCompletion(value: Subscribers.Completion<any Error>, channel: FlutterMethodChannel?){
-        switch value {
-            case .failure(let error):  channel?.invokeMethod("sendPair", arguments: encode(ErrorResult(code: "PairError", message: error.localizedDescription)))
-            case .finished:  channel?.invokeMethod("sendPair", arguments: encode(true))
-        }
-
-        // Since the contract is delivery-once-then-complete, we assume the Dart `sendPair`
-        // should have closed the Dart Stream/Future at this point.
-    }
-
-    private func handlePairValue(channel: FlutterMethodChannel?) {
-        channel?.invokeMethod("sendPair", arguments: encode(true))
     }
 
     private func startReadingGlucoseMeter(_ arguments: [AnyObject], result: @escaping FlutterResult){
@@ -226,6 +215,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         glucoseMeterCancellable?.cancel()
         glucoseMeterCancellable =  deviceManager.glucoseMeter(for: scannedDevice)
             .read(device: scannedDevice)
+            .receive(on: DispatchQueue.main)
             .sink (receiveCompletion: {[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
@@ -264,6 +254,7 @@ public class SwiftVitalDevicesPlugin: NSObject, FlutterPlugin {
         bloodPressureCancellable?.cancel()
         bloodPressureCancellable = deviceManager.bloodPressureReader(for: scannedDevice)
             .read(device: scannedDevice)
+            .receive(on: DispatchQueue.main)
             .sink (receiveCompletion: {[weak self] value in
                 guard self?.flutterRunning ?? false else {
                     return
