@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:vital_core/client_status.dart';
 import 'package:vital_core/environment.dart';
 import 'package:vital_core/region.dart';
@@ -21,10 +22,12 @@ Future<Set<ClientStatus>> clientStatus() {
           .toSet());
 }
 
-Stream<Set<ClientStatus>> get clientStatusStream {
-  return VitalCorePlatform.instance
-      .clientStatusChanged()
-      .asyncMap((event) => clientStatus());
+Stream<Set<ClientStatus>> get clientStatusStream async* {
+  yield await clientStatus();
+
+  await for (void _ in VitalCorePlatform.instance.clientStatusChanged()) {
+    yield await clientStatus();
+  }
 }
 
 Future<String?> currentUserId() {
@@ -98,4 +101,8 @@ Future<Map<String, String>> getVitalAPIHeaders() async {
   headers[versionKey] = await sdkVersion();
 
   return headers;
+}
+
+Future<String> systemTimeZoneName() {
+  return VitalCorePlatform.instance.systemTimeZoneName();
 }

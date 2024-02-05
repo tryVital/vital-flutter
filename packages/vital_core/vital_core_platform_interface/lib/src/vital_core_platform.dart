@@ -68,4 +68,8 @@ class VitalCorePlatform extends PlatformInterface {
   Future<String> sdkVersion() {
     throw UnimplementedError();
   }
+
+  Future<String> systemTimeZoneName() {
+    throw UnimplementedError();
+  }
 }

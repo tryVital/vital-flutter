@@ -39,8 +39,31 @@ void main() {
   vital_core
       .currentUserId()
       .then((userId) => Fimber.i("vital_core launch userId: $userId"));
-  clientStatusSubscription = vital_core.clientStatusStream.listen(
-      (status) => Fimber.i("vital_core status changed: ${status.join(", ")}"));
+  clientStatusSubscription =
+      vital_core.clientStatusStream.listen((status) async {
+    Fimber.i("vital_core status changed: ${status.join(", ")}");
+
+    //
+    // Updating user fallback time zone at app launch:
+    //
+    if (status.contains(vital_core.ClientStatus.signedIn)) {
+      final client = vital_core.VitalClient.forSignedInUser(
+          region: region, environment: environment);
+      final userId = await vital_core.currentUserId();
+      if (userId == null) {
+        return;
+      }
+
+      // IANA timezone ID
+      final timeZone = await vital_core.systemTimeZoneName();
+      Fimber.i("will patch user fallback time zone: $timeZone");
+      await client.userService.patchUser(userId, fallbackTimeZone: timeZone);
+
+      final updatedUser = await client.userService.getUser(userId);
+      Fimber.i(
+          "updated user fallback time zone: ${updatedUser.body?.fallbackTimeZone?.id} at ${updatedUser.body?.fallbackTimeZone?.updatedAt}");
+    }
+  });
 
   runApp(
       VitalSampleApp(vitalClient: vitalClient, deviceManager: deviceManager));

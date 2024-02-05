@@ -226,6 +226,9 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
           statusCancellable?.cancel()
           statusCancellable = nil
         }
+      
+      case "systemTimeZoneName":
+        result(TimeZone.current.identifier)
 
       default:
         result(

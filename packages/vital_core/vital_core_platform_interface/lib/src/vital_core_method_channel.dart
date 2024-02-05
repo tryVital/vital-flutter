@@ -113,4 +113,11 @@ class VitalCoreMethodChannel extends VitalCorePlatform {
         .invokeMethod<String>("sdkVersion")
         .then((value) => value as String);
   }
+
+  @override
+  Future<String> systemTimeZoneName() {
+    return _channel
+        .invokeMethod<String>("systemTimeZoneName")
+        .then((value) => value as String);
+  }
 }
