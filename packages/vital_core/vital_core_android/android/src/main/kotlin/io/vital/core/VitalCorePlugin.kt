@@ -1,6 +1,7 @@
 package io.vital.core
 
 import android.content.Context
+import android.icu.util.TimeZone
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -239,6 +240,10 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 // lowerCamelCase to match iOS.
                 val statuses = VitalClient.status.map { status -> status.name.replaceFirstChar { it.lowercase() } }
                 result.success(statuses)
+            }
+
+            "systemTimeZoneName" -> {
+                result.success(TimeZone.getDefault().id)
             }
 
             "subscribeToStatusChanges" -> {

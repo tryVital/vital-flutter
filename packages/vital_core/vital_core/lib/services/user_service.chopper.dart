@@ -39,9 +39,15 @@ final class _$UserService extends UserService {
   }
 
   @override
-  Future<Response<CreateUserResponse>> createUser(String clientUserId) {
-    final Uri $url = Uri.parse('/user/key');
-    final $body = <String, dynamic>{'client_user_id': clientUserId};
+  Future<Response<CreateUserResponse>> createUser(
+    String clientUserId, {
+    String? fallbackTimeZone,
+  }) {
+    final Uri $url = Uri.parse('/user');
+    final $body = <String, dynamic>{
+      'client_user_id': clientUserId,
+      'fallback_time_zone': fallbackTimeZone,
+    };
     final Request $request = Request(
       'POST',
       $url,
@@ -49,6 +55,25 @@ final class _$UserService extends UserService {
       body: $body,
     );
     return client.send<CreateUserResponse, CreateUserResponse>(
+      $request,
+      requestConverter: JsonConverter.requestFactory,
+    );
+  }
+
+  @override
+  Future<Response<NoContent>> patchUser(
+    String userId, {
+    String? fallbackTimeZone,
+  }) {
+    final Uri $url = Uri.parse('/user/${userId}');
+    final $body = <String, dynamic>{'fallback_time_zone': fallbackTimeZone};
+    final Request $request = Request(
+      'PATCH',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<NoContent, NoContent>(
       $request,
       requestConverter: JsonConverter.requestFactory,
     );

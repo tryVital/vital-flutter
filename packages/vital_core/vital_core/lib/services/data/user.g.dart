@@ -18,6 +18,20 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
               ?.map((e) => ConnectedSource.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      fallbackTimeZone: json['fallback_time_zone'] == null
+          ? null
+          : UserFallbackTimeZone.fromJson(
+              json['fallback_time_zone'] as Map<String, dynamic>),
+    );
+
+UserFallbackTimeZone _$UserFallbackTimeZoneFromJson(
+        Map<String, dynamic> json) =>
+    UserFallbackTimeZone(
+      json['id'] as String,
+      json['source_slug'] as String,
+      json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
     );
 
 ConnectedSource _$ConnectedSourceFromJson(Map<String, dynamic> json) =>
