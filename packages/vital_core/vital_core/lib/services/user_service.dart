@@ -19,14 +19,22 @@ abstract class UserService extends ChopperService {
   @Get(path: 'user/{user_id}')
   Future<Response<User>> getUser(@Path('user_id') String userId);
 
-  @Post(path: '/user/key')
+  @Post(path: '/user')
   @FactoryConverter(
     request: JsonConverter.requestFactory,
   )
   Future<Response<CreateUserResponse>> createUser(
-      @Field('client_user_id') String clientUserId);
+      @Field('client_user_id') String clientUserId,
+      {@Field('fallback_time_zone') String? fallbackTimeZone});
 
-  @Post(path: '/user/{user_id}/sign_in_token')
+  @Patch(path: '/user/{user_id}')
+  @FactoryConverter(
+    request: JsonConverter.requestFactory,
+  )
+  Future<Response<NoContent>> patchUser(@Path('user_id') String userId,
+      {@Field('fallback_time_zone') String? fallbackTimeZone});
+
+  @Post(path: '/user/{user_id}/sign_in_token', optionalBody: true)
   @FactoryConverter(
     request: JsonConverter.requestFactory,
   )
@@ -65,6 +73,7 @@ abstract class UserService extends ChopperService {
         ],
         converter: const JsonSerializableConverter({
           User: User.fromJson,
+          UserFallbackTimeZone: UserFallbackTimeZone.fromJson,
           RefreshResponse: RefreshResponse.fromJson,
           ProvidersResponse: ProvidersResponse.fromJson,
           CreateUserResponse: CreateUserResponse.fromJson,

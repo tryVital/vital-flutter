@@ -16,6 +16,8 @@ class User {
   DateTime? createdOn;
   @JsonKey(name: 'connected_sources')
   List<ConnectedSource> connectedSources;
+  @JsonKey(name: 'fallback_time_zone')
+  UserFallbackTimeZone? fallbackTimeZone;
 
   User({
     this.userId,
@@ -24,9 +26,31 @@ class User {
     this.clientUserId,
     this.createdOn,
     this.connectedSources = const [],
+    this.fallbackTimeZone,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
+class UserFallbackTimeZone {
+  @JsonKey(name: 'id')
+  String id;
+
+  @JsonKey(name: 'source_slug')
+  String sourceSlug;
+
+  @JsonKey(name: 'updated_at')
+  DateTime? updatedAt;
+
+  UserFallbackTimeZone(
+    this.id,
+    this.sourceSlug,
+    this.updatedAt,
+  );
+
+  factory UserFallbackTimeZone.fromJson(Map<String, dynamic> json) =>
+      _$UserFallbackTimeZoneFromJson(json);
 }
 
 @JsonSerializable(createToJson: false)
