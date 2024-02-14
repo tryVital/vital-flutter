@@ -178,7 +178,7 @@ class UserBloc extends ChangeNotifier {
   }
 
   Future<void> read(vital_health.HealthResource healthResource) async {
-    final result = await vital_health.read(healthResource,
+    vital_health.ProcessedData? result = await vital_health.read(healthResource,
         DateTime.now().subtract(const Duration(days: 10)), DateTime.now());
 
     Fimber.i("Read $healthResource: $result");
