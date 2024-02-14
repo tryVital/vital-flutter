@@ -1,3 +1,7 @@
+## 3.1.1
+
+ - Bump "vital_core_android" to `3.1.1`.
+
 ## 3.1.0
 
 ## 3.0.9
