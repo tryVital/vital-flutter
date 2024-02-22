@@ -12,38 +12,22 @@ const _channel = MethodChannel('vital_health_kit');
 
 class VitalHealthIos extends VitalHealthPlatform {
   static void registerWith() {
-    VitalHealthPlatform.instance = VitalHealthIos();
+    VitalHealthPlatform.instanceFactory = () => VitalHealthIos();
   }
 
   late final StreamController<SyncStatus> _streamController = StreamController(
     onListen: () async {
-      _statusSubscribed = true;
-      if (_healthKitConfigured) {
-        Fimber.d('Healthkit subscribeToStatus (stream)');
-        await _channel.invokeMethod('subscribeToStatus');
-      }
+      Fimber.d('Healthkit subscribeToStatus (stream)');
+      await _channel.invokeMethod('subscribeToStatus');
     },
     onCancel: () async {
-      _statusSubscribed = false;
       await _channel.invokeMethod('unsubscribeFromStatus');
     },
   );
 
   late final _statusStream = _streamController.stream.asBroadcastStream();
 
-  var _statusSubscribed = false;
-  var _healthKitConfigured = false;
-
-  @override
-  Future<bool> isAvailable() async {
-    return true;
-  }
-
-  @override
-  Future<void> configureClient(
-      String apiKey, Region region, Environment environment) async {
-    Fimber.d('Healthkit configure $apiKey, $region $environment');
-
+  VitalHealthIos() : super() {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'sendStatus':
@@ -57,6 +41,17 @@ class VitalHealthIos extends VitalHealthPlatform {
       }
       return null;
     });
+  }
+
+  @override
+  Future<bool> isAvailable() async {
+    return true;
+  }
+
+  @override
+  Future<void> configureClient(
+      String apiKey, Region region, Environment environment) async {
+    Fimber.d('Healthkit configure $apiKey, $region $environment');
 
     await _channel.invokeMethod(
         'configureClient', [apiKey, region.name, environment.name]);
@@ -74,12 +69,6 @@ class VitalHealthIos extends VitalHealthPlatform {
     final error = _mapError(result);
     if (error != null) {
       throw error;
-    } else {
-      _healthKitConfigured = true;
-      if (_statusSubscribed) {
-        Fimber.d('Healthkit subscribeToStatus (configure)');
-        await _channel.invokeMethod('subscribeToStatus');
-      }
     }
   }
 

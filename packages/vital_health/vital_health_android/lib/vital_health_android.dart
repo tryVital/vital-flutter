@@ -13,10 +13,22 @@ const _channel = MethodChannel('vital_health_connect');
 
 class VitalHealthAndroid extends VitalHealthPlatform {
   static void registerWith() {
-    VitalHealthPlatform.instance = VitalHealthAndroid();
+    VitalHealthPlatform.instanceFactory = () => VitalHealthAndroid();
   }
 
   final _statusSubject = PublishSubject<SyncStatus>();
+
+  VitalHealthAndroid() : super() {
+    _channel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case "status":
+          {
+            _statusSubject
+                .add(mapArgumentsToStatus(call.arguments as List<dynamic>));
+          }
+      }
+    });
+  }
 
   @override
   Future<bool> isAvailable() async {
@@ -27,16 +39,6 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   Future<void> configureClient(
       String apiKey, Region region, Environment environment) async {
     Fimber.d('Health Connect configure $apiKey, $region $environment');
-
-    _channel.setMethodCallHandler((call) async {
-      switch (call.method) {
-        case "status":
-          {
-            _statusSubject
-                .add(mapArgumentsToStatus(call.arguments as List<dynamic>));
-          }
-      }
-    });
 
     await _channel.invokeMethod('configureClient', <String, dynamic>{
       "apiKey": apiKey,

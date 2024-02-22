@@ -8,6 +8,8 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 // > https://dart.dev/effective-dart/design#avoid-defining-a-class-that-contains-only-static-members
 // > AVOID defining a class that contains only static members
 
+/// Health Data sync status.
+/// Note that this stream does not replay any status already emitted.
 Stream<SyncStatus> get syncStatus => VitalHealthPlatform.instance.status;
 
 /// Android: Whether Health Connect is available on the current device.
