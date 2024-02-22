@@ -13,8 +13,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
 
-  # NOTE: Please update `packages/vital_core/vital_core/lib/services/utils/vital_interceptor.dart` as well.
-  s.dependency 'VitalCore', '~> 0.10.11'
+  s.dependency 'VitalCore', '~> 0.11.1'
   s.platform = :ios, '14.0'
 
   # Flutter.framework does not contain a i386 slice.
