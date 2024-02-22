@@ -1,3 +1,7 @@
+## 3.1.2
+
+ - Bump "vital_core_platform_interface" to `3.1.2`.
+
 ## 3.1.1
 
  - Bump "vital_core_platform_interface" to `3.1.1`.

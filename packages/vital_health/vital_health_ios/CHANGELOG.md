@@ -1,3 +1,5 @@
+## 3.1.2
+
 ## 3.1.1
 
  - Bump "vital_health_ios" to `3.1.1`.
