@@ -279,14 +279,16 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
 
   private func subscribeToStatus(){
     cancellable?.cancel()
-    cancellable = VitalHealthKitClient.shared.status.sink {[weak self] value in
-      guard self?.flutterRunning ?? false else {
-        return
-      }
+    cancellable = VitalHealthKitClient.shared.status
+      .receive(on: DispatchQueue.main)
+      .sink {[weak self] value in
+        guard self?.flutterRunning ?? false else {
+          return
+        }
 
-      self?.channel.invokeMethod("sendStatus", arguments: mapStatusToArguments(value))
+        self?.channel.invokeMethod("sendStatus", arguments: mapStatusToArguments(value))
+      }
     }
-  }
 }
 
 struct AnyEncodable: Encodable {

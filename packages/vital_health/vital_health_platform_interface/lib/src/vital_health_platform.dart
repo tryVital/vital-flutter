@@ -7,14 +7,20 @@ class VitalHealthPlatform extends PlatformInterface {
 
   VitalHealthPlatform() : super(token: _token);
 
-  static VitalHealthPlatform _instance = VitalHealthPlatform();
+  static VitalHealthPlatform Function()? _instanceFactory = null;
+  static VitalHealthPlatform? _instance;
 
-  static set instance(VitalHealthPlatform instance) {
-    PlatformInterface.verify(instance, _token);
-    _instance = instance;
+  static set instanceFactory(VitalHealthPlatform Function() factory) {
+    _instanceFactory = factory;
   }
 
-  static VitalHealthPlatform get instance => _instance;
+  static VitalHealthPlatform get instance {
+    if (_instance == null) {
+      _instance = _instanceFactory!();
+      PlatformInterface.verify(_instance!, _token);
+    }
+    return _instance!;
+  }
 
   Stream<SyncStatus> get status =>
       throw UnimplementedError('status() has not been implemented.');
