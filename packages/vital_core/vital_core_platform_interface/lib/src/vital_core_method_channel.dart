@@ -91,8 +91,8 @@ class VitalCoreMethodChannel extends VitalCorePlatform {
   }
 
   @override
-  Future<void> cleanUp() {
-    return _channel.invokeMethod("cleanUp");
+  Future<void> signOut() {
+    return _channel.invokeMethod("signOut");
   }
 
   @override

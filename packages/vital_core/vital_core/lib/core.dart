@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
 import 'package:vital_core/client_status.dart';
 import 'package:vital_core/environment.dart';
 import 'package:vital_core/region.dart';
@@ -67,8 +66,13 @@ Future<void> deregisterProvider(ProviderSlug provider) {
   return VitalCorePlatform.instance.deregisterProvider(provider.toString());
 }
 
+Future<void> signOut() {
+  return VitalCorePlatform.instance.signOut();
+}
+
+@Deprecated("Renamed to `signOut()`.")
 Future<void> cleanUp() {
-  return VitalCorePlatform.instance.cleanUp();
+  return signOut();
 }
 
 Future<String> getAccessToken() {

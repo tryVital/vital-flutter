@@ -172,8 +172,8 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
           reportError(error)
         }
 
-      case "cleanUp":
-        await VitalClient.shared.cleanUp()
+      case "signOut":
+        await VitalClient.shared.signOut()
         result(nil)
 
       case "getAccessToken":

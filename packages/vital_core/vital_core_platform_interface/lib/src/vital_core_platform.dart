@@ -53,7 +53,7 @@ class VitalCorePlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
-  Future<void> cleanUp() {
+  Future<void> signOut() {
     throw UnimplementedError();
   }
 
