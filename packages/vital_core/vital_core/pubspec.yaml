@@ -1,6 +1,6 @@
 name: vital_core
 description: The official Flutter package for Vital APIs allowing fitness apps linking with tryvital.io and with support for HealthKit.
-version: 3.1.2
+version: 3.1.3
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
@@ -24,9 +24,9 @@ dependencies:
   json_annotation: ^4.8.1
   url_launcher: ^6.2.3
   fimber: ^0.6.6
-  vital_core_platform_interface: ^3.1.2
-  vital_core_ios: ^3.1.2
-  vital_core_android: ^3.1.2
+  vital_core_platform_interface: ^3.1.3
+  vital_core_ios: ^3.1.3
+  vital_core_android: ^3.1.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
