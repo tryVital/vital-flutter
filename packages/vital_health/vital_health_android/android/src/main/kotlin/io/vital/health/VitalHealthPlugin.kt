@@ -133,9 +133,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             "askForResources" -> {
                 askForResources(call, result)
             }
-            "cleanUp" -> {
-                cleanUp(result)
-            }
             "writeHealthData" -> {
                 writeHealthData(call, result)
             }
@@ -525,11 +522,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             )
             return@execute null
         }
-    }
-
-    private fun cleanUp(result: Result) {
-        vitalHealthConnectManager.cleanUp()
-        result.success(null)
     }
 
     override fun onDetachedFromActivity() {

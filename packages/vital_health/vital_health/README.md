@@ -79,10 +79,10 @@ vital_health.syncData();
 Stream<SyncStatus> status = vital_health.status;
 ```
 
-8. When your user logs out, you can call `cleanUp()` to reset the SDK state. This resets both the Vital Health and the Vital Core SDK.
+8. When your user logs out, you can call `signOut()` to reset the SDK state. This resets both the Vital Health and the Vital Core SDK.
     
 ```dart
-vital_health.cleanUp();
+vital_health.signOut();
 ```
 ## Documentation
 

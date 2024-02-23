@@ -65,12 +65,6 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
           result(nil)
         }
         return
-      case "cleanUp":
-        NonthrowingTask {
-          await VitalHealthKitClient.shared.cleanUp()
-          result(nil)
-        }
-        return
       case "hasAskedForPermission":
         let resource = call.arguments as! String
         hasAskedForPermission(resource: resource, result: result)

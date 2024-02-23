@@ -103,7 +103,7 @@ class UserBloc extends ChangeNotifier {
   }
 
   void resetSDK() async {
-    await vital_health.cleanUp();
+    await vital_core.signOut();
   }
 
   void createLinkToken() async {

@@ -83,8 +83,8 @@ class HealthServices {
     return VitalHealthPlatform.instance.read(resource, startDate, endDate);
   }
 
-  @Deprecated("Use top-level `cleanUp` in vital_health instead")
+  @Deprecated("Use `vital_core.signOut()` instead")
   Future<void> cleanUp() async {
-    await VitalHealthPlatform.instance.cleanUp();
+    await vital_core.signOut();
   }
 }
