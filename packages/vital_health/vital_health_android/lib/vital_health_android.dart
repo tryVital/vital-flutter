@@ -346,31 +346,31 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
         : <QuantitySample>[]),
     sleepStages: SleepStages(
       awakeSleepSamples: json['sleepStages']['awakeSleepSamples'] != null
-          ? jsonDecode(json['sleepStages']['awakeSleepSamples'])
+          ? (json['sleepStages']['awakeSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
               .whereType<QuantitySample>()
               .toList()
           : <QuantitySample>[],
       deepSleepSamples: json['sleepStages']['deepSleepSamples'] != null
-          ? jsonDecode(json['sleepStages']['deepSleepSamples'])
+          ? (json['sleepStages']['deepSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
               .whereType<QuantitySample>()
               .toList()
           : <QuantitySample>[],
       lightSleepSamples: json['sleepStages']['lightSleepSamples'] != null
-          ? jsonDecode(json['sleepStages']['lightSleepSamples'])
+          ? (json['sleepStages']['lightSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
               .whereType<QuantitySample>()
               .toList()
           : <QuantitySample>[],
       remSleepSamples: json['sleepStages']['remSleepSamples'] != null
-          ? jsonDecode(json['sleepStages']['remSleepSamples'])
+          ? (json['sleepStages']['remSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
               .whereType<QuantitySample>()
               .toList()
           : <QuantitySample>[],
       unknownSleepSamples: json['sleepStages']['unknownSleepSamples'] != null
-          ? jsonDecode(json['sleepStages']['unknownSleepSamples'])
+          ? (json['sleepStages']['unknownSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
               .whereType<QuantitySample>()
               .toList()
