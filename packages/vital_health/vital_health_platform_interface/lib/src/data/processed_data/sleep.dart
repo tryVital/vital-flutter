@@ -39,6 +39,8 @@ class SleepStages {
   final List<QuantitySample> lightSleepSamples;
   final List<QuantitySample> remSleepSamples;
   final List<QuantitySample> unknownSleepSamples;
+  final List<QuantitySample> inBedSleepSamples;
+  final List<QuantitySample> unspecifiedSleepSamples;
 
   SleepStages({
     required this.awakeSleepSamples,
@@ -46,5 +48,12 @@ class SleepStages {
     required this.lightSleepSamples,
     required this.remSleepSamples,
     required this.unknownSleepSamples,
+    required this.inBedSleepSamples,
+    required this.unspecifiedSleepSamples,
   });
+
+  @override
+  String toString() {
+    return 'SleepStages{awakeSleepSamples: $awakeSleepSamples, deepSleepSamples: $deepSleepSamples, lightSleepSamples: $lightSleepSamples, remSleepSamples: $remSleepSamples, unknownSleepSamples: $unknownSleepSamples, inBedSleepSamples: $inBedSleepSamples}';
+  }
 }

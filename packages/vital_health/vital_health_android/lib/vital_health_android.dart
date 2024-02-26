@@ -375,6 +375,8 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
               .whereType<QuantitySample>()
               .toList()
           : <QuantitySample>[],
+      inBedSleepSamples: [],
+      unspecifiedSleepSamples: [],
     ),
   );
 }
