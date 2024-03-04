@@ -390,6 +390,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
           return "distanceWalkingRunning"
         case .vo2Max:
           return "vo2Max"
+      case .exerciseTime:
+          return "exerciseTime"
         case .weight:
           return "weight"
         case .bodyFat:
@@ -485,6 +487,8 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .individual(.floorsClimbed)
     case "distanceWalkingRunning":
       return .individual(.distanceWalkingRunning)
+    case "exerciseTime":
+      return .individual(.exerciseTime)
     case "vo2Max":
       return .individual(.vo2Max)
     case "weight":
