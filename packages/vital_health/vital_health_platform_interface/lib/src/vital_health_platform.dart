@@ -70,4 +70,28 @@ class VitalHealthPlatform extends PlatformInterface {
       HealthResource resource, DateTime startDate, DateTime endDate) {
     throw UnimplementedError('read() has not been implemented.');
   }
+
+  Future<bool> getPauseSynchronization() {
+    throw UnimplementedError();
+  }
+
+  Future<void> setPauseSynchronization(bool paused) {
+    throw UnimplementedError();
+  }
+
+  Future<bool> isBackgroundSyncEnabled() {
+    throw UnimplementedError();
+  }
+
+  Future<bool> enableBackgroundSync() {
+    throw UnimplementedError();
+  }
+
+  Future<void> disableBackgroundSync() {
+    throw UnimplementedError();
+  }
+
+  Future<void> setSyncNotificationContent(SyncNotificationContent content) {
+    throw UnimplementedError();
+  }
 }

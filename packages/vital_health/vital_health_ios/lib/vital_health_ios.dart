@@ -196,6 +196,18 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
+  Future<bool> getPauseSynchronization() {
+    return _channel
+        .invokeMethod<bool>('getPauseSynchronization')
+        .then((result) => result!);
+  }
+
+  @override
+  Future<void> setPauseSynchronization(bool paused) {
+    return _channel.invokeMethod('setPauseSynchronization', paused);
+  }
+
+  @override
   Stream<SyncStatus> get status => _statusStream;
 }
 
