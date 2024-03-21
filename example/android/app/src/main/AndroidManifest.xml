@@ -11,8 +11,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30"/>
 
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- BEGIN: [🔘 OPTIONAL] Background Sync -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" android:minSdkVersion="33" />
+    <!-- END:   [🔘 OPTIONAL] Background Sync -->
 
     <!-- BEGIN: Health Connect permissions -->
     <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
@@ -99,14 +101,6 @@
             </intent-filter>
         </activity-alias>
         <!-- END: Mandatory for Health Connect permission flow -->
-
-        <!-- BEGIN: Mandatory for running Health Connect as foreground service on Android 14+ -->
-        <service
-            android:name="androidx.work.impl.foreground.SystemForegroundService"
-            android:foregroundServiceType="shortService"
-            android:exported="false">
-        </service>
-        <!-- END: Mandatory for running Health Connect as foreground service on Android 14+ -->
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

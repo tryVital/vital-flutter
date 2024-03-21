@@ -184,6 +184,16 @@ class UserScreen extends StatelessWidget {
         ),
       ),
       ListTile(
+        title: const Text('Pause Sync'),
+        trailing: bloc.initialSyncDone
+            ? Switch(
+                value: bloc.pauseSync,
+                onChanged: (value) => bloc.setPauseSync(value),
+              )
+            : const CircularProgressIndicator(),
+      ),
+      ...backgroundSyncWidget(bloc),
+      ListTile(
         title: const Text('Health sync status'),
         subtitle: StreamBuilder(
           stream: bloc.healthSyncStatus,
@@ -229,6 +239,24 @@ class UserScreen extends StatelessWidget {
             ),
           )),
       const SizedBox(height: 60)
+    ];
+  }
+
+  List<Widget> backgroundSyncWidget(UserBloc bloc) {
+    if (!bloc.showBackgroundSyncSwitch) {
+      return [];
+    }
+
+    return [
+      ListTile(
+        title: const Text('Background Sync (experimental)'),
+        trailing: bloc.initialSyncDone
+            ? Switch(
+                value: bloc.isBackgroundSyncEnabled,
+                onChanged: (value) => bloc.setBackgroundSyncEnabled(value),
+              )
+            : const CircularProgressIndicator(),
+      )
     ];
   }
 }
