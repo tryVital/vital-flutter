@@ -1,3 +1,7 @@
+## 3.2.0-beta.2
+
+ - Bump "vital_core_ios" to `3.2.0-beta.2`.
+
 ## 3.2.0-beta.1
 
  - Bump "vital_core_ios" to `3.2.0-beta.1`.
