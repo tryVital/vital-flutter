@@ -61,7 +61,7 @@ bool get canEnableBackgroundSyncNoninteractively {
 }
 
 /// Whether health data sync is paused at the moment.
-Future<bool> pauseSynchronization() async {
+Future<bool> get pauseSynchronization async {
   return VitalHealthPlatform.instance.getPauseSynchronization();
 }
 
@@ -72,7 +72,7 @@ Future<bool> pauseSynchronization() async {
 /// ## Overview
 ///
 /// Whether Background Sync on Android is enabled at the moment.
-Future<bool> isBackgroundSyncEnabled() async {
+Future<bool> get isBackgroundSyncEnabled async {
   if (!Platform.isAndroid) {
     return true;
   }

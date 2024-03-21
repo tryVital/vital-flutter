@@ -54,8 +54,8 @@ class UserBloc extends ChangeNotifier {
     isCurrentSDKUser = await vital_core.currentUserId() == user.userId;
     isSDKConfigured = status.contains(vital_core.ClientStatus.configured);
     isHealthDataAvailable = await vital_health.isAvailable();
-    isBackgroundSyncEnabled = await vital_health.isBackgroundSyncEnabled();
-    pauseSync = await vital_health.pauseSynchronization();
+    isBackgroundSyncEnabled = await vital_health.isBackgroundSyncEnabled;
+    pauseSync = await vital_health.pauseSynchronization;
     initialSyncDone = true;
 
     if (!hasDisposed) {

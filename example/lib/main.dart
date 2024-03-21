@@ -17,6 +17,7 @@ import 'package:vital_flutter_example/user/user_bloc.dart';
 import 'package:vital_flutter_example/user/user_screen.dart';
 
 import 'package:vital_core/vital_core.dart' as vital_core;
+import 'package:vital_health/vital_health.dart' as vital_health;
 
 StreamSubscription? clientStatusSubscription;
 
@@ -32,6 +33,12 @@ void main() {
     );
 
   final DeviceManager deviceManager = DeviceManager();
+
+  vital_health.setSyncNotificationContent(vital_health.SyncNotificationContent(
+      "Example Sync",
+      "Syncing your data",
+      "Example Sync",
+      "Notifies when Example is syncing your data"));
 
   // Print initial SDK status, and then listen for any change.
   vital_core.clientStatus().then(
