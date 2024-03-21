@@ -1,3 +1,5 @@
+## 3.2.0-beta.1
+
 ## 3.1.8
 
  - Bump "vital_core_android" to `3.1.8`.
