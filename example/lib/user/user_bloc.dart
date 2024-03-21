@@ -22,7 +22,11 @@ class UserBloc extends ChangeNotifier {
   bool isHealthDataAvailable = false;
   bool initialSyncDone = false;
 
+  bool pauseSync = false;
+  bool isBackgroundSyncEnabled = false;
+
   bool hasDisposed = false;
+  bool showBackgroundSyncSwitch = false;
 
   Stream<String> get healthSyncStatus =>
       vital_health.syncStatus.map((event) => event.status.name);
@@ -32,6 +36,8 @@ class UserBloc extends ChangeNotifier {
       syncSDKStatus(status);
     });
     vital_core.clientStatus().then((status) => syncSDKStatus(status));
+    showBackgroundSyncSwitch =
+        !vital_health.canEnableBackgroundSyncNoninteractively;
   }
 
   @override
@@ -48,6 +54,8 @@ class UserBloc extends ChangeNotifier {
     isCurrentSDKUser = await vital_core.currentUserId() == user.userId;
     isSDKConfigured = status.contains(vital_core.ClientStatus.configured);
     isHealthDataAvailable = await vital_health.isAvailable();
+    isBackgroundSyncEnabled = await vital_health.isBackgroundSyncEnabled();
+    pauseSync = await vital_health.pauseSynchronization();
     initialSyncDone = true;
 
     if (!hasDisposed) {
@@ -182,5 +190,33 @@ class UserBloc extends ChangeNotifier {
         DateTime.now().subtract(const Duration(days: 10)), DateTime.now());
 
     Fimber.i("Read $healthResource: $result");
+  }
+
+  void setBackgroundSyncEnabled(bool enabled) {
+    // Optimistic update
+    isBackgroundSyncEnabled = enabled;
+    notifyListeners();
+
+    if (enabled) {
+      vital_health.enableBackgroundSync().then((success) {
+        isBackgroundSyncEnabled = success;
+        if (!hasDisposed) {
+          notifyListeners();
+        }
+      });
+    } else {
+      vital_health.disableBackgroundSync().then((_) {
+        isBackgroundSyncEnabled = false;
+        if (!hasDisposed) {
+          notifyListeners();
+        }
+      });
+    }
+  }
+
+  void setPauseSync(bool paused) {
+    vital_health.setPauseSynchronization(paused);
+    pauseSync = paused;
+    notifyListeners();
   }
 }
