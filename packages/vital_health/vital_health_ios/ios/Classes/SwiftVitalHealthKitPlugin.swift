@@ -107,6 +107,13 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       case "read":
         read(call.arguments as! [AnyObject], result: result)
         return
+      case "getPauseSynchronization":
+        result(VitalHealthKitClient.shared.pauseSynchronization)
+        return
+      case "setPauseSynchronization":
+        VitalHealthKitClient.shared.pauseSynchronization = call.arguments as! Bool
+        result(nil)
+        return
       default:
         break
     }

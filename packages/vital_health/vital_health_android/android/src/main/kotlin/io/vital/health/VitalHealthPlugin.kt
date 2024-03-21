@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalVitalApi::class)
+
 package io.vital.health
 
 import android.app.Activity
@@ -19,7 +21,13 @@ import io.tryvital.client.Environment
 import io.tryvital.client.Region
 import io.tryvital.client.VitalClient
 import io.tryvital.client.utils.VitalLogger
+import io.tryvital.vitalhealthconnect.DefaultSyncNotificationBuilder
+import io.tryvital.vitalhealthconnect.DefaultSyncNotificationContent
+import io.tryvital.vitalhealthconnect.ExperimentalVitalApi
 import io.tryvital.vitalhealthconnect.VitalHealthConnectManager
+import io.tryvital.vitalhealthconnect.disableBackgroundSync
+import io.tryvital.vitalhealthconnect.enableBackgroundSyncContract
+import io.tryvital.vitalhealthconnect.isBackgroundSyncEnabled
 import io.tryvital.vitalhealthconnect.model.HealthConnectAvailability
 import io.tryvital.vitalhealthconnect.model.PermissionOutcome
 import io.tryvital.vitalhealthconnect.model.SyncStatus
@@ -52,12 +60,13 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     private var activity: Activity? = null
 
     private var activeAskRequest: Pair<ActivityResultContract<Unit, Deferred<PermissionOutcome>>, Result>? = null
+    private var activeEnableBgSync: Pair<ActivityResultContract<Unit, Boolean>, Result>? = null
 
-    private var taskScope = CoroutineScope(SupervisorJob())
+    private var taskScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         taskScope.cancel()
-        taskScope = CoroutineScope(SupervisorJob())
+        taskScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "vital_health_connect")
         context = flutterPluginBinding.applicationContext
@@ -118,32 +127,38 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         logger.logI("onMethodCall: ${call.method}")
 
         when (call.method) {
-            "configureClient" -> {
-                configureClient(call, result)
-            }
-            "configureHealthConnect" -> {
-                configureHealthConnect(call, result)
-            }
-            "setUserId" -> {
-                setUserId(call, result)
-            }
-            "syncData" -> {
-                syncData(call, result)
-            }
-            "askForResources" -> {
-                askForResources(call, result)
-            }
-            "writeHealthData" -> {
-                writeHealthData(call, result)
-            }
-            "read" -> {
-                read(call, result)
-            }
+            "configureClient" -> configureClient(call, result)
+            "configureHealthConnect" -> configureHealthConnect(call, result)
+            "setUserId" -> setUserId(call, result)
+            "syncData" -> syncData(call, result)
+            "askForResources" -> askForResources(call, result)
+            "writeHealthData" -> writeHealthData(call, result)
+            "read" -> read(call, result)
+
             "isAvailable" -> {
                 result.success(
                     VitalHealthConnectManager.isAvailable(context) == HealthConnectAvailability.Installed
                 )
             }
+            "getPauseSynchronization" -> {
+                result.success(vitalHealthConnectManager.pauseSynchronization)
+            }
+            "setPauseSynchronization" -> {
+                vitalHealthConnectManager.pauseSynchronization = call.arguments<Boolean>()!!
+                result.success(null)
+            }
+            "isBackgroundSyncEnabled" -> {
+                result.success(vitalHealthConnectManager.isBackgroundSyncEnabled)
+            }
+
+            "enableBackgroundSync" -> enableBackgroundSync(call, result)
+
+            "disableBackgroundSync" -> result.execute(taskScope) {
+                vitalHealthConnectManager.disableBackgroundSync()
+                return@execute null
+            }
+
+            "setSyncNotificationContent" -> setSyncNotificationContent(call, result)
             else -> throw Exception("Unsupported method ${call.method}")
         }
     }
@@ -213,6 +228,49 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         launcher.launch(Unit)
     }
 
+    private fun enableBackgroundSync(call: MethodCall, result: Result) {
+        val availability = VitalHealthConnectManager.isAvailable(context)
+        if (availability != HealthConnectAvailability.Installed) {
+            return result.error("VitalHealthError", "Health Connect is not available: $availability", null)
+        }
+
+        if (synchronized(this) { activeEnableBgSync != null }) {
+            return result.error("VitalHealthError", "another ask request is in progress", null)
+        }
+
+        val activity = this.activity ?: return result.error("VitalHealthError", "No active Android Activity", null)
+        if (activity !is ComponentActivity) {
+            return result.error("VitalHealthError", "The MainActivity of your Flutter host app must be a `FlutterFragmentActivity` subclass for the permission request flow to function properly.", null)
+        }
+
+        val contract = vitalHealthConnectManager.enableBackgroundSyncContract()
+
+        synchronized(this) {
+            activeEnableBgSync = Pair(contract, result)
+        }
+
+        val registry = activity.activityResultRegistry
+        val launcherRef = AtomicReference<ActivityResultLauncher<*>>(null)
+        val launcher = registry.register("io.tryvital.health.enableBackgroundSync", contract) { success ->
+            val continuation = synchronized(this) {
+                val currentValue = activeEnableBgSync
+                activeEnableBgSync = null
+                return@synchronized currentValue
+            }
+
+            val launcher = launcherRef.getAndSet(null)
+            launcher?.unregister()
+
+            if (continuation != null) {
+                taskScope.launch {
+                    continuation.second.success(success)
+                }
+            }
+        }
+        launcherRef.set(launcher)
+        launcher.launch(Unit)
+    }
+
     override fun onActivityResult(p0: Int, p1: Int, p2: Intent?): Boolean {
         if (p0 == 1984) {
             val activeAskRequest = synchronized(this) { this.activeAskRequest ?: return false }
@@ -230,6 +288,23 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             return true
         }
         return false
+    }
+
+    private fun setSyncNotificationContent(call: MethodCall, result: Result) = result.execute(taskScope) {
+        val builder = vitalHealthConnectManager.syncNotificationBuilder
+        if (builder is DefaultSyncNotificationBuilder) {
+            val json = JSONObject(call.arguments<String>()!!)
+
+            builder.setContentOverride(
+                DefaultSyncNotificationContent(
+                    notificationTitle = json.getString("notificationTitle"),
+                    notificationContent = json.getString("notificationContent"),
+                    channelName = json.getString("channelName"),
+                    channelDescription = json.getString("channelDescription"),
+                )
+            )
+        }
+        return@execute null
     }
 
     private fun writeHealthData(call: MethodCall, result: Result) {

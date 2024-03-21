@@ -188,6 +188,43 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   }
 
   @override
+  Future<bool> getPauseSynchronization() {
+    return _channel
+        .invokeMethod<bool>('getPauseSynchronization')
+        .then((result) => result!);
+  }
+
+  @override
+  Future<void> setPauseSynchronization(bool paused) {
+    return _channel.invokeMethod('setPauseSynchronization', paused);
+  }
+
+  @override
+  Future<bool> isBackgroundSyncEnabled() {
+    return _channel
+        .invokeMethod<bool>('isBackgroundSyncEnabled')
+        .then((result) => result!);
+  }
+
+  @override
+  Future<bool> enableBackgroundSync() {
+    return _channel
+        .invokeMethod<bool>('enableBackgroundSync')
+        .then((result) => result!);
+  }
+
+  @override
+  Future<void> disableBackgroundSync() {
+    return _channel.invokeMethod('disableBackgroundSync');
+  }
+
+  @override
+  Future<void> setSyncNotificationContent(SyncNotificationContent content) {
+    final encodedContent = json.encode(content.toMap());
+    return _channel.invokeMethod('setSyncNotificationContent', encodedContent);
+  }
+
+  @override
   Stream<SyncStatus> get status => _statusSubject.stream;
 }
 
