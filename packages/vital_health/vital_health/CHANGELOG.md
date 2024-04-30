@@ -1,3 +1,7 @@
+## 3.2.0
+
+ - Bump "vital_health" to `3.2.0`.
+
 ## 3.2.0-beta.2
 
 ## 3.2.0-beta.1

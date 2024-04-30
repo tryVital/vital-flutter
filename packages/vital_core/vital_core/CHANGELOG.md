@@ -1,3 +1,7 @@
+## 3.2.0
+
+ - Bump "vital_core" to `3.2.0`.
+
 ## 3.2.0-beta.2
 
  - Bump "vital_core" to `3.2.0-beta.2`.
