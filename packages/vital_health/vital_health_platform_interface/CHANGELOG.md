@@ -1,3 +1,7 @@
+## 3.2.2
+
+ - Bump "vital_health_platform_interface" to `3.2.2`.
+
 ## 3.2.1
 
  - Bump "vital_health_platform_interface" to `3.2.1`.

@@ -1,3 +1,7 @@
+## 3.2.2
+
+ - Bump "vital_devices_ios" to `3.2.2`.
+
 ## 3.2.1
 
  - Bump "vital_devices_ios" to `3.2.1`.
