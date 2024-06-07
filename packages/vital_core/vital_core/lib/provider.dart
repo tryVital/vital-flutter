@@ -95,7 +95,9 @@ enum ProviderSlug {
   dexcomV3,
   cronometer,
   polar,
-  omron;
+  omron,
+  kardia,
+  abbottLibreview;
 
   static ProviderSlug? fromString(String rawValue) {
     try {
@@ -110,6 +112,8 @@ enum ProviderSlug {
   @override
   String toString() {
     switch (this) {
+      case abbottLibreview:
+        return "abbott_libreview";
       case beurerBLE:
         return "beurer_ble";
       case omronBLE:
@@ -168,6 +172,8 @@ enum ProviderSlug {
         return "polar";
       case omron:
         return "omron";
+      case kardia:
+        return "kardia";
     }
   }
 }
