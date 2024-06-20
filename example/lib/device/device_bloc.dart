@@ -17,8 +17,8 @@ class DeviceBloc extends ChangeNotifier with Disposer {
 
   List<ScannedDevice> connectedDevices = [];
   List<ScannedDevice> scannedDevices = [];
-  List<QuantitySample> glucoseMeterResults = [];
-  List<BloodPressureSample> bloodPressureMeterResults = [];
+  List<LocalQuantitySample> glucoseMeterResults = [];
+  List<LocalBloodPressureSample> bloodPressureMeterResults = [];
 
   DeviceBloc(BuildContext context, this._deviceManager, this.deviceModel) {
     _deviceManager.init();
@@ -84,7 +84,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
       case DeviceKind.bloodPressure:
         // `readBloodPressureData` delivers all data in one batch, and then completes.
         _deviceManager.readBloodPressureData(scannedDevice).then(
-            (List<BloodPressureSample> newReadings) {
+            (List<LocalBloodPressureSample> newReadings) {
           Fimber.i(
               'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 
@@ -105,7 +105,7 @@ class DeviceBloc extends ChangeNotifier with Disposer {
         break;
       case DeviceKind.glucoseMeter:
         _deviceManager.readGlucoseMeterData(scannedDevice).then(
-            (List<QuantitySample> newReadings) {
+            (List<LocalQuantitySample> newReadings) {
           Fimber.i(
               'Received ${newReadings.length} samples from device: ${scannedDevice.deviceModel.name}');
 

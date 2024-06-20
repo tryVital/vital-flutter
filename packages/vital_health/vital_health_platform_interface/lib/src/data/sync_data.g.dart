@@ -10,38 +10,46 @@ ActivitySummary _$ActivitySummaryFromJson(Map<String, dynamic> json) =>
     ActivitySummary(
       date: DateTime.parse(json['date'] as String),
       activeEnergyBurned: (json['activeEnergyBurned'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       basalEnergyBurned: (json['basalEnergyBurned'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       steps: (json['steps'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       floorsClimbed: (json['floorsClimbed'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       distanceWalkingRunning: (json['distanceWalkingRunning'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       vo2Max: (json['vo2Max'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );
 
 BodySummary _$BodySummaryFromJson(Map<String, dynamic> json) => BodySummary(
       bodyMass: (json['bodyMass'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       bodyFatPercentage: (json['bodyFatPercentage'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );
@@ -52,23 +60,28 @@ SleepSummary _$SleepSummaryFromJson(Map<String, dynamic> json) => SleepSummary(
       endDate: DateTime.parse(json['endDate'] as String),
       sourceBundle: json['sourceBundle'] as String,
       heartRate: (json['heartRate'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       restingHeartRate: (json['restingHeartRate'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       heartRateVariability: (json['heartRateVariability'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       oxygenSaturation: (json['oxygenSaturation'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       respiratoryRate: (json['respiratoryRate'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );
@@ -83,11 +96,13 @@ WorkoutSummary _$WorkoutSummaryFromJson(Map<String, dynamic> json) =>
       calories: (json['calories'] as num).toDouble(),
       distance: (json['distance'] as num).toDouble(),
       heartRate: (json['heartRate'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       respiratoryRate: (json['respiratoryRate'] as List<dynamic>?)
-              ?.map((e) => QuantitySample.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  LocalQuantitySample.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );

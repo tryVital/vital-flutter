@@ -13,19 +13,8 @@ part 'user_service.chopper.dart';
 
 @ChopperApi()
 abstract class UserService extends ChopperService {
-  @Get(path: 'user/')
-  Future<Response<GetAllUsersResponse>> getAll();
-
   @Get(path: 'user/{user_id}')
   Future<Response<User>> getUser(@Path('user_id') String userId);
-
-  @Post(path: '/user')
-  @FactoryConverter(
-    request: JsonConverter.requestFactory,
-  )
-  Future<Response<CreateUserResponse>> createUser(
-      @Field('client_user_id') String clientUserId,
-      {@Field('fallback_time_zone') String? fallbackTimeZone});
 
   @Patch(path: '/user/{user_id}')
   @FactoryConverter(
@@ -33,21 +22,6 @@ abstract class UserService extends ChopperService {
   )
   Future<Response<NoContent>> patchUser(@Path('user_id') String userId,
       {@Field('fallback_time_zone') String? fallbackTimeZone});
-
-  @Post(path: '/user/{user_id}/sign_in_token', optionalBody: true)
-  @FactoryConverter(
-    request: JsonConverter.requestFactory,
-  )
-  Future<Response<CreateSignInTokenResponse>> createSignInToken(
-      @Path('user_id') String userId);
-
-  @Delete(path: 'user/{user_id}')
-  Future<Response<DeleteUserResponse>> deleteUser(
-      @Path('user_id') String userId);
-
-  @Get(path: '/user/key/{client_user_id}')
-  Future<Response<User>> resolveUser(
-      @Path('client_user_id') String clientUserId);
 
   @Delete(path: '/user/{user_id}/{provider}')
   Future<Response<DeregisterProviderResponse>> deregisterProvider(
@@ -71,12 +45,7 @@ abstract class UserService extends ChopperService {
           User: User.fromJson,
           UserFallbackTimeZone: UserFallbackTimeZone.fromJson,
           RefreshResponse: RefreshResponse.fromJson,
-          ProvidersResponse: ProvidersResponse.fromJson,
-          CreateUserResponse: CreateUserResponse.fromJson,
-          DeleteUserResponse: DeleteUserResponse.fromJson,
           DeregisterProviderResponse: DeregisterProviderResponse.fromJson,
-          GetAllUsersResponse: GetAllUsersResponse.fromJson,
-          CreateSignInTokenResponse: CreateSignInTokenResponse.fromJson,
         }));
 
     return _$UserService(client);

@@ -245,11 +245,11 @@ ProcessedData _mapJsonToProcessedData(
       return BodyProcessedData(
         bodyMass: (json['bodyMass'] as List<dynamic>)
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList(),
         bodyFatPercentage: (json['bodyFatPercentage'] as List<dynamic>)
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList(),
       );
     case HealthResource.workout:
@@ -299,35 +299,35 @@ ProcessedData _mapJsonToProcessedData(
       return GlucoseProcessedData(
         timeSeries: (json['timeSeries'] as List<dynamic>)
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList(),
       );
     case HealthResource.bloodPressure:
       return BloodPressureProcessedData(
         timeSeries: (json['timeSeries'] as List<dynamic>)
             .map((it) => _bloodPressureSampleFromJson(it))
-            .whereType<BloodPressureSample>()
+            .whereType<LocalBloodPressureSample>()
             .toList(),
       );
     case HealthResource.heartRate:
       return HeartRateProcessedData(
         timeSeries: (json['timeSeries'] as List<dynamic>)
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList(),
       );
     case HealthResource.heartRateVariability:
       return HeartRateVariabilityProcessedData(
         timeSeries: (json['timeSeries'] as List<dynamic>)
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList(),
       );
     case HealthResource.water:
       return WaterProcessedData(
         timeSeries: (json['timeSeries'] as List<dynamic>)
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList(),
       );
     case HealthResource.caffeine:
@@ -354,64 +354,64 @@ Sleep? _sleepFromJson(Map<dynamic, dynamic>? json) {
     heartRate: (json['heartRate'] != null
         ? json['heartRate']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     respiratoryRate: (json['respiratoryRate'] != null
         ? json['respiratoryRate']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     heartRateVariability: (json['heartRateVariability'] != null
         ? json['heartRateVariability']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     oxygenSaturation: (json['oxygenSaturation'] != null
         ? json['oxygenSaturation']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     restingHeartRate: (json['restingHeartRate'] != null
         ? json['restingHeartRate']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     sleepStages: SleepStages(
       awakeSleepSamples: json['sleepStages']['awakeSleepSamples'] != null
           ? (json['sleepStages']['awakeSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
-              .whereType<QuantitySample>()
+              .whereType<LocalQuantitySample>()
               .toList()
-          : <QuantitySample>[],
+          : <LocalQuantitySample>[],
       deepSleepSamples: json['sleepStages']['deepSleepSamples'] != null
           ? (json['sleepStages']['deepSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
-              .whereType<QuantitySample>()
+              .whereType<LocalQuantitySample>()
               .toList()
-          : <QuantitySample>[],
+          : <LocalQuantitySample>[],
       lightSleepSamples: json['sleepStages']['lightSleepSamples'] != null
           ? (json['sleepStages']['lightSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
-              .whereType<QuantitySample>()
+              .whereType<LocalQuantitySample>()
               .toList()
-          : <QuantitySample>[],
+          : <LocalQuantitySample>[],
       remSleepSamples: json['sleepStages']['remSleepSamples'] != null
           ? (json['sleepStages']['remSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
-              .whereType<QuantitySample>()
+              .whereType<LocalQuantitySample>()
               .toList()
-          : <QuantitySample>[],
+          : <LocalQuantitySample>[],
       unknownSleepSamples: json['sleepStages']['unknownSleepSamples'] != null
           ? (json['sleepStages']['unknownSleepSamples'] as List<dynamic>)
               .map((it) => _sampleFromJson(it))
-              .whereType<QuantitySample>()
+              .whereType<LocalQuantitySample>()
               .toList()
-          : <QuantitySample>[],
+          : <LocalQuantitySample>[],
       inBedSleepSamples: [],
       unspecifiedSleepSamples: [],
     ),
@@ -438,15 +438,15 @@ Workout? _workoutFromJson(Map<dynamic, dynamic>? json) {
     heartRate: (json['heartRate'] != null
         ? json['heartRate']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     respiratoryRate: (json['respiratoryRate'] != null
         ? json['respiratoryRate']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
   );
 }
 
@@ -458,39 +458,39 @@ Activity? _activityFromSwiftJson(Map<dynamic, dynamic>? json) {
     distanceWalkingRunning: (json['distanceWalkingRunning'] != null
         ? json['distanceWalkingRunning']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     activeEnergyBurned: (json['activeEnergyBurned'] != null
         ? json['activeEnergyBurned']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     basalEnergyBurned: (json['basalEnergyBurned'] != null
         ? json['basalEnergyBurned']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     steps: (json['steps'] != null
         ? json['steps']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     floorsClimbed: (json['floorsClimbed'] != null
         ? json['floorsClimbed']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
     vo2Max: (json['vo2Max'] != null
         ? json['vo2Max']
             .map((it) => _sampleFromJson(it))
-            .whereType<QuantitySample>()
+            .whereType<LocalQuantitySample>()
             .toList()
-        : <QuantitySample>[]),
+        : <LocalQuantitySample>[]),
   );
 }
 
@@ -520,9 +520,9 @@ SyncStatus mapArgumentsToStatus(List<dynamic> arguments) {
   }
 }
 
-BloodPressureSample? _bloodPressureSampleFromJson(e) {
+LocalBloodPressureSample? _bloodPressureSampleFromJson(e) {
   try {
-    return BloodPressureSample(
+    return LocalBloodPressureSample(
       systolic: _sampleFromJson(e["systolic"])!,
       diastolic: _sampleFromJson(e["diastolic"])!,
       pulse: e["pulse"] != null ? _sampleFromJson(e["pulse"]) : null,
@@ -533,9 +533,9 @@ BloodPressureSample? _bloodPressureSampleFromJson(e) {
   }
 }
 
-QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
+LocalQuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   try {
-    return QuantitySample(
+    return LocalQuantitySample(
       id: json['id'] as String?,
       value: (json['value'] as num).toDouble(),
       unit: json['unit'] as String,

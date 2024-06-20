@@ -42,45 +42,8 @@ RefreshResponse _$RefreshResponseFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-ProvidersResponse _$ProvidersResponseFromJson(Map<String, dynamic> json) =>
-    ProvidersResponse(
-      providers: (json['providers'] as List<dynamic>?)
-              ?.map(
-                  (e) => AvailableProvider.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-    );
-
-CreateUserResponse _$CreateUserResponseFromJson(Map<String, dynamic> json) =>
-    CreateUserResponse(
-      userId: json['user_id'] as String?,
-      userKey: json['user_key'] as String?,
-      clientUserId: json['client_user_id'] as String?,
-    );
-
-CreateSignInTokenResponse _$CreateSignInTokenResponseFromJson(
-        Map<String, dynamic> json) =>
-    CreateSignInTokenResponse(
-      userId: json['user_id'] as String,
-      signInToken: json['sign_in_token'] as String,
-    );
-
-DeleteUserResponse _$DeleteUserResponseFromJson(Map<String, dynamic> json) =>
-    DeleteUserResponse(
-      success: json['success'] as bool? ?? false,
-      error: json['error'] as String?,
-    );
-
 DeregisterProviderResponse _$DeregisterProviderResponseFromJson(
         Map<String, dynamic> json) =>
     DeregisterProviderResponse(
       success: json['success'] as bool? ?? false,
-    );
-
-GetAllUsersResponse _$GetAllUsersResponseFromJson(Map<String, dynamic> json) =>
-    GetAllUsersResponse(
-      users: (json['users'] as List<dynamic>?)
-              ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
     );

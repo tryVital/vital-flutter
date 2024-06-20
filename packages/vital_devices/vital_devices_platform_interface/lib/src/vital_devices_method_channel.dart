@@ -13,8 +13,9 @@ const _channel = MethodChannel('vital_devices');
 
 class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   final _scanSubject = PublishSubject<ScannedDevice>();
-  final _glucoseReadSubject = PublishSubject<List<QuantitySample>>();
-  final _bloodPressureSubject = PublishSubject<List<BloodPressureSample>>();
+  final _glucoseReadSubject = PublishSubject<List<LocalQuantitySample>>();
+  final _bloodPressureSubject =
+      PublishSubject<List<LocalBloodPressureSample>>();
 
   @override
   void init() {
@@ -46,7 +47,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
               _glucoseReadSubject.sink.add(
                 decodedArguments
                     .map((e) => _sampleFromJson(e))
-                    .whereType<QuantitySample>()
+                    .whereType<LocalQuantitySample>()
                     .toList(),
               );
             }
@@ -67,7 +68,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
               _bloodPressureSubject.sink.add(
                 decodedArguments
                     .map((e) => _bloodPressureSampleFromJson(e))
-                    .whereType<BloodPressureSample>()
+                    .whereType<LocalBloodPressureSample>()
                     .toList(),
               );
             }
@@ -140,7 +141,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 
   @override
-  Future<List<QuantitySample>> readGlucoseMeterData(
+  Future<List<LocalQuantitySample>> readGlucoseMeterData(
       ScannedDevice scannedDevice) {
     return _checkPermissions()
         .then((value) => _channel
@@ -156,7 +157,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 
   @override
-  Future<List<BloodPressureSample>> readBloodPressureData(
+  Future<List<LocalBloodPressureSample>> readBloodPressureData(
       ScannedDevice scannedDevice) {
     return _checkPermissions()
         .then((value) => _channel
@@ -236,9 +237,9 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
   }
 }
 
-BloodPressureSample? _bloodPressureSampleFromJson(e) {
+LocalBloodPressureSample? _bloodPressureSampleFromJson(e) {
   try {
-    return BloodPressureSample(
+    return LocalBloodPressureSample(
       systolic: _sampleFromJson(e["systolic"])!,
       diastolic: _sampleFromJson(e["diastolic"])!,
       pulse: e["pulse"] != null ? _sampleFromJson(e["pulse"]) : null,
@@ -249,9 +250,9 @@ BloodPressureSample? _bloodPressureSampleFromJson(e) {
   }
 }
 
-QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
+LocalQuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
   try {
-    return QuantitySample(
+    return LocalQuantitySample(
       id: json['id'] as String?,
       value: (json['value'] as num).toDouble(),
       unit: json['unit'] as String,

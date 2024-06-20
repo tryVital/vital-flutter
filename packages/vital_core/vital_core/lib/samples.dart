@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'samples.g.dart';
 
 @JsonSerializable(createToJson: false)
-class QuantitySample {
+class LocalQuantitySample {
   final String? id;
   final double value;
   final DateTime startDate;
@@ -12,7 +12,7 @@ class QuantitySample {
   final String? type;
   final String unit;
 
-  QuantitySample({
+  LocalQuantitySample({
     this.id,
     required this.value,
     required this.startDate,
@@ -22,32 +22,32 @@ class QuantitySample {
     required this.unit,
   });
 
-  factory QuantitySample.fromJson(Map<String, dynamic> json) =>
-      _$QuantitySampleFromJson(json);
+  factory LocalQuantitySample.fromJson(Map<String, dynamic> json) =>
+      _$LocalQuantitySampleFromJson(json);
 
   @override
   String toString() {
-    return 'QuantitySample{id: $id, value: $value, startDate: $startDate, endDate: $endDate, sourceBundle: $sourceBundle, type: $type, unit: $unit}';
+    return 'LocalQuantitySample{id: $id, value: $value, startDate: $startDate, endDate: $endDate, sourceBundle: $sourceBundle, type: $type, unit: $unit}';
   }
 }
 
 @JsonSerializable(createToJson: false)
-class BloodPressureSample {
-  final QuantitySample systolic;
-  final QuantitySample diastolic;
-  final QuantitySample? pulse;
+class LocalBloodPressureSample {
+  final LocalQuantitySample systolic;
+  final LocalQuantitySample diastolic;
+  final LocalQuantitySample? pulse;
 
-  BloodPressureSample({
+  LocalBloodPressureSample({
     required this.systolic,
     required this.diastolic,
     this.pulse,
   });
 
-  factory BloodPressureSample.fromJson(Map<String, dynamic> json) =>
-      _$BloodPressureSampleFromJson(json);
+  factory LocalBloodPressureSample.fromJson(Map<String, dynamic> json) =>
+      _$LocalBloodPressureSampleFromJson(json);
 
   @override
   String toString() {
-    return 'BloodPressureSample{systolic: $systolic, diastolic: $diastolic, pulse: $pulse}';
+    return 'LocalBloodPressureSample{systolic: $systolic, diastolic: $diastolic, pulse: $pulse}';
   }
 }
