@@ -255,12 +255,8 @@ QuantitySample? _sampleFromJson(Map<dynamic, dynamic> json) {
       id: json['id'] as String?,
       value: (json['value'] as num).toDouble(),
       unit: json['unit'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch(
-          (json['startDate'] as num).toInt(),
-          isUtc: true),
-      endDate: DateTime.fromMillisecondsSinceEpoch(
-          (json['endDate'] as num).toInt(),
-          isUtc: true),
+      startDate: DateTime.parse(json['startDate'] as String),
+      endDate: DateTime.parse(json['endDate'] as String),
       type: json['type'] as String?,
     );
   } catch (e, stacktrace) {

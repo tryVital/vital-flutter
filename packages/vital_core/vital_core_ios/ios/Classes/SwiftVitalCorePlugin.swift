@@ -126,30 +126,38 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
           reportError(error)
         }
 
-      case "userConnectedSources":
+      case "userConnections":
         do {
-          let providers = try await VitalClient.shared.user.userConnectedSources()
-            .map { ["name": $0.name, "slug": $0.slug.rawValue, "logo": $0.logo] }
-          let jsonString = String(data: try JSONEncoder().encode(providers), encoding: .utf8)!
+          let providers = try await VitalClient.shared.user.userConnections().map {
+            [
+              "name": $0.name,
+              "slug": $0.slug.rawValue,
+              "logo": $0.logo,
+              "status": $0.status,
+              "resourceAvailability": Dictionary(
+                uniqueKeysWithValues: $0.resourceAvailability.map { resource, descriptor in
+                  (resource.rawValue, [
+                    "status": descriptor.status.rawValue,
+                    "scopeRequirements": descriptor.scopeRequirements.map { req in
+                      [
+                        "userGranted": [
+                          "required": req.userGranted.required,
+                          "optional": req.userGranted.optional,
+                        ],
+                        "userDenied": [
+                          "required": req.userDenied.required,
+                          "optional": req.userDenied.optional,
+                        ],
+                      ]
+                    } as Any
+                  ])
+                }
+              )
+            ]
+          }
+          let jsonString = try JSONSerialization.data(withJSONObject: providers)
           // NOTE: Dart end expects a JSON string
-          result(jsonString)
-
-        } catch let error {
-          reportError(error)
-        }
-
-      case "createConnectedSourceIfNotExist":
-        guard
-          let arguments = call.arguments as? [String: AnyHashable],
-          let rawProvider = arguments["provider"] as? String
-        else { return reportInvalidArguments() }
-
-        guard let provider = Provider.Slug(rawValue: rawProvider)
-          else { return reportInvalidArguments(context: "unrecognized provider \(rawProvider)") }
-
-        do {
-          try await VitalClient.shared.checkConnectedSource(for: provider)
-          result(nil)
+          result(String(data: jsonString, encoding: .utf8))
 
         } catch let error {
           reportError(error)

@@ -20,6 +20,7 @@ import io.flutter.plugin.common.PluginRegistry
 import io.tryvital.client.Environment
 import io.tryvital.client.Region
 import io.tryvital.client.VitalClient
+import io.tryvital.client.services.data.LocalQuantitySample
 import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitalhealthconnect.DefaultSyncNotificationBuilder
 import io.tryvital.vitalhealthconnect.DefaultSyncNotificationContent
@@ -34,7 +35,6 @@ import io.tryvital.vitalhealthconnect.model.SyncStatus
 import io.tryvital.vitalhealthconnect.model.VitalResource
 import io.tryvital.vitalhealthconnect.model.WritableVitalResource
 import io.tryvital.vitalhealthconnect.model.processedresource.ProcessedResourceData
-import io.tryvital.vitalhealthconnect.model.processedresource.QuantitySample
 import io.tryvital.vitalhealthconnect.model.processedresource.SummaryData
 import io.tryvital.vitalhealthconnect.model.processedresource.TimeSeriesData
 import kotlinx.coroutines.*
@@ -338,7 +338,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                             JSONObject(
                                 mapOf(
                                     "biologicalSex" to (readResult.summaryData as SummaryData.Profile).biologicalSex,
-                                    "dateOfBirth" to (readResult.summaryData as SummaryData.Profile).dateOfBirth.time,
+                                    "dateOfBirth" to (readResult.summaryData as SummaryData.Profile).dateOfBirth.toString(),
                                     "heightInCm" to (readResult.summaryData as SummaryData.Profile).heightInCm,
                                 )
                             ).toString()
@@ -406,8 +406,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                     "workouts" to JSONArray((readResult.summaryData as SummaryData.Workouts).samples.map {
                                         JSONObject().apply {
                                             put("id", it.id)
-                                            put("startDate", it.startDate.time)
-                                            put("endDate", it.endDate.time)
+                                            put("startDate", it.startDate.toString())
+                                            put("endDate", it.endDate.toString())
                                             put("sourceBundle", it.sourceBundle)
                                             put("deviceModel", it.deviceModel)
                                             put("sport", it.sport)
@@ -440,8 +440,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                     "sleeps" to JSONArray((readResult.summaryData as SummaryData.Sleeps).samples.map {
                                         JSONObject().apply {
                                             put("id", it.id)
-                                            put("startDate", it.startDate.time)
-                                            put("endDate", it.endDate.time)
+                                            put("startDate", it.startDate.toString())
+                                            put("endDate", it.endDate.toString())
                                             put("sourceBundle", it.sourceBundle)
                                             put("deviceModel", it.deviceModel)
                                             put(
@@ -477,32 +477,32 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                             put("sleepStages", JSONObject().apply {
                                                 put(
                                                     "awakeSleepSamples",
-                                                    it.stages.awakeSleepSamples.map {
+                                                    it.sleepStages.awakeSleepSamples.map {
                                                         mapSampleToJson(it)
                                                     })
                                                 put(
                                                     "deepSleepSamples",
-                                                    it.stages.deepSleepSamples.map {
+                                                    it.sleepStages.deepSleepSamples.map {
                                                         mapSampleToJson(it)
                                                     })
                                                 put(
                                                     "lightSleepSamples",
-                                                    it.stages.lightSleepSamples.map {
+                                                    it.sleepStages.lightSleepSamples.map {
                                                         mapSampleToJson(it)
                                                     })
                                                 put(
                                                     "remSleepSamples",
-                                                    it.stages.remSleepSamples.map {
+                                                    it.sleepStages.remSleepSamples.map {
                                                         mapSampleToJson(it)
                                                     })
                                                 put(
                                                     "outOfBedSleepSamples",
-                                                    it.stages.outOfBedSleepSamples.map {
+                                                    it.sleepStages.outOfBedSleepSamples.map {
                                                         mapSampleToJson(it)
                                                     })
                                                 put(
                                                     "unknownSleepSamples",
-                                                    it.stages.unknownSleepSamples.map {
+                                                    it.sleepStages.unknownSleepSamples.map {
                                                         mapSampleToJson(it)
                                                     })
                                             })
@@ -618,17 +618,16 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 }
 
-private fun mapSampleToJson(it: QuantitySample): JSONObject {
+private fun mapSampleToJson(it: LocalQuantitySample): JSONObject {
     return JSONObject().apply {
         put("id", it.id)
         put("value", it.value)
         put("unit", it.unit)
-        put("startDate", it.startDate.time)
-        put("endDate", it.endDate.time)
+        put("startDate", it.startDate.toString())
+        put("endDate", it.endDate.toString())
         put("sourceBundle", it.sourceBundle)
         put("deviceModel", it.deviceModel)
         put("type", it.type)
-        put("metadata", it.metadata)
     }
 }
 

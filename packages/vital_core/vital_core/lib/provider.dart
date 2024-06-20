@@ -7,69 +7,111 @@ part 'provider.g.dart';
 // when the package is imported without namespacing
 
 @JsonSerializable(createToJson: false)
-class VitalProvider {
+class UserConnection {
   String name;
-  String slug;
-  String? logo;
 
-  VitalProvider({
+  @JsonKey(unknownEnumValue: ProviderSlug.unrecognized)
+  ProviderSlug slug;
+
+  String? logo;
+  UserConnectionStatus status;
+
+  Map<String, ResourceAvailability> resourceAvailability;
+
+  UserConnection({
     required this.name,
     required this.slug,
     this.logo,
+    required this.status,
+    required this.resourceAvailability,
   });
 
-  factory VitalProvider.fromJson(Map<String, dynamic> json) =>
-      _$VitalProviderFromJson(json);
-
-  ProviderSlug? resolveSlug() {
-    try {
-      return ProviderSlug.values
-          .firstWhere((slug) => slug.toString() == this.slug);
-    } catch (err) {
-      assert(err is StateError);
-      return null;
-    }
-  }
+  factory UserConnection.fromJson(Map<String, dynamic> json) =>
+      _$UserConnectionFromJson(json);
 }
 
+enum UserConnectionStatus {
+  connected,
+  error,
+  paused;
+}
+
+@JsonSerializable(createToJson: false)
+class ResourceAvailability {
+  ResourceAvailabilityStatus status;
+  ScopeRequirementsGrants? scopeRequirements;
+
+  ResourceAvailability({
+    required this.status,
+    this.scopeRequirements,
+  });
+
+  factory ResourceAvailability.fromJson(Map<String, dynamic> json) =>
+      _$ResourceAvailabilityFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
+class ScopeRequirementsGrants {
+  ScopeRequirements userGranted;
+  ScopeRequirements userDenied;
+
+  ScopeRequirementsGrants({
+    required this.userGranted,
+    required this.userDenied,
+  });
+
+  factory ScopeRequirementsGrants.fromJson(Map<String, dynamic> json) =>
+      _$ScopeRequirementsGrantsFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
+class ScopeRequirements {
+  List<String> required;
+  List<String> optional;
+
+  ScopeRequirements({
+    required this.required,
+    required this.optional,
+  });
+
+  factory ScopeRequirements.fromJson(Map<String, dynamic> json) =>
+      _$ScopeRequirementsFromJson(json);
+}
+
+@JsonEnum(fieldRename: FieldRename.snake)
+enum ResourceAvailabilityStatus {
+  available,
+  unavailable;
+}
+
+@JsonEnum(fieldRename: FieldRename.snake)
 enum ManualProviderSlug {
+  @JsonValue("beurer_ble")
   beurerBLE,
+  @JsonValue("omron_ble")
   omronBLE,
+  @JsonValue("accuchek_ble")
   accuchekBLE,
+  @JsonValue("contour_ble")
   contourBLE,
+  @JsonValue("libre_ble")
   libreBLE,
   manual,
   appleHealthKit,
   healthConnect;
-
-  @override
-  String toString() {
-    switch (this) {
-      case beurerBLE:
-        return "beurer_ble";
-      case omronBLE:
-        return "omron_ble";
-      case accuchekBLE:
-        return "accuchek_ble";
-      case contourBLE:
-        return "contour_ble";
-      case libreBLE:
-        return "freestyle_libre_ble";
-      case manual:
-        return "manual";
-      case appleHealthKit:
-        return "apple_health_kit";
-      case healthConnect:
-        return "health_connect";
-    }
-  }
 }
 
+@JsonEnum(fieldRename: FieldRename.snake)
 enum ProviderSlug {
+  @JsonValue("beurer_ble")
   beurerBLE,
+  @JsonValue("omron_ble")
   omronBLE,
+  @JsonValue("accuchek_ble")
   accuchekBLE,
+  @JsonValue("contour_ble")
   contourBLE,
+  @JsonValue("libre_ble")
   libreBLE,
   manual,
   appleHealthKit,
@@ -97,83 +139,12 @@ enum ProviderSlug {
   polar,
   omron,
   kardia,
-  abbottLibreview;
+  abbottLibreview,
 
-  static ProviderSlug? fromString(String rawValue) {
-    try {
-      return ProviderSlug.values
-          .firstWhere((element) => element.toString() == rawValue);
-    } catch (err) {
-      assert(err is StateError);
-      return null;
-    }
-  }
+  unrecognized;
 
-  @override
-  String toString() {
-    switch (this) {
-      case abbottLibreview:
-        return "abbott_libreview";
-      case beurerBLE:
-        return "beurer_ble";
-      case omronBLE:
-        return "omron_ble";
-      case accuchekBLE:
-        return "accuchek_ble";
-      case contourBLE:
-        return "contour_ble";
-      case libreBLE:
-        return "freestyle_libre_ble";
-      case manual:
-        return "manual";
-      case appleHealthKit:
-        return "apple_health_kit";
-      case healthConnect:
-        return "health_connect";
-      case iHealth:
-        return "ihealth";
-      case oura:
-        return "oura";
-      case garmin:
-        return "garmin";
-      case fitbit:
-        return "fitbit";
-      case libre:
-        return "freestyle_libre";
-      case whoop:
-        return "whoop";
-      case strava:
-        return "strava";
-      case renpho:
-        return "renpho";
-      case peloton:
-        return "peloton";
-      case wahoo:
-        return "wahoo";
-      case zwift:
-        return "zwift";
-      case eightSleep:
-        return "eight_sleep";
-      case withings:
-        return "withings";
-      case googleFit:
-        return "google_fit";
-      case hammerhead:
-        return "hammerhead";
-      case dexcom:
-        return "dexcom";
-      case myFitnessPal:
-        return "my_fitness_pal";
-      case dexcomV3:
-        return "dexcom_v3";
-      case cronometer:
-        return "cronometer";
-      case polar:
-        return "polar";
-      case omron:
-        return "omron";
-      case kardia:
-        return "kardia";
-    }
+  static ProviderSlug fromString(String rawValue) {
+    return $enumDecode(_$ProviderSlugEnumMap, rawValue,
+        unknownValue: ProviderSlug.unrecognized);
   }
 }

@@ -50,16 +50,11 @@ Future<bool> hasUserConnectedTo(ProviderSlug provider) {
   return VitalCorePlatform.instance.hasUserConnectedTo(provider.toString());
 }
 
-Future<List<VitalProvider>> userConnectedSources() {
-  return VitalCorePlatform.instance.userConnectedSources().then((json) {
+Future<List<UserConnection>> userConnections() {
+  return VitalCorePlatform.instance.userConnections().then((json) {
     List data = jsonDecode(json);
-    return data.map((item) => VitalProvider.fromJson(item)).toList();
+    return data.map((item) => UserConnection.fromJson(item)).toList();
   });
-}
-
-Future<void> createConnectedSourceIfNotExist(ManualProviderSlug provider) {
-  return VitalCorePlatform.instance
-      .createConnectedSourceIfNotExist(provider.toString());
 }
 
 Future<void> deregisterProvider(ProviderSlug provider) {
@@ -68,11 +63,6 @@ Future<void> deregisterProvider(ProviderSlug provider) {
 
 Future<void> signOut() {
   return VitalCorePlatform.instance.signOut();
-}
-
-@Deprecated("Renamed to `signOut()`.")
-Future<void> cleanUp() {
-  return signOut();
 }
 
 Future<String> getAccessToken() {

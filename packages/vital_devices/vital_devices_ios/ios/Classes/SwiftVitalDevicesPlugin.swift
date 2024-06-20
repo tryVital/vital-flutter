@@ -309,7 +309,7 @@ private func mapStringToKind(_ kindId: String) throws -> DeviceModel.Kind  {
 private func encode(_ encodable: Encodable) -> String? {
   let json: String?
   let jsonEncoder = JSONEncoder()
-  jsonEncoder.dateEncodingStrategy = .millisecondsSince1970
+  jsonEncoder.dateEncodingStrategy = .iso8601
 
   if let data = try? encode(encodable, encoder: jsonEncoder) {
     json = String(data: data, encoding: .utf8)

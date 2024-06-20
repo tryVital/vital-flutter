@@ -72,17 +72,11 @@ class VitalCoreMethodChannel extends VitalCorePlatform {
   }
 
   @override
-  Future<String> userConnectedSources() {
+  Future<String> userConnections() {
     // NOTE: Native to respond with a JSON string
     return _channel
         .invokeMethod("userConnectedSources")
         .then((value) => value as String);
-  }
-
-  @override
-  Future<void> createConnectedSourceIfNotExist(String provider) {
-    return _channel.invokeMethod(
-        "createConnectedSourceIfNotExist", {"provider": provider});
   }
 
   @override
