@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:vital_core/core.dart' as vital_core;
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 // NOTE: All methods are exposed as top-level functions, without a "VitalHealth"
@@ -48,12 +47,6 @@ Future<void> writeHealthData(HealthResourceWrite writeResource,
 Future<ProcessedData?> read(
     HealthResource resource, DateTime startDate, DateTime endDate) {
   return VitalHealthPlatform.instance.read(resource, startDate, endDate);
-}
-
-@Deprecated(
-    "Use `vital_core.signOut()`, which now resets both Vital Core and Health SDKs.")
-Future<void> cleanUp() async {
-  await vital_core.signOut();
 }
 
 bool get canEnableBackgroundSyncNoninteractively {
