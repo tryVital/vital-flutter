@@ -29,24 +29,6 @@ abstract class SleepService extends ChopperService {
         endDate?.toIso8601String(), provider);
   }
 
-  @Get(path: 'summary/sleep/{user_id}/stream')
-  Future<Response<SleepResponse>> _getSleepStreamSeries(
-    @Path('user_id') String userId,
-    @Query('start_date') String startDate,
-    @Query('end_date') String? endDate,
-    @Query('provider') String? provider,
-  );
-
-  Future<Response<SleepResponse>> getSleepStreamSeries(
-    @Path('user_id') String userId,
-    @Query('start_date') DateTime startDate,
-    @Query('end_date') DateTime? endDate,
-    @Query('provider') String? provider,
-  ) {
-    return _getSleepStreamSeries(userId, startDate.toIso8601String(),
-        endDate?.toIso8601String(), provider);
-  }
-
   @Get(path: 'summary/sleep/{user_id}/raw')
   Future<Response<Object>> _getSleepDataRaw(
     @Path('user_id') String userId,
@@ -65,10 +47,6 @@ abstract class SleepService extends ChopperService {
         endDate?.toIso8601String(), provider);
   }
 
-  @Get(path: 'timeseries/sleep/{sleep_id}/stream')
-  Future<Response<SleepStreamResponse>> getSleepStream(
-      @Path('sleep_id') String sleepId);
-
   static SleepService create(
       http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
     final client = ChopperClient(
@@ -80,7 +58,6 @@ abstract class SleepService extends ChopperService {
       ],
       converter: const JsonSerializableConverter({
         SleepResponse: SleepResponse.fromJson,
-        SleepStreamResponse: SleepStreamResponse.fromJson,
       }),
     );
 

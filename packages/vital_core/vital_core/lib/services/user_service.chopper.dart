@@ -116,17 +116,6 @@ final class _$UserService extends UserService {
   }
 
   @override
-  Future<Response<ProvidersResponse>> getProviders(String userId) {
-    final Uri $url = Uri.parse('/user/providers/${userId}');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<ProvidersResponse, ProvidersResponse>($request);
-  }
-
-  @override
   Future<Response<DeregisterProviderResponse>> deregisterProvider(
     String userId,
     String provider,

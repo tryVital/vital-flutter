@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'user.dart';
+import 'package:vital_core/services/data/source.dart';
 
 part 'body.g.dart';
 
@@ -15,23 +15,19 @@ class BodyDataResponse {
       _$BodyDataResponseFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class BodyData {
-  @JsonKey(name: 'user_id')
   String? userId;
-  @JsonKey(name: 'user_key')
-  String? userKey;
   String id;
-  DateTime date;
+  String calendarDate;
   double? weight;
   double? fat;
   Source source;
 
   BodyData({
     this.userId,
-    this.userKey,
     required this.id,
-    required this.date,
+    required this.calendarDate,
     this.weight,
     this.fat,
     required this.source,

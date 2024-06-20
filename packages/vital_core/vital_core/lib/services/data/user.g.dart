@@ -7,17 +7,10 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-      userId: json['user_id'] as String?,
-      userKey: json['user_key'] as String?,
-      teamId: json['team_id'] as String?,
-      clientUserId: json['client_user_id'] as String?,
-      createdOn: json['created_on'] == null
-          ? null
-          : DateTime.parse(json['created_on'] as String),
-      connectedSources: (json['connected_sources'] as List<dynamic>?)
-              ?.map((e) => ConnectedSource.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
+      userId: json['user_id'] as String,
+      teamId: json['team_id'] as String,
+      clientUserId: json['client_user_id'] as String,
+      createdOn: DateTime.parse(json['created_on'] as String),
       fallbackTimeZone: json['fallback_time_zone'] == null
           ? null
           : UserFallbackTimeZone.fromJson(
@@ -32,22 +25,6 @@ UserFallbackTimeZone _$UserFallbackTimeZoneFromJson(
       json['updated_at'] == null
           ? null
           : DateTime.parse(json['updated_at'] as String),
-    );
-
-ConnectedSource _$ConnectedSourceFromJson(Map<String, dynamic> json) =>
-    ConnectedSource(
-      source: json['source'] == null
-          ? null
-          : Source.fromJson(json['source'] as Map<String, dynamic>),
-      createdOn: json['created_on'] == null
-          ? null
-          : DateTime.parse(json['created_on'] as String),
-    );
-
-Source _$SourceFromJson(Map<String, dynamic> json) => Source(
-      name: json['name'] as String?,
-      slug: json['slug'] as String?,
-      logo: json['logo'] as String?,
     );
 
 RefreshResponse _$RefreshResponseFromJson(Map<String, dynamic> json) =>
@@ -68,7 +45,8 @@ RefreshResponse _$RefreshResponseFromJson(Map<String, dynamic> json) =>
 ProvidersResponse _$ProvidersResponseFromJson(Map<String, dynamic> json) =>
     ProvidersResponse(
       providers: (json['providers'] as List<dynamic>?)
-              ?.map((e) => Source.fromJson(e as Map<String, dynamic>))
+              ?.map(
+                  (e) => AvailableProvider.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );

@@ -16,9 +16,8 @@ BodyDataResponse _$BodyDataResponseFromJson(Map<String, dynamic> json) =>
 
 BodyData _$BodyDataFromJson(Map<String, dynamic> json) => BodyData(
       userId: json['user_id'] as String?,
-      userKey: json['user_key'] as String?,
       id: json['id'] as String,
-      date: DateTime.parse(json['date'] as String),
+      calendarDate: json['calendar_date'] as String,
       weight: (json['weight'] as num?)?.toDouble(),
       fat: (json['fat'] as num?)?.toDouble(),
       source: Source.fromJson(json['source'] as Map<String, dynamic>),

@@ -47,17 +47,17 @@ final class _$LinkService extends LinkService {
     required String provider,
     required String username,
     required String password,
-    required String redirectUrl,
     required String linkToken,
+    String? region,
   }) {
     final Uri $url = Uri.parse('link/provider/password/${provider}');
     final Map<String, String> $headers = {
-      'LinkToken': linkToken,
+      'x-vital-link-token': linkToken,
     };
     final $body = <String, dynamic>{
       'username': username,
       'password': password,
-      'redirect_url': redirectUrl,
+      'region': region,
     };
     final Request $request = Request(
       'POST',
@@ -73,33 +73,11 @@ final class _$LinkService extends LinkService {
   }
 
   @override
-  Future<Response<Void>> createManualProvider(
-    String userId,
-    String provider,
-  ) {
-    final Uri $url = Uri.parse('link/provider/manual/{provider}');
-    final $body = <String, dynamic>{
-      'user_id': userId,
-      'provider': provider,
-    };
-    final Request $request = Request(
-      'POST',
-      $url,
-      client.baseUrl,
-      body: $body,
-    );
-    return client.send<Void, Void>(
-      $request,
-      requestConverter: JsonConverter.requestFactory,
-    );
-  }
-
-  @override
   Future<Response<EmailProviderResponse>> _emailProvider(
     String provider,
     String email,
-    String? region,
     String linkToken,
+    String? region,
   ) {
     final Uri $url = Uri.parse('link/provider/email/${provider}');
     final Map<String, String> $headers = {
@@ -129,7 +107,7 @@ final class _$LinkService extends LinkService {
   }) {
     final Uri $url = Uri.parse('link/provider/oauth/${provider}');
     final Map<String, String> $headers = {
-      'LinkToken': linkToken,
+      'x-vital-link-token': linkToken,
     };
     final Request $request = Request(
       'GET',

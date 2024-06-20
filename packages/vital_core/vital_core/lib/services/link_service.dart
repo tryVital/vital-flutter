@@ -29,40 +29,33 @@ abstract class LinkService extends ChopperService {
     @Path('provider') required String provider,
     @Field('username') required String username,
     @Field('password') required String password,
-    @Field('redirect_url') required String redirectUrl,
-    @Header('LinkToken') required String linkToken,
+    @Header('x-vital-link-token') required String linkToken,
+    @Field('region') String? region,
   });
-
-  @Post(path: 'link/provider/manual/{provider}')
-  @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<Void>> createManualProvider(
-    @Field('user_id') String userId,
-    @Field('provider') String provider,
-  );
 
   @Post(path: 'link/provider/email/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<EmailProviderResponse>> _emailProvider(
     @Path('provider') String provider,
     @Field('email') String email,
-    @Field('region') String? region,
     @Header('x-vital-link-token') String linkToken,
+    @Field('region') String? region,
   );
 
   Future<Response<EmailProviderResponse>> emailProvider({
     required String provider,
     required String email,
-    required Region region,
     required String linkToken,
+    String? region,
   }) {
-    return _emailProvider(provider, email, region.name, linkToken);
+    return _emailProvider(provider, email, linkToken, region);
   }
 
   @Get(path: 'link/provider/oauth/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<OauthLinkResponse>> oauthProvider({
     @Path('provider') required String provider,
-    @Header('LinkToken') required String linkToken,
+    @Header('x-vital-link-token') required String linkToken,
   });
 
   @Get(

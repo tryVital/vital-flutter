@@ -1,31 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:vital_core/services/data/providers.dart';
 
 part 'user.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class User {
-  @JsonKey(name: 'user_id')
-  String? userId;
-  @JsonKey(name: 'user_key')
-  String? userKey;
-  @JsonKey(name: 'team_id')
-  String? teamId;
-  @JsonKey(name: 'client_user_id')
-  String? clientUserId;
-  @JsonKey(name: 'created_on')
-  DateTime? createdOn;
-  @JsonKey(name: 'connected_sources')
-  List<ConnectedSource> connectedSources;
-  @JsonKey(name: 'fallback_time_zone')
+  String userId;
+  String teamId;
+  String clientUserId;
+  DateTime createdOn;
   UserFallbackTimeZone? fallbackTimeZone;
 
   User({
-    this.userId,
-    this.userKey,
-    this.teamId,
-    this.clientUserId,
-    this.createdOn,
-    this.connectedSources = const [],
+    required this.userId,
+    required this.teamId,
+    required this.clientUserId,
+    required this.createdOn,
     this.fallbackTimeZone,
   });
 
@@ -54,36 +44,6 @@ class UserFallbackTimeZone {
 }
 
 @JsonSerializable(createToJson: false)
-class ConnectedSource {
-  Source? source;
-  @JsonKey(name: 'created_on')
-  DateTime? createdOn;
-
-  ConnectedSource({
-    this.source,
-    this.createdOn,
-  });
-
-  factory ConnectedSource.fromJson(Map<String, dynamic> json) =>
-      _$ConnectedSourceFromJson(json);
-}
-
-@JsonSerializable(createToJson: false)
-class Source {
-  String? name;
-  String? slug;
-  String? logo;
-
-  Source({
-    this.name,
-    this.slug,
-    this.logo,
-  });
-
-  factory Source.fromJson(Map<String, dynamic> json) => _$SourceFromJson(json);
-}
-
-@JsonSerializable(createToJson: false)
 class RefreshResponse {
   bool success;
   @JsonKey(name: 'user_id')
@@ -108,7 +68,7 @@ class RefreshResponse {
 
 @JsonSerializable(createToJson: false)
 class ProvidersResponse {
-  List<Source> providers;
+  List<AvailableProvider> providers;
 
   ProvidersResponse({
     this.providers = const [],

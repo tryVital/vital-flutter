@@ -39,28 +39,6 @@ final class _$SleepService extends SleepService {
   }
 
   @override
-  Future<Response<SleepResponse>> _getSleepStreamSeries(
-    String userId,
-    String startDate,
-    String? endDate,
-    String? provider,
-  ) {
-    final Uri $url = Uri.parse('summary/sleep/${userId}/stream');
-    final Map<String, dynamic> $params = <String, dynamic>{
-      'start_date': startDate,
-      'end_date': endDate,
-      'provider': provider,
-    };
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-      parameters: $params,
-    );
-    return client.send<SleepResponse, SleepResponse>($request);
-  }
-
-  @override
   Future<Response<Object>> _getSleepDataRaw(
     String userId,
     String startDate,
@@ -80,16 +58,5 @@ final class _$SleepService extends SleepService {
       parameters: $params,
     );
     return client.send<Object, Object>($request);
-  }
-
-  @override
-  Future<Response<SleepStreamResponse>> getSleepStream(String sleepId) {
-    final Uri $url = Uri.parse('timeseries/sleep/${sleepId}/stream');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<SleepStreamResponse, SleepStreamResponse>($request);
   }
 }
