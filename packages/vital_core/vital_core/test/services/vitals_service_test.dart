@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:vital_core/services/data/vitals.dart';
+import 'package:vital_core/services/data/timeseries.dart';
 import 'package:vital_core/services/utils/vital_interceptor.dart';
-import 'package:vital_core/services/vitals_service.dart';
+import 'package:vital_core/services/timeseries_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ void main() {
         final httpClient =
             createVitalsClient('/timeseries/$userId/cholesterol/${type.name}');
 
-        final sut = VitalsService.create(httpClient,
+        final sut = TimeseriesService.create(httpClient,
             Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
         final response = await sut.getCholesterol(
           type,
@@ -33,7 +33,7 @@ void main() {
     test('Get glucose', () async {
       final httpClient = createVitalsClient('/timeseries/$userId/glucose');
 
-      final sut = VitalsService.create(httpClient,
+      final sut = TimeseriesService.create(httpClient,
           Uri.parse("https://example.com"), VitalInterceptor(false, apiKey));
       final response = await sut.getGlucose(
         userId,
