@@ -10,13 +10,11 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.tryvital.client.Environment
 import io.tryvital.client.Region
 import io.tryvital.client.VitalClient
-import io.tryvital.client.createConnectedSourceIfNotExist
 import io.tryvital.client.getAccessToken
 import io.tryvital.client.hasUserConnectedTo
 import io.tryvital.client.refreshToken
-import io.tryvital.client.services.data.ManualProviderSlug
 import io.tryvital.client.services.data.ProviderSlug
-import io.tryvital.client.userConnectedSources
+import io.tryvital.client.userConnections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,9 +24,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.add
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 
 /** VitalCorePlugin */
 class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
@@ -137,11 +138,40 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 taskScope.launch {
                     try {
                         val jsonArray = buildJsonArray {
-                            VitalClient.getOrCreate(context).userConnectedSources().forEach {
+                            VitalClient.getOrCreate(context).userConnections().forEach {
                                 addJsonObject {
                                     put("name", it.name)
                                     put("slug", it.slug.toString())
                                     put("logo", it.logo)
+                                    put("status", it.status.toString().lowercase())
+                                    putJsonObject("resourceAvailability") {
+                                        for ((resource, data) in it.resourceAvailability) {
+                                            putJsonObject(resource.rawValue) {
+                                                put("status", data.status.toString().lowercase())
+                                                val req = data.scopeRequirements
+                                                if (req != null) {
+                                                    putJsonObject("scopeRequirements") {
+                                                        putJsonObject("userGranted") {
+                                                            putJsonArray("required") {
+                                                                req.userGranted.required.forEach(this::add)
+                                                            }
+                                                            putJsonArray("optional") {
+                                                                req.userGranted.optional.forEach(this::add)
+                                                            }
+                                                        }
+                                                        putJsonObject("userDenied") {
+                                                            putJsonArray("required") {
+                                                                req.userDenied.required.forEach(this::add)
+                                                            }
+                                                            putJsonArray("optional") {
+                                                                req.userDenied.optional.forEach(this::add)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -160,28 +190,6 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
-            "createConnectedSourceIfNotExist" -> {
-                val arguments = call.arguments as? Map<*, *> ?: return reportInvalidArguments()
-                val rawProvider = arguments ["provider"] as? String ?: return reportInvalidArguments()
-                val provider = runCatching { ManualProviderSlug.valueOf(rawProvider) }.getOrNull()
-                    ?: return reportInvalidArguments("unrecognized SDK provider $rawProvider")
-
-                taskScope.launch {
-                    try {
-                        VitalClient.getOrCreate(context).createConnectedSourceIfNotExist(provider)
-
-                        withContext(Dispatchers.Main) {
-                            result.success(null)
-                        }
-
-                    } catch (e: Throwable) {
-                        withContext(Dispatchers.Main) {
-                            reportError(e)
-                        }
-                    }
-                }
-            }
-
             "deregisterProvider" -> {
                 val arguments = call.arguments as? Map<*, *> ?: return reportInvalidArguments()
                 val rawProvider = arguments["provider"] as? String ?: return reportInvalidArguments()
@@ -190,7 +198,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
 
                 taskScope.launch {
                     try {
-                        val userId = VitalClient.getOrCreate(context).checkUserId()
+                        val userId = VitalClient.checkUserId()
                         VitalClient.getOrCreate(context).userService.deregisterProvider(userId, provider)
                         withContext(Dispatchers.Main) {
                             result.success(null)

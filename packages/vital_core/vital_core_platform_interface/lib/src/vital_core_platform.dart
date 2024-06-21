@@ -41,11 +41,7 @@ class VitalCorePlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
-  Future<String> userConnectedSources() {
-    throw UnimplementedError();
-  }
-
-  Future<void> createConnectedSourceIfNotExist(String provider) {
+  Future<String> userConnections() {
     throw UnimplementedError();
   }
 

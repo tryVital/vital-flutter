@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.tryvital.client.services.data.QuantitySamplePayload
+import io.tryvital.client.services.data.LocalQuantitySample
 import io.tryvital.client.utils.VitalLogger
 import io.tryvital.vitaldevices.*
 import kotlinx.coroutines.*
@@ -246,13 +246,13 @@ class VitalDevicesPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun mapSample(it: QuantitySamplePayload): JSONObject {
+    private fun mapSample(it: LocalQuantitySample): JSONObject {
         return JSONObject().apply {
             put("id", it.id)
-            put("value", it.value.toDouble())
+            put("value", it.value)
             put("unit", it.unit)
-            put("startDate", it.startDate.time)
-            put("endDate", it.endDate.time)
+            put("startDate", it.startDate.toString())
+            put("endDate", it.endDate.toString())
             put("type", it.type)
         }
     }
