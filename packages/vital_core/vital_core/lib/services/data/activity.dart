@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'user.dart';
+import 'package:vital_core/services/data/source.dart';
 
 part 'activity.g.dart';
 
@@ -15,21 +15,15 @@ class ActivitiesResponse {
       _$ActivitiesResponseFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class Activity {
-  @JsonKey(name: 'user_id')
   String? userId;
-  @JsonKey(name: 'user_key')
-  String? userKey;
   String id;
-  DateTime date;
-  @JsonKey(name: 'calories_total')
+  String calendarDate;
   double? caloriesTotal;
-  @JsonKey(name: 'calories_active')
   double? caloriesActive;
   double? steps;
-  @JsonKey(name: 'daily_movement')
-  double? dailyMovement;
+  double? distance;
   double? low;
   double? medium;
   double? high;
@@ -37,13 +31,11 @@ class Activity {
 
   Activity({
     this.userId,
-    this.userKey,
     required this.id,
-    required this.date,
+    required this.calendarDate,
     this.caloriesTotal,
     this.caloriesActive,
     this.steps,
-    this.dailyMovement,
     this.low,
     this.medium,
     this.high,

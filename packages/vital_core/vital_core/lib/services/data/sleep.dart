@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:vital_core/services/data/source.dart';
 import 'package:vital_core/services/data/vitals.dart';
-import 'user.dart';
 
 part 'sleep.g.dart';
 
@@ -16,19 +16,13 @@ class SleepResponse {
       _$SleepResponseFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class SleepData {
-  @JsonKey(name: 'user_id')
   String? userId;
-  @JsonKey(name: 'user_key')
-  String? userKey;
   String id;
-  DateTime date;
-  @JsonKey(name: 'bedtime_start')
-  DateTime? bedtimeStart;
-  @JsonKey(name: 'bedtime_stop')
-  DateTime? bedtimeStop;
-  @JsonKey(name: 'timezone_offset')
+  String calendarDate;
+  DateTime bedtimeStart;
+  DateTime bedtimeStop;
   int? timezoneOffset;
   int? duration;
   int? total;
@@ -37,29 +31,21 @@ class SleepData {
   int? rem;
   int? deep;
   int? score;
-  @JsonKey(name: 'hr_lowest')
   int? hrLowest;
-  @JsonKey(name: 'hr_average')
   int? hrAverage;
   double? efficiency;
   int? latency;
-  @JsonKey(name: 'temperature_delta')
   double? temperatureDelta;
-  @JsonKey(name: 'average_hrv')
   double? averageHrv;
-  @JsonKey(name: 'respiratory_rate')
   double? respiratoryRate;
-  Source? source;
-  @JsonKey(name: 'sleep_stream')
-  SleepStreamResponse? sleepStream;
+  Source source;
 
   SleepData({
     this.userId,
-    this.userKey,
     required this.id,
-    required this.date,
-    this.bedtimeStart,
-    this.bedtimeStop,
+    required this.calendarDate,
+    required this.bedtimeStart,
+    required this.bedtimeStop,
     this.timezoneOffset,
     this.duration,
     this.total,
@@ -75,29 +61,9 @@ class SleepData {
     this.temperatureDelta,
     this.averageHrv,
     this.respiratoryRate,
-    this.source,
-    this.sleepStream,
+    required this.source,
   });
 
   factory SleepData.fromJson(Map<String, dynamic> json) =>
       _$SleepDataFromJson(json);
-}
-
-@JsonSerializable(createToJson: false)
-class SleepStreamResponse {
-  List<Measurement> hrv;
-  List<Measurement> heartrate;
-  List<Measurement> hypnogram;
-  @JsonKey(name: 'respiratory_rate')
-  List<Measurement> respiratoryRate;
-
-  SleepStreamResponse({
-    this.hrv = const [],
-    this.heartrate = const [],
-    this.hypnogram = const [],
-    this.respiratoryRate = const [],
-  });
-
-  factory SleepStreamResponse.fromJson(Map<String, dynamic> json) =>
-      _$SleepStreamResponseFromJson(json);
 }

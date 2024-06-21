@@ -1,24 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'user.dart';
+import 'package:vital_core/services/data/source.dart';
 
 part 'profile.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class Profile {
-  @JsonKey(name: 'user_id')
   String userId;
-  @JsonKey(name: 'user_key')
-  String? userKey;
   String id;
   double? height;
-  Source? source;
+  Source source;
 
   Profile({
     required this.userId,
-    this.userKey,
     required this.id,
     this.height,
-    this.source,
+    required this.source,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) =>

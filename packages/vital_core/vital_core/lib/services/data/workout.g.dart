@@ -15,19 +15,14 @@ WorkoutsResponse _$WorkoutsResponseFromJson(Map<String, dynamic> json) =>
 
 Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
       userId: json['user_id'] as String,
-      userKey: json['user_key'] as String,
       id: json['id'] as String,
       title: json['title'] as String?,
       timezoneOffset: json['timezone_offset'] as int?,
       averageHr: (json['average_hr'] as num?)?.toDouble(),
       maxHr: (json['max_hr'] as num?)?.toDouble(),
       distance: (json['distance'] as num?)?.toDouble(),
-      timeStart: json['time_start'] == null
-          ? null
-          : DateTime.parse(json['time_start'] as String),
-      timeEnd: json['time_end'] == null
-          ? null
-          : DateTime.parse(json['time_end'] as String),
+      timeStart: DateTime.parse(json['time_start'] as String),
+      timeEnd: DateTime.parse(json['time_end'] as String),
       calories: (json['calories'] as num?)?.toDouble(),
       sport: json['sport'] == null
           ? null
@@ -51,9 +46,7 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
           ? null
           : MapData.fromJson(json['map'] as Map<String, dynamic>),
       providerId: json['provider_id'] as String?,
-      source: json['source'] == null
-          ? null
-          : Source.fromJson(json['source'] as Map<String, dynamic>),
+      source: Source.fromJson(json['source'] as Map<String, dynamic>),
     );
 
 Sport _$SportFromJson(Map<String, dynamic> json) => Sport(

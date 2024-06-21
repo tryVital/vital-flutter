@@ -49,10 +49,6 @@ abstract class UserService extends ChopperService {
   Future<Response<User>> resolveUser(
       @Path('client_user_id') String clientUserId);
 
-  @Get(path: '/user/providers/{user_id}')
-  Future<Response<ProvidersResponse>> getProviders(
-      @Path('user_id') String userId);
-
   @Delete(path: '/user/{user_id}/{provider}')
   Future<Response<DeregisterProviderResponse>> deregisterProvider(
     @Path('user_id') String userId,

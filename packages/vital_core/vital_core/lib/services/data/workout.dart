@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vital_core/services/data/user.dart';
+import 'package:vital_core/services/data/source.dart';
 part 'workout.g.dart';
 
 @JsonSerializable(createToJson: false)
@@ -12,65 +12,44 @@ class WorkoutsResponse {
       _$WorkoutsResponseFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
 class Workout {
-  @JsonKey(name: 'user_id')
   String userId;
-  @JsonKey(name: 'user_key')
-  String userKey;
   String id;
   String? title;
-  @JsonKey(name: 'timezone_offset')
   int? timezoneOffset;
-  @JsonKey(name: 'average_hr')
   double? averageHr;
-  @JsonKey(name: 'max_hr')
   double? maxHr;
   double? distance;
-  @JsonKey(name: 'time_start')
-  DateTime? timeStart;
-  @JsonKey(name: 'time_end')
-  DateTime? timeEnd;
+  DateTime timeStart;
+  DateTime timeEnd;
   double? calories;
   Sport? sport;
-  @JsonKey(name: 'hr_zones')
   List<Object> hrZones;
-  @JsonKey(name: 'moving_time')
   int? movingTime;
-  @JsonKey(name: 'total_elevation_gain')
   double? totalElevationGain;
-  @JsonKey(name: 'elev_high')
   double? elevHigh;
-  @JsonKey(name: 'elev_low')
   double? elevLow;
-  @JsonKey(name: 'average_speed')
   double? averageSpeed;
-  @JsonKey(name: 'max_speed')
   double? maxSpeed;
-  @JsonKey(name: 'average_watts')
   double? averageWatts;
-  @JsonKey(name: 'device_watts')
   double? deviceWatts;
-  @JsonKey(name: 'max_watts')
   double? maxWatts;
-  @JsonKey(name: 'weighted_average_watts')
   double? weightedAverageWatts;
   MapData? map;
-  @JsonKey(name: 'provider_id')
   String? providerId;
-  Source? source;
+  Source source;
 
   Workout({
     required this.userId,
-    required this.userKey,
     required this.id,
     this.title,
     this.timezoneOffset,
     this.averageHr,
     this.maxHr,
     this.distance,
-    this.timeStart,
-    this.timeEnd,
+    required this.timeStart,
+    required this.timeEnd,
     this.calories,
     this.sport,
     this.hrZones = const [],
@@ -86,7 +65,7 @@ class Workout {
     this.weightedAverageWatts,
     this.map,
     this.providerId,
-    this.source,
+    required this.source,
   });
 
   factory Workout.fromJson(Map<String, dynamic> json) =>
