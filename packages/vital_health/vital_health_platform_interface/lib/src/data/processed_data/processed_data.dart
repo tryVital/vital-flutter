@@ -27,9 +27,9 @@ class ProfileProcessedData extends ProcessedData {
   }
 }
 
-  class BodyProcessedData extends ProcessedData {
-  final List<QuantitySample> bodyMass;
-  final List<QuantitySample> bodyFatPercentage;
+class BodyProcessedData extends ProcessedData {
+  final List<LocalQuantitySample> bodyMass;
+  final List<LocalQuantitySample> bodyFatPercentage;
 
   BodyProcessedData({
     required this.bodyMass,
@@ -108,7 +108,7 @@ class BasalEnergyBurnedProcessedData extends ProcessedData {
 }
 
 class GlucoseProcessedData extends ProcessedData {
-  final List<QuantitySample> timeSeries;
+  final List<LocalQuantitySample> timeSeries;
 
   GlucoseProcessedData({
     required this.timeSeries,
@@ -121,7 +121,7 @@ class GlucoseProcessedData extends ProcessedData {
 }
 
 class BloodPressureProcessedData extends ProcessedData {
-  final List<BloodPressureSample> timeSeries;
+  final List<LocalBloodPressureSample> timeSeries;
 
   BloodPressureProcessedData({
     required this.timeSeries,
@@ -134,7 +134,7 @@ class BloodPressureProcessedData extends ProcessedData {
 }
 
 class HeartRateProcessedData extends ProcessedData {
-  final List<QuantitySample> timeSeries;
+  final List<LocalQuantitySample> timeSeries;
 
   HeartRateProcessedData({
     required this.timeSeries,
@@ -147,7 +147,7 @@ class HeartRateProcessedData extends ProcessedData {
 }
 
 class HeartRateVariabilityProcessedData extends ProcessedData {
-  final List<QuantitySample> timeSeries;
+  final List<LocalQuantitySample> timeSeries;
 
   HeartRateVariabilityProcessedData({
     required this.timeSeries,
@@ -158,7 +158,6 @@ class HeartRateVariabilityProcessedData extends ProcessedData {
     return 'HeartRateVariabilityProcessedData{timeSeries: $timeSeries}';
   }
 }
-
 
 class StepsProcessedData extends ProcessedData {
   final List<Activity> activities;
@@ -174,7 +173,7 @@ class StepsProcessedData extends ProcessedData {
 }
 
 class WaterProcessedData extends ProcessedData {
-  final List<QuantitySample> timeSeries;
+  final List<LocalQuantitySample> timeSeries;
 
   WaterProcessedData({
     required this.timeSeries,
@@ -187,7 +186,7 @@ class WaterProcessedData extends ProcessedData {
 }
 
 class CaffeineProcessedData extends ProcessedData {
-  final List<QuantitySample> timeSeries;
+  final List<LocalQuantitySample> timeSeries;
 
   CaffeineProcessedData({
     required this.timeSeries,
@@ -200,7 +199,7 @@ class CaffeineProcessedData extends ProcessedData {
 }
 
 class MindfulSessionProcessedData extends ProcessedData {
-  final List<QuantitySample> timeSeries;
+  final List<LocalQuantitySample> timeSeries;
 
   MindfulSessionProcessedData({
     required this.timeSeries,

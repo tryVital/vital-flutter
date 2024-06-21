@@ -41,12 +41,12 @@ class VitalDevicesPlatform extends PlatformInterface {
   Future<bool> pair(ScannedDevice scannedDevice) =>
       throw UnimplementedError('pair() has not been implemented.');
 
-  Future<List<QuantitySample>> readGlucoseMeterData(
+  Future<List<LocalQuantitySample>> readGlucoseMeterData(
           ScannedDevice scannedDevice) =>
       throw UnimplementedError(
           'readGlucoseMeterData() has not been implemented.');
 
-  Future<List<BloodPressureSample>> readBloodPressureData(
+  Future<List<LocalBloodPressureSample>> readBloodPressureData(
           ScannedDevice scannedDevice) =>
       throw UnimplementedError(
           'readBloodPressureData() has not been implemented.');

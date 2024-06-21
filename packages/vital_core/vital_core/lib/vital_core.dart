@@ -9,6 +9,7 @@ import 'package:vital_core/provider.dart';
 import 'package:vital_core/region.dart';
 import 'package:vital_core/services/activity_service.dart';
 import 'package:vital_core/services/body_service.dart';
+import 'package:vital_core/services/control_plane_service.dart';
 import 'package:vital_core/services/data/link.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/services/link_service.dart';
@@ -55,6 +56,8 @@ class VitalClient {
       VitalsService.create(_httpClient, _baseUrl, _authInterceptor);
   late final workoutService =
       WorkoutService.create(_httpClient, _baseUrl, _authInterceptor);
+  late final controlPlaneService =
+      ControlPlaneService.create(_httpClient, _baseUrl, _authInterceptor);
 
   // Unnamed constructor for source compatibility.
   VitalClient();

@@ -9,8 +9,8 @@ class Workout {
   final String sport;
   final int caloriesInKiloJules;
   final int distanceInMeter;
-  final List<QuantitySample> heartRate;
-  final List<QuantitySample> respiratoryRate;
+  final List<LocalQuantitySample> heartRate;
+  final List<LocalQuantitySample> respiratoryRate;
 
   Workout({
     required this.id,
@@ -30,4 +30,3 @@ class Workout {
     return 'Workout{id: $id, startDate: $startDate, endDate: $endDate, sourceBundle: $sourceBundle, deviceModel: $deviceModel, sport: $sport, caloriesInKiloJules: $caloriesInKiloJules, distanceInMeter: $distanceInMeter, heartRate: $heartRate, respiratoryRate: $respiratoryRate}';
   }
 }
-

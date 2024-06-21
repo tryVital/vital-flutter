@@ -1,12 +1,12 @@
 import 'package:vital_core/samples.dart';
 
 class Activity {
-  final List<QuantitySample> activeEnergyBurned;
-  final List<QuantitySample> basalEnergyBurned;
-  final List<QuantitySample> steps;
-  final List<QuantitySample> floorsClimbed;
-  final List<QuantitySample> distanceWalkingRunning;
-  final List<QuantitySample> vo2Max;
+  final List<LocalQuantitySample> activeEnergyBurned;
+  final List<LocalQuantitySample> basalEnergyBurned;
+  final List<LocalQuantitySample> steps;
+  final List<LocalQuantitySample> floorsClimbed;
+  final List<LocalQuantitySample> distanceWalkingRunning;
+  final List<LocalQuantitySample> vo2Max;
 
   Activity({
     required this.activeEnergyBurned,

@@ -6,8 +6,8 @@ part of 'samples.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-QuantitySample _$QuantitySampleFromJson(Map<String, dynamic> json) =>
-    QuantitySample(
+LocalQuantitySample _$LocalQuantitySampleFromJson(Map<String, dynamic> json) =>
+    LocalQuantitySample(
       id: json['id'] as String?,
       value: (json['value'] as num).toDouble(),
       startDate: DateTime.parse(json['startDate'] as String),
@@ -17,13 +17,14 @@ QuantitySample _$QuantitySampleFromJson(Map<String, dynamic> json) =>
       unit: json['unit'] as String,
     );
 
-BloodPressureSample _$BloodPressureSampleFromJson(Map<String, dynamic> json) =>
-    BloodPressureSample(
-      systolic:
-          QuantitySample.fromJson(json['systolic'] as Map<String, dynamic>),
-      diastolic:
-          QuantitySample.fromJson(json['diastolic'] as Map<String, dynamic>),
+LocalBloodPressureSample _$LocalBloodPressureSampleFromJson(
+        Map<String, dynamic> json) =>
+    LocalBloodPressureSample(
+      systolic: LocalQuantitySample.fromJson(
+          json['systolic'] as Map<String, dynamic>),
+      diastolic: LocalQuantitySample.fromJson(
+          json['diastolic'] as Map<String, dynamic>),
       pulse: json['pulse'] == null
           ? null
-          : QuantitySample.fromJson(json['pulse'] as Map<String, dynamic>),
+          : LocalQuantitySample.fromJson(json['pulse'] as Map<String, dynamic>),
     );

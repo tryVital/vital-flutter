@@ -6,11 +6,11 @@ class Sleep {
   final DateTime endDate;
   final String? sourceBundle;
   final String? deviceModel;
-  final List<QuantitySample> heartRate;
-  final List<QuantitySample> restingHeartRate;
-  final List<QuantitySample> heartRateVariability;
-  final List<QuantitySample> oxygenSaturation;
-  final List<QuantitySample> respiratoryRate;
+  final List<LocalQuantitySample> heartRate;
+  final List<LocalQuantitySample> restingHeartRate;
+  final List<LocalQuantitySample> heartRateVariability;
+  final List<LocalQuantitySample> oxygenSaturation;
+  final List<LocalQuantitySample> respiratoryRate;
   final SleepStages sleepStages;
 
   Sleep({
@@ -34,13 +34,13 @@ class Sleep {
 }
 
 class SleepStages {
-  final List<QuantitySample> awakeSleepSamples;
-  final List<QuantitySample> deepSleepSamples;
-  final List<QuantitySample> lightSleepSamples;
-  final List<QuantitySample> remSleepSamples;
-  final List<QuantitySample> unknownSleepSamples;
-  final List<QuantitySample> inBedSleepSamples;
-  final List<QuantitySample> unspecifiedSleepSamples;
+  final List<LocalQuantitySample> awakeSleepSamples;
+  final List<LocalQuantitySample> deepSleepSamples;
+  final List<LocalQuantitySample> lightSleepSamples;
+  final List<LocalQuantitySample> remSleepSamples;
+  final List<LocalQuantitySample> unknownSleepSamples;
+  final List<LocalQuantitySample> inBedSleepSamples;
+  final List<LocalQuantitySample> unspecifiedSleepSamples;
 
   SleepStages({
     required this.awakeSleepSamples,

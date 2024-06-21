@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vital_core/services/data/control_plane.dart';
 import 'package:vital_core/services/data/link.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart' as vital_core;
@@ -90,7 +91,8 @@ class UserBloc extends ChangeNotifier {
         // your backend service on behalf of your consumer apps, so that your
         // Vital API Key is kept strictly as a server-side secret.
         //
-        CreateSignInTokenResponse response = await vitalClient.userService
+        CreateSignInTokenResponse response = await vitalClient
+            .controlPlaneService
             .createSignInToken(user.userId!)
             .then((resp) => resp.isSuccessful
                 ? resp.body!

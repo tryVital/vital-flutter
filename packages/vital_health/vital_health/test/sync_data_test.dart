@@ -40,8 +40,8 @@ void main() {
       expect(result, isA<SyncStatusSuccessSyncing>());
       expect(result.status, SyncStatusType.successSyncing);
       final data = (result as SyncStatusSuccessSyncing).data;
-      expect(data, isA<List<QuantitySample>>());
-      expect((data as List<QuantitySample>).length, 1);
+      expect(data, isA<List<LocalQuantitySample>>());
+      expect((data as List<LocalQuantitySample>).length, 1);
     });
 
     test('Heart rate sync arguments', () async {
@@ -50,8 +50,8 @@ void main() {
       expect(result, isA<SyncStatusSuccessSyncing>());
       expect(result.status, SyncStatusType.successSyncing);
       final data = (result as SyncStatusSuccessSyncing).data;
-      expect(data, isA<List<QuantitySample>>());
-      expect((data as List<QuantitySample>).length, 1);
+      expect(data, isA<List<LocalQuantitySample>>());
+      expect((data as List<LocalQuantitySample>).length, 1);
     });
 
     test('Blood pressure sync arguments', () async {
@@ -60,8 +60,8 @@ void main() {
       expect(result, isA<SyncStatusSuccessSyncing>());
       expect(result.status, SyncStatusType.successSyncing);
       final data = (result as SyncStatusSuccessSyncing).data;
-      expect(data, isA<List<BloodPressureSample>>());
-      expect((data as List<BloodPressureSample>).length, 1);
+      expect(data, isA<List<LocalBloodPressureSample>>());
+      expect((data as List<LocalBloodPressureSample>).length, 1);
     });
   });
 }

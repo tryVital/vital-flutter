@@ -28,12 +28,12 @@ class DeviceManager {
     return VitalDevicesPlatform.instance.pair(scannedDevice);
   }
 
-  Future<List<QuantitySample>> readGlucoseMeterData(
+  Future<List<LocalQuantitySample>> readGlucoseMeterData(
       ScannedDevice scannedDevice) {
     return VitalDevicesPlatform.instance.readGlucoseMeterData(scannedDevice);
   }
 
-  Future<List<BloodPressureSample>> readBloodPressureData(
+  Future<List<LocalBloodPressureSample>> readBloodPressureData(
       ScannedDevice scannedDevice) {
     return VitalDevicesPlatform.instance.readBloodPressureData(scannedDevice);
   }

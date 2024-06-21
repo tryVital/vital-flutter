@@ -89,23 +89,23 @@ Object? fromArgument(HealthResource resource, String argument) {
           .toList();
     case HealthResource.glucose:
       return (jsonDecode(argument) as List)
-          .map((e) => QuantitySample.fromJson(e))
+          .map((e) => LocalQuantitySample.fromJson(e))
           .toList();
     case HealthResource.bloodPressure:
       return (jsonDecode(argument) as List)
-          .map((e) => BloodPressureSample.fromJson(e))
+          .map((e) => LocalBloodPressureSample.fromJson(e))
           .toList();
     case HealthResource.heartRate:
       return (jsonDecode(argument) as List)
-          .map((e) => QuantitySample.fromJson(e))
+          .map((e) => LocalQuantitySample.fromJson(e))
           .toList();
     case HealthResource.water:
       return (jsonDecode(argument) as List)
-          .map((e) => QuantitySample.fromJson(e))
+          .map((e) => LocalQuantitySample.fromJson(e))
           .toList();
     case HealthResource.caffeine:
       return (jsonDecode(argument) as List)
-          .map((e) => QuantitySample.fromJson(e))
+          .map((e) => LocalQuantitySample.fromJson(e))
           .toList();
     default:
       return null;
@@ -115,12 +115,12 @@ Object? fromArgument(HealthResource resource, String argument) {
 @JsonSerializable(createToJson: false)
 class ActivitySummary {
   final DateTime date;
-  final List<QuantitySample> activeEnergyBurned;
-  final List<QuantitySample> basalEnergyBurned;
-  final List<QuantitySample> steps;
-  final List<QuantitySample> floorsClimbed;
-  final List<QuantitySample> distanceWalkingRunning;
-  final List<QuantitySample> vo2Max;
+  final List<LocalQuantitySample> activeEnergyBurned;
+  final List<LocalQuantitySample> basalEnergyBurned;
+  final List<LocalQuantitySample> steps;
+  final List<LocalQuantitySample> floorsClimbed;
+  final List<LocalQuantitySample> distanceWalkingRunning;
+  final List<LocalQuantitySample> vo2Max;
 
   ActivitySummary({
     required this.date,
@@ -138,8 +138,8 @@ class ActivitySummary {
 
 @JsonSerializable(createToJson: false)
 class BodySummary {
-  final List<QuantitySample> bodyMass;
-  final List<QuantitySample> bodyFatPercentage;
+  final List<LocalQuantitySample> bodyMass;
+  final List<LocalQuantitySample> bodyFatPercentage;
 
   BodySummary({this.bodyMass = const [], this.bodyFatPercentage = const []});
 
@@ -154,11 +154,11 @@ class SleepSummary {
   final DateTime endDate;
   final String sourceBundle;
 
-  final List<QuantitySample> heartRate;
-  final List<QuantitySample> restingHeartRate;
-  final List<QuantitySample> heartRateVariability;
-  final List<QuantitySample> oxygenSaturation;
-  final List<QuantitySample> respiratoryRate;
+  final List<LocalQuantitySample> heartRate;
+  final List<LocalQuantitySample> restingHeartRate;
+  final List<LocalQuantitySample> heartRateVariability;
+  final List<LocalQuantitySample> oxygenSaturation;
+  final List<LocalQuantitySample> respiratoryRate;
 
   SleepSummary({
     this.id,
@@ -186,8 +186,8 @@ class WorkoutSummary {
   final double calories;
   final double distance;
 
-  final List<QuantitySample> heartRate;
-  final List<QuantitySample> respiratoryRate;
+  final List<LocalQuantitySample> heartRate;
+  final List<LocalQuantitySample> respiratoryRate;
 
   WorkoutSummary({
     this.id,
