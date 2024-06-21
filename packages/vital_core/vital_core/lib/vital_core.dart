@@ -18,7 +18,7 @@ import 'package:vital_core/services/providers_service.dart';
 import 'package:vital_core/services/sleep_service.dart';
 import 'package:vital_core/services/user_service.dart';
 import 'package:vital_core/services/utils/vital_interceptor.dart';
-import 'package:vital_core/services/vitals_service.dart';
+import 'package:vital_core/services/timeseries_service.dart';
 import 'package:vital_core/services/workout_service.dart';
 
 export 'environment.dart';
@@ -53,7 +53,7 @@ class VitalClient {
   late final userService =
       UserService.create(_httpClient, _baseUrl, _authInterceptor);
   late final vitalsService =
-      VitalsService.create(_httpClient, _baseUrl, _authInterceptor);
+      TimeseriesService.create(_httpClient, _baseUrl, _authInterceptor);
   late final workoutService =
       WorkoutService.create(_httpClient, _baseUrl, _authInterceptor);
   late final controlPlaneService =
