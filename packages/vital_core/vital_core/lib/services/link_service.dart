@@ -15,10 +15,10 @@ abstract class LinkService extends ChopperService {
   @Post(path: 'link/token')
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<CreateLinkResponse>> createLink(
-      @Field('user_id') String userId,
+      {@Field('user_id') required String userId,
+      @Field('redirect_url') required String redirectUrl,
       @Field('provider') String? provider,
-      @Field('redirect_url') String redirectUrl,
-      {@Field('filter_on_providers') List<String>? filterOnProviders});
+      @Field('filter_on_providers') List<String>? filterOnProviders});
 
   @Post(path: 'link/provider/password/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
@@ -41,9 +41,9 @@ abstract class LinkService extends ChopperService {
   @Post(path: 'link/provider/email/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<LinkResponse>> emailProvider({
-    @Path('provider') String provider,
-    @Field('email') String email,
-    @Header('x-vital-link-token') String linkToken,
+    @Path('provider') required String provider,
+    @Field('email') required String email,
+    @Header('x-vital-link-token') required String linkToken,
     @Field('region') String? region,
   });
 

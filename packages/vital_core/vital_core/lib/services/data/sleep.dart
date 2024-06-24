@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vital_core/services/data/source.dart';
-import 'package:vital_core/services/data/timeseries.dart';
 
 part 'sleep.g.dart';
 

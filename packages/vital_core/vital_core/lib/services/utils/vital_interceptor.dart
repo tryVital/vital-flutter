@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:chopper/chopper.dart';
 import 'package:vital_core/core.dart' as vital_core;

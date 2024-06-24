@@ -82,16 +82,6 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   }
 
   @override
-  Future<PermissionOutcome> askForResources(
-      List<HealthResource> resources) async {
-    try {
-      return ask(resources, []);
-    } on Exception catch (e) {
-      throw _mapException(e);
-    }
-  }
-
-  @override
   Future<PermissionOutcome> ask(List<HealthResource> readResources,
       List<HealthResourceWrite> writeResources) async {
     try {

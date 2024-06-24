@@ -80,7 +80,7 @@ class UserBloc extends ChangeNotifier {
     switch (authMode) {
       case SDKAuthMode.apiKey:
         await vital_core.configure(apiKey, environment, region);
-        await vital_core.setUserId(user.userId!);
+        await vital_core.setUserId(user.userId);
         break;
 
       case SDKAuthMode.signInTokenDemo:
@@ -93,7 +93,7 @@ class UserBloc extends ChangeNotifier {
         //
         CreateSignInTokenResponse response = await vitalClient
             .controlPlaneService
-            .createSignInToken(user.userId!)
+            .createSignInToken(user.userId)
             .then((resp) => resp.isSuccessful
                 ? resp.body!
                 : throw Exception("HTTP error ${resp.statusCode}"));
@@ -121,8 +121,8 @@ class UserBloc extends ChangeNotifier {
         VitalClient.forSignedInUser(environment: environment, region: region);
     String userId = (await vital_core.currentUserId())!;
 
-    Response<CreateLinkResponse> resp =
-        await client.linkService.createLink(userId, "fitbit", "x-vital-app://");
+    Response<CreateLinkResponse> resp = await client.linkService.createLink(
+        userId: userId, provider: "fitbit", redirectUrl: "x-vital-app://");
 
     if (resp.error != null) {
       Fimber.i("Create Link Token Failed: ${resp.error}");
