@@ -57,7 +57,7 @@ class HomeBloc extends ChangeNotifier {
 
   deleteUser(User user) {
     unawaited(client.controlPlaneService
-        .deleteUser(user.userId!)
+        .deleteUser(user.userId)
         .then((value) => refresh()));
   }
 

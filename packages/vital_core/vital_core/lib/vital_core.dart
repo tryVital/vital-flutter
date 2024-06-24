@@ -131,7 +131,8 @@ class VitalClient {
         filterOnProviders?.map((slug) => slug.toString()).toList();
 
     Response<CreateLinkResponse> response = await linkService.createLink(
-        userId, null, redirectUrl,
+        userId: userId,
+        redirectUrl: redirectUrl,
         filterOnProviders: rawfilterOnProviders);
 
     if (response.isSuccessful) {
@@ -167,7 +168,8 @@ class VitalClient {
 
   Future<bool> linkProvider(User user, String provider, String callback) {
     return linkService
-        .createLink(user.userId!, provider, callback)
+        .createLink(
+            userId: user.userId, provider: provider, redirectUrl: callback)
         .then((tokenResponse) {
           if (!tokenResponse.isSuccessful || tokenResponse.body == null) {
             throw VitalHTTPStatusException(
@@ -194,7 +196,8 @@ class VitalClient {
     return linkService
         // The Redirect URL here is just a placeholder value.
         // linkService.exchangeOAuthCode requests the API not to redirect.
-        .createLink(userId, provider, "x-vital-noop://")
+        .createLink(
+            userId: userId, provider: provider, redirectUrl: "x-vital-noop://")
         .then((tokenResponse) {
           if (!tokenResponse.isSuccessful || tokenResponse.body == null) {
             throw VitalHTTPStatusException(

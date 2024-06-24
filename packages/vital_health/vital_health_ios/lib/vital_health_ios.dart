@@ -93,12 +93,6 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<PermissionOutcome> askForResources(
-      List<HealthResource> resources) async {
-    return ask(resources, []);
-  }
-
-  @override
   Future<PermissionOutcome> ask(List<HealthResource> readResources,
       List<HealthResourceWrite> writeResources) async {
     final outcome = await _channel.invokeMethod('ask', [

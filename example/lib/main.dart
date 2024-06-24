@@ -52,8 +52,10 @@ void main() {
 
     //
     // Updating user fallback time zone at app launch:
+    // (only when the Vital Sign-In Token scheme is used)
     //
-    if (status.contains(vital_core.ClientStatus.signedIn)) {
+    if (status.contains(vital_core.ClientStatus.signedIn) &&
+        status.contains(vital_core.ClientStatus.useSignInToken)) {
       final client = vital_core.VitalClient.forSignedInUser(
           region: region, environment: environment);
       final userId = await vital_core.currentUserId();

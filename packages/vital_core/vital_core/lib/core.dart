@@ -30,7 +30,9 @@ Stream<Set<ClientStatus>> get clientStatusStream async* {
 }
 
 Future<String?> currentUserId() {
-  return VitalCorePlatform.instance.currentUserId();
+  return VitalCorePlatform.instance
+      .currentUserId()
+      .then((v) => v?.toLowerCase());
 }
 
 Future<void> setUserId(String userId) {

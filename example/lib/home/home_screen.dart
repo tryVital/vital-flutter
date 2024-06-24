@@ -129,7 +129,7 @@ class UserWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  user.clientUserId ?? '',
+                  user.clientUserId,
                   style: const TextStyle(fontSize: 18.0),
                 ),
               ),
@@ -156,8 +156,8 @@ class UserWidget extends StatelessWidget {
             ],
           ),
           if (isCurrentSDKUser)
-            Row(
-              children: const [
+            const Row(
+              children: [
                 SizedBox(width: 32),
                 Icon(
                   Icons.arrow_upward,

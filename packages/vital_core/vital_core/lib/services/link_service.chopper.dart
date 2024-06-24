@@ -17,17 +17,17 @@ final class _$LinkService extends LinkService {
   final definitionType = LinkService;
 
   @override
-  Future<Response<CreateLinkResponse>> createLink(
-    String userId,
+  Future<Response<CreateLinkResponse>> createLink({
+    required String userId,
+    required String redirectUrl,
     String? provider,
-    String redirectUrl, {
     List<String>? filterOnProviders,
   }) {
     final Uri $url = Uri.parse('link/token');
     final $body = <String, dynamic>{
       'user_id': userId,
-      'provider': provider,
       'redirect_url': redirectUrl,
+      'provider': provider,
       'filter_on_providers': filterOnProviders,
     };
     final Request $request = Request(
@@ -99,9 +99,9 @@ final class _$LinkService extends LinkService {
 
   @override
   Future<Response<LinkResponse>> emailProvider({
-    String provider,
-    String email,
-    String linkToken,
+    required String provider,
+    required String email,
+    required String linkToken,
     String? region,
   }) {
     final Uri $url = Uri.parse('link/provider/email/${provider}');

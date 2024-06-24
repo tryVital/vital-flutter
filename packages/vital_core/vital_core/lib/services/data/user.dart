@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vital_core/services/data/providers.dart';
 
 part 'user.g.dart';
 

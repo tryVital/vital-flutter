@@ -28,14 +28,12 @@ class UserScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text("Copied to clipboard")));
-                          if (bloc.user.clientUserId != null) {
-                            Clipboard.setData(
-                                ClipboardData(text: bloc.user.userId!));
-                          }
+                          Clipboard.setData(
+                              ClipboardData(text: bloc.user.userId));
                         },
                         child: ListTile(
                           title: const Text('Id'),
-                          subtitle: Text(bloc.user.userId ?? ""),
+                          subtitle: Text(bloc.user.userId),
                         ),
                       ),
                       InkWell(
@@ -43,14 +41,12 @@ class UserScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text("Copied to clipboard")));
-                          if (bloc.user.clientUserId != null) {
-                            Clipboard.setData(
-                                ClipboardData(text: bloc.user.clientUserId!));
-                          }
+                          Clipboard.setData(
+                              ClipboardData(text: bloc.user.clientUserId));
                         },
                         child: ListTile(
                           title: const Text('Client User Id'),
-                          subtitle: Text(bloc.user.clientUserId ?? ""),
+                          subtitle: Text(bloc.user.clientUserId),
                         ),
                       ),
                       InkWell(
@@ -58,14 +54,12 @@ class UserScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text("Copied to clipboard")));
-                          if (bloc.user.clientUserId != null) {
-                            Clipboard.setData(
-                                ClipboardData(text: bloc.user.teamId!));
-                          }
+                          Clipboard.setData(
+                              ClipboardData(text: bloc.user.teamId));
                         },
                         child: ListTile(
                           title: const Text('Team Id'),
-                          subtitle: Text(bloc.user.teamId ?? ""),
+                          subtitle: Text(bloc.user.teamId),
                         ),
                       ),
                     ],
