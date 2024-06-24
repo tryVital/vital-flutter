@@ -9,7 +9,6 @@ part of 'control_plane.dart';
 CreateUserResponse _$CreateUserResponseFromJson(Map<String, dynamic> json) =>
     CreateUserResponse(
       userId: json['user_id'] as String?,
-      userKey: json['user_key'] as String?,
       clientUserId: json['client_user_id'] as String?,
     );
 

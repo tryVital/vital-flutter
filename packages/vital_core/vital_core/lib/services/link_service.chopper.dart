@@ -43,7 +43,7 @@ final class _$LinkService extends LinkService {
   }
 
   @override
-  Future<Response<EmailProviderResponse>> passwordProvider({
+  Future<Response<LinkResponse>> passwordProvider({
     required String provider,
     required String username,
     required String password,
@@ -66,19 +66,44 @@ final class _$LinkService extends LinkService {
       body: $body,
       headers: $headers,
     );
-    return client.send<EmailProviderResponse, EmailProviderResponse>(
+    return client.send<LinkResponse, LinkResponse>(
       $request,
       requestConverter: JsonConverter.requestFactory,
     );
   }
 
   @override
-  Future<Response<EmailProviderResponse>> _emailProvider(
+  Future<Response<LinkResponse>> completePasswordProviderMFA({
+    required String provider,
+    required String mfaCode,
+    required String linkToken,
+  }) {
+    final Uri $url =
+        Uri.parse('link/provider/password/${provider}/complete_mfa');
+    final Map<String, String> $headers = {
+      'x-vital-link-token': linkToken,
+    };
+    final $body = <String, dynamic>{'mfa_code': mfaCode};
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<LinkResponse, LinkResponse>(
+      $request,
+      requestConverter: JsonConverter.requestFactory,
+    );
+  }
+
+  @override
+  Future<Response<LinkResponse>> emailProvider({
     String provider,
     String email,
     String linkToken,
     String? region,
-  ) {
+  }) {
     final Uri $url = Uri.parse('link/provider/email/${provider}');
     final Map<String, String> $headers = {
       'x-vital-link-token': linkToken,
@@ -94,7 +119,7 @@ final class _$LinkService extends LinkService {
       body: $body,
       headers: $headers,
     );
-    return client.send<EmailProviderResponse, EmailProviderResponse>(
+    return client.send<LinkResponse, LinkResponse>(
       $request,
       requestConverter: JsonConverter.requestFactory,
     );

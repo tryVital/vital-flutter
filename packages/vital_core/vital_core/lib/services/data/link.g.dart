@@ -36,9 +36,30 @@ OauthLinkResponse _$OauthLinkResponseFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int? ?? -1,
     );
 
-EmailProviderResponse _$EmailProviderResponseFromJson(
-        Map<String, dynamic> json) =>
-    EmailProviderResponse(
+LinkResponse _$LinkResponseFromJson(Map<String, dynamic> json) => LinkResponse(
+      state: $enumDecode(_$LinkStateEnumMap, json['state']),
       redirectUrl: json['redirect_url'] as String?,
-      success: json['success'] as bool? ?? false,
+      errorType: json['error_type'] as String?,
+      error: json['error'] as String?,
+      providerMfa: json['provider_mfa'] == null
+          ? null
+          : LinkProviderMFA.fromJson(
+              json['provider_mfa'] as Map<String, dynamic>),
     );
+
+const _$LinkStateEnumMap = {
+  LinkState.success: 'success',
+  LinkState.error: 'error',
+  LinkState.pendingProviderMfa: 'pending_provider_mfa',
+};
+
+LinkProviderMFA _$LinkProviderMFAFromJson(Map<String, dynamic> json) =>
+    LinkProviderMFA(
+      method: $enumDecode(_$LinkProviderMFAMethodEnumMap, json['method']),
+      hint: json['hint'] as String,
+    );
+
+const _$LinkProviderMFAMethodEnumMap = {
+  LinkProviderMFAMethod.sms: 'sms',
+  LinkProviderMFAMethod.email: 'email',
+};

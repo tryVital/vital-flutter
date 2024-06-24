@@ -61,17 +61,50 @@ class OauthLinkResponse {
       _$OauthLinkResponseFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
-class EmailProviderResponse {
-  bool success;
-  @JsonKey(name: 'redirect_url')
+@JsonEnum(fieldRename: FieldRename.snake)
+enum LinkState {
+  success,
+  error,
+  pendingProviderMfa;
+}
+
+@JsonEnum(fieldRename: FieldRename.snake)
+enum LinkProviderMFAMethod {
+  sms,
+  email;
+}
+
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
+class LinkResponse {
+  LinkState state;
   String? redirectUrl;
 
-  EmailProviderResponse({
+  String? errorType;
+  String? error;
+  LinkProviderMFA? providerMfa;
+
+  LinkResponse({
+    required this.state,
     this.redirectUrl,
-    this.success = false,
+    this.errorType,
+    this.error,
+    this.providerMfa,
   });
 
-  factory EmailProviderResponse.fromJson(Map<String, dynamic> json) =>
-      _$EmailProviderResponseFromJson(json);
+  factory LinkResponse.fromJson(Map<String, dynamic> json) =>
+      _$LinkResponseFromJson(json);
+}
+
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
+class LinkProviderMFA {
+  LinkProviderMFAMethod method;
+  String hint;
+
+  LinkProviderMFA({
+    required this.method,
+    required this.hint,
+  });
+
+  factory LinkProviderMFA.fromJson(Map<String, dynamic> json) =>
+      _$LinkProviderMFAFromJson(json);
 }

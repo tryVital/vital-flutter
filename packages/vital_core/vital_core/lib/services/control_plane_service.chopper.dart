@@ -76,7 +76,7 @@ final class _$ControlPlaneService extends ControlPlaneService {
 
   @override
   Future<Response<User>> resolveUser(String clientUserId) {
-    final Uri $url = Uri.parse('/user/key/${clientUserId}');
+    final Uri $url = Uri.parse('/user/resolve/${clientUserId}');
     final Request $request = Request(
       'GET',
       $url,
