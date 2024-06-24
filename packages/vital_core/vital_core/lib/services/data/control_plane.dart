@@ -7,14 +7,11 @@ part 'control_plane.g.dart';
 class CreateUserResponse {
   @JsonKey(name: 'user_id')
   String? userId;
-  @JsonKey(name: 'user_key')
-  String? userKey;
   @JsonKey(name: 'client_user_id')
   String? clientUserId;
 
   CreateUserResponse({
     this.userId,
-    this.userKey,
     this.clientUserId,
   });
 

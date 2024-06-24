@@ -1,12 +1,9 @@
 library vital;
 
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:chopper/chopper.dart';
 import 'package:http/http.dart' as http;
-import 'package:vital_core/provider.dart';
-import 'package:vital_core/region.dart';
 import 'package:vital_core/services/data/link.dart';
 import 'package:vital_core/services/utils/http_logging_interceptor.dart';
 import 'package:vital_core/services/utils/json_serializable_converter.dart';
@@ -25,7 +22,7 @@ abstract class LinkService extends ChopperService {
 
   @Post(path: 'link/provider/password/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<EmailProviderResponse>> passwordProvider({
+  Future<Response<LinkResponse>> passwordProvider({
     @Path('provider') required String provider,
     @Field('username') required String username,
     @Field('password') required String password,
@@ -33,23 +30,22 @@ abstract class LinkService extends ChopperService {
     @Field('region') String? region,
   });
 
+  @Post(path: 'link/provider/password/{provider}/complete_mfa')
+  @FactoryConverter(request: JsonConverter.requestFactory)
+  Future<Response<LinkResponse>> completePasswordProviderMFA({
+    @Path('provider') required String provider,
+    @Field('mfa_code') required String mfaCode,
+    @Header('x-vital-link-token') required String linkToken,
+  });
+
   @Post(path: 'link/provider/email/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
-  Future<Response<EmailProviderResponse>> _emailProvider(
+  Future<Response<LinkResponse>> emailProvider({
     @Path('provider') String provider,
     @Field('email') String email,
     @Header('x-vital-link-token') String linkToken,
     @Field('region') String? region,
-  );
-
-  Future<Response<EmailProviderResponse>> emailProvider({
-    required String provider,
-    required String email,
-    required String linkToken,
-    String? region,
-  }) {
-    return _emailProvider(provider, email, linkToken, region);
-  }
+  });
 
   @Get(path: 'link/provider/oauth/{provider}')
   @FactoryConverter(request: JsonConverter.requestFactory)
@@ -85,7 +81,7 @@ abstract class LinkService extends ChopperService {
       converter: const JsonSerializableConverter({
         CreateLinkResponse: CreateLinkResponse.fromJson,
         OauthLinkResponse: OauthLinkResponse.fromJson,
-        EmailProviderResponse: EmailProviderResponse.fromJson,
+        LinkResponse: LinkResponse.fromJson,
       }),
     );
 

@@ -36,7 +36,7 @@ abstract class ControlPlaneService extends ChopperService {
   Future<Response<DeleteUserResponse>> deleteUser(
       @Path('user_id') String userId);
 
-  @Get(path: '/user/key/{client_user_id}')
+  @Get(path: '/user/resolve/{client_user_id}')
   Future<Response<User>> resolveUser(
       @Path('client_user_id') String clientUserId);
 
