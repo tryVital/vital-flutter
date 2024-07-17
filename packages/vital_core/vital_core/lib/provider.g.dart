@@ -92,3 +92,14 @@ ScopeRequirements _$ScopeRequirementsFromJson(Map<String, dynamic> json) =>
       optional:
           (json['optional'] as List<dynamic>).map((e) => e as String).toList(),
     );
+
+const _$ManualProviderSlugEnumMap = {
+  ManualProviderSlug.beurerBLE: 'beurer_ble',
+  ManualProviderSlug.omronBLE: 'omron_ble',
+  ManualProviderSlug.accuchekBLE: 'accuchek_ble',
+  ManualProviderSlug.contourBLE: 'contour_ble',
+  ManualProviderSlug.libreBLE: 'libre_ble',
+  ManualProviderSlug.manual: 'manual',
+  ManualProviderSlug.appleHealthKit: 'apple_health_kit',
+  ManualProviderSlug.healthConnect: 'health_connect',
+};

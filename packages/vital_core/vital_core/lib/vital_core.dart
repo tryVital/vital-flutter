@@ -121,7 +121,8 @@ class VitalClient {
 
   Future<Uri> linkWidgetUrl(
       {required String redirectUrl,
-      List<ProviderSlug>? filterOnProviders}) async {
+      List<ProviderSlug>? filterOnProviders,
+      ProviderSlug? provider}) async {
     String? userId = await core.currentUserId();
     if (userId == null) {
       throw Exception("SDK is not signed in.");
@@ -133,7 +134,8 @@ class VitalClient {
     Response<CreateLinkResponse> response = await linkService.createLink(
         userId: userId,
         redirectUrl: redirectUrl,
-        filterOnProviders: rawfilterOnProviders);
+        filterOnProviders: rawfilterOnProviders,
+        provider: provider?.toString());
 
     if (response.isSuccessful) {
       String host, env;
@@ -154,12 +156,16 @@ class VitalClient {
       }
 
       CreateLinkResponse resp = response.body!;
-      Uri widgetUrl =
-          Uri(scheme: "https", host: host, path: "/", queryParameters: {
-        "token": resp.linkToken,
-        "env": env,
-        "region": _region.name,
-      });
+      Uri widgetUrl = Uri(
+          scheme: "https",
+          host: host,
+          path: "/",
+          queryParameters: {
+            "token": resp.linkToken,
+            "env": env,
+            "region": _region.name,
+            "isMobile": "true"
+          });
       return widgetUrl;
     } else {
       throw Exception("Link token creation failed: ${response.error}");
@@ -167,26 +173,14 @@ class VitalClient {
   }
 
   Future<bool> linkProvider(User user, String provider, String callback) {
-    return linkService
-        .createLink(
-            userId: user.userId, provider: provider, redirectUrl: callback)
-        .then((tokenResponse) {
-          if (!tokenResponse.isSuccessful || tokenResponse.body == null) {
-            throw VitalHTTPStatusException(
-                tokenResponse.statusCode, "${tokenResponse.error}");
-          }
-          return tokenResponse.body!.linkToken;
-        })
-        .then((linkToken) => linkService.oauthProvider(
-              provider: provider,
-              linkToken: linkToken,
-            ))
-        .then((oauthResponse) => launchUrlString(oauthResponse.body!.oauthUrl!,
+    return linkWidgetUrl(
+            redirectUrl: callback, provider: ProviderSlug.fromString(provider))
+        .then((url) => launchUrlString(url.toString(),
             mode: LaunchMode.externalApplication))
         .catchError((e) {
-          Fimber.e(e);
-          return false;
-        });
+      Fimber.e(e);
+      return false;
+    });
   }
 
   Future<void> exchangeOAuthCode(

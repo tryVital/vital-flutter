@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:vital_core/provider.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart' as vital_core;
 
@@ -61,7 +62,8 @@ class HomeBloc extends ChangeNotifier {
         .then((value) => refresh()));
   }
 
-  Future<bool> launchLink(User user) async {
-    return client.linkProvider(user, 'strava', 'vitalexample://callback');
+  Future<bool> launchLink(User user, ProviderSlug provider) async {
+    return client.linkProvider(
+        user, provider.toString(), 'vitalexample://callback');
   }
 }

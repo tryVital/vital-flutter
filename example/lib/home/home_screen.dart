@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vital_core/services/data/user.dart';
+import 'package:vital_core/vital_core.dart';
 import 'package:vital_flutter_example/home/home_bloc.dart';
 import 'package:vital_flutter_example/routes.dart';
 
@@ -84,7 +85,8 @@ class UsersPage extends StatelessWidget {
               itemBuilder: ((context, index) => UserWidget(
                     user: users[index],
                     isCurrentSDKUser: users[index].userId == bloc.currentUserId,
-                    linkAction: () => bloc.launchLink(users[index]),
+                    linkAction: (provider) =>
+                        bloc.launchLink(users[index], provider),
                     deleteAction: () => bloc.deleteUser(users[index]),
                     onTap: () {
                       Navigator.of(context)
@@ -102,7 +104,7 @@ class UsersPage extends StatelessWidget {
 
 class UserWidget extends StatelessWidget {
   final User user;
-  final VoidCallback? linkAction;
+  final void Function(ProviderSlug)? linkAction;
   final VoidCallback? deleteAction;
   final VoidCallback? onTap;
   final bool isCurrentSDKUser;
@@ -135,13 +137,28 @@ class UserWidget extends StatelessWidget {
               ),
               if (linkAction != null && isCurrentSDKUser) ...[
                 const SizedBox(width: 12),
-                IconButton(
-                  onPressed: linkAction,
+                PopupMenuButton(
                   icon: const Icon(
-                    Icons.copy,
+                    Icons.add_link,
                     color: Colors.grey,
                   ),
-                )
+                  onSelected: (slug) => linkAction!(slug),
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<ProviderSlug>>[
+                    const PopupMenuItem<ProviderSlug>(
+                      value: ProviderSlug.strava,
+                      child: Text('Strava'),
+                    ),
+                    const PopupMenuItem<ProviderSlug>(
+                      value: ProviderSlug.abbottLibreview,
+                      child: Text('LibreView'),
+                    ),
+                    const PopupMenuItem<ProviderSlug>(
+                      value: ProviderSlug.fitbit,
+                      child: Text('Fitbit'),
+                    ),
+                  ],
+                ),
               ],
               if (deleteAction != null) ...[
                 const SizedBox(width: 12),
