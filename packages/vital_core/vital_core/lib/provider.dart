@@ -84,7 +84,7 @@ enum ResourceAvailabilityStatus {
   unavailable;
 }
 
-@JsonEnum(fieldRename: FieldRename.snake)
+@JsonEnum(fieldRename: FieldRename.snake, alwaysCreate: true)
 enum ManualProviderSlug {
   @JsonValue("beurer_ble")
   beurerBLE,
@@ -99,9 +99,14 @@ enum ManualProviderSlug {
   manual,
   appleHealthKit,
   healthConnect;
+
+  @override
+  String toString() {
+    return _$ManualProviderSlugEnumMap[this]!;
+  }
 }
 
-@JsonEnum(fieldRename: FieldRename.snake)
+@JsonEnum(fieldRename: FieldRename.snake, alwaysCreate: true)
 enum ProviderSlug {
   @JsonValue("beurer_ble")
   beurerBLE,
@@ -146,5 +151,10 @@ enum ProviderSlug {
   static ProviderSlug fromString(String rawValue) {
     return $enumDecode(_$ProviderSlugEnumMap, rawValue,
         unknownValue: ProviderSlug.unrecognized);
+  }
+
+  @override
+  String toString() {
+    return _$ProviderSlugEnumMap[this]!;
   }
 }
