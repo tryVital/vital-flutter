@@ -81,45 +81,6 @@ class WorkoutProcessedData extends ProcessedData {
   }
 }
 
-class ActiveEnergyBurnedProcessedData extends ProcessedData {
-  final List<Activity> activities;
-
-  ActiveEnergyBurnedProcessedData({
-    required this.activities,
-  }) : super(HealthResource.activeEnergyBurned);
-
-  @override
-  String toString() {
-    return 'ActiveEnergyBurnedProcessedData{activities: $activities}';
-  }
-}
-
-class BasalEnergyBurnedProcessedData extends ProcessedData {
-  final List<Activity> activities;
-
-  BasalEnergyBurnedProcessedData({
-    required this.activities,
-  }) : super(HealthResource.basalEnergyBurned);
-
-  @override
-  String toString() {
-    return 'BasalEnergyBurnedProcessedData{activities: $activities}';
-  }
-}
-
-class GlucoseProcessedData extends ProcessedData {
-  final List<LocalQuantitySample> timeSeries;
-
-  GlucoseProcessedData({
-    required this.timeSeries,
-  }) : super(HealthResource.glucose);
-
-  @override
-  String toString() {
-    return 'GlucoseProcessedData{timeSeries: $timeSeries}';
-  }
-}
-
 class BloodPressureProcessedData extends ProcessedData {
   final List<LocalBloodPressureSample> timeSeries;
 
@@ -133,80 +94,15 @@ class BloodPressureProcessedData extends ProcessedData {
   }
 }
 
-class HeartRateProcessedData extends ProcessedData {
+class TimeseriesProcessedData extends ProcessedData {
   final List<LocalQuantitySample> timeSeries;
 
-  HeartRateProcessedData({
+  TimeseriesProcessedData({
     required this.timeSeries,
   }) : super(HealthResource.heartRate);
 
   @override
   String toString() {
-    return 'HeartRateProcessedData{timeSeries: $timeSeries}';
-  }
-}
-
-class HeartRateVariabilityProcessedData extends ProcessedData {
-  final List<LocalQuantitySample> timeSeries;
-
-  HeartRateVariabilityProcessedData({
-    required this.timeSeries,
-  }) : super(HealthResource.heartRate);
-
-  @override
-  String toString() {
-    return 'HeartRateVariabilityProcessedData{timeSeries: $timeSeries}';
-  }
-}
-
-class StepsProcessedData extends ProcessedData {
-  final List<Activity> activities;
-
-  StepsProcessedData({
-    required this.activities,
-  }) : super(HealthResource.steps);
-
-  @override
-  String toString() {
-    return 'StepsProcessedData{activities: $activities}';
-  }
-}
-
-class WaterProcessedData extends ProcessedData {
-  final List<LocalQuantitySample> timeSeries;
-
-  WaterProcessedData({
-    required this.timeSeries,
-  }) : super(HealthResource.bloodPressure);
-
-  @override
-  String toString() {
-    return 'WaterProcessedData{timeSeries: $timeSeries}';
-  }
-}
-
-class CaffeineProcessedData extends ProcessedData {
-  final List<LocalQuantitySample> timeSeries;
-
-  CaffeineProcessedData({
-    required this.timeSeries,
-  }) : super(HealthResource.caffeine);
-
-  @override
-  String toString() {
-    return 'CaffeineProcessedData{timeSeries: $timeSeries}';
-  }
-}
-
-class MindfulSessionProcessedData extends ProcessedData {
-  final List<LocalQuantitySample> timeSeries;
-
-  MindfulSessionProcessedData({
-    required this.timeSeries,
-  }) : super(HealthResource.mindfulSession);
-
-  @override
-  String toString() {
-    return 'MindfulSessionProcessedData{timeSeries: $timeSeries}';
+    return 'TimeseriesProcessedData{timeSeries: $timeSeries}';
   }
 }
