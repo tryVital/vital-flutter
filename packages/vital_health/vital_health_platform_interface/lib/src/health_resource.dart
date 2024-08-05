@@ -14,6 +14,11 @@ enum HealthResource {
   water,
   caffeine, // Not available on Android
   mindfulSession, // Not available on Android
+  temperature,
+  respiratoryRate,
+  menstrualCycle,
+  distanceWalkingRunning,
+  vo2Max,
 }
 
 enum HealthResourceWrite {

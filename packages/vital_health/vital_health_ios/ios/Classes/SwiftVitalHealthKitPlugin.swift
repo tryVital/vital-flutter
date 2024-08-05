@@ -382,6 +382,10 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
           return "heartRateVariability"
         case .mindfulSession:
           return "mindfulSession"
+        case .respiratoryRate:
+          return "respiratoryRate"
+        case .temperature:
+          return "temperature"
       }
     case .individual(let type):
       switch type {
@@ -412,6 +416,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
         case .caffeine:
           return "caffeine"
       }
+    case .menstrualCycle:
+      return "menstrualCycle"
   }
 }
 
@@ -506,6 +512,12 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .nutrition(.water)
     case "caffeine":
       return .nutrition(.caffeine)
+    case "respiratoryRate":
+      return .vitals(.respiratoryRate)
+    case "temperature":
+      return .vitals(.temperature)
+    case "menstrualCycle":
+      return .menstrualCycle
     default:
       throw VitalError.UnsupportedResource(name)
   }
