@@ -32,11 +32,6 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-
-  pod 'VitalLogging', :git => 'https://github.com/tryVital/vital-ios.git', :tag => '1.2.1'
-  pod 'VitalCore', :git => 'https://github.com/tryVital/vital-ios.git', :tag => '1.2.1'
-  pod 'VitalHealthKit', :git => 'https://github.com/tryVital/vital-ios.git', :tag => '1.2.1'
-  pod 'VitalDevices', :git => 'https://github.com/tryVital/vital-ios.git', :tag => '1.2.1'
 end
 
 post_install do |installer|

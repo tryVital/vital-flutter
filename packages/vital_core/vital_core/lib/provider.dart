@@ -122,6 +122,7 @@ enum ProviderSlug {
   appleHealthKit,
   healthConnect,
 
+  @JsonValue("ihealth")
   iHealth,
   oura,
   garmin,
@@ -140,6 +141,7 @@ enum ProviderSlug {
   dexcom,
   myFitnessPal,
   dexcomV3,
+  whoopV2,
   cronometer,
   polar,
   omron,
