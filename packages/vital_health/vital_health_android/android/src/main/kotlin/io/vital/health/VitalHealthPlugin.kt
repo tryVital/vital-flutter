@@ -334,6 +334,10 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             return@execute when (readResult) {
                 is ProcessedResourceData.Summary -> {
                     when (readResult.summaryData) {
+                        is SummaryData.MenstrualCycles -> {
+                            throw NotImplementedError("Not supported")
+                        }
+
                         is SummaryData.Profile -> {
                             JSONObject(
                                 mapOf(
@@ -413,9 +417,9 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                             put("sport", it.sport)
                                             put(
                                                 "caloriesInKiloJules",
-                                                it.caloriesInKiloJules
+                                                it.calories
                                             )
-                                            put("distanceInMeter", it.distanceInMeter)
+                                            put("distanceInMeter", it.calories)
                                             put(
                                                 "heartRate",
                                                 JSONArray(it.heartRate.map {
