@@ -1,3 +1,7 @@
+## 4.3.0
+
+ - Bump "vital_health_platform_interface" to `4.3.0`.
+
 ## 4.2.1
 
  - Bump "vital_health_platform_interface" to `4.2.1`.
