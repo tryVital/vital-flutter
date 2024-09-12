@@ -418,6 +418,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
       }
     case .menstrualCycle:
       return "menstrualCycle"
+    case .meal:
+      return "meal"
   }
 }
 
@@ -518,6 +520,8 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .vitals(.temperature)
     case "menstrualCycle":
       return .menstrualCycle
+    case "meal":
+      return .meal
     default:
       throw VitalError.UnsupportedResource(name)
   }

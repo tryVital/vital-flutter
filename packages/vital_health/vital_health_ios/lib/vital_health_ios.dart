@@ -367,6 +367,8 @@ ProcessedData _mapJsonToProcessedData(
       );
     case HealthResource.menstrualCycle:
       throw Exception("Not supported by read()");
+    case HealthResource.meal:
+      throw Exception("Not supported by read()");
   }
 }
 
