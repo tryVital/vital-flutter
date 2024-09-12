@@ -19,6 +19,7 @@ enum HealthResource {
   menstrualCycle,
   distanceWalkingRunning,
   vo2Max,
+  meal,
 }
 
 enum HealthResourceWrite {

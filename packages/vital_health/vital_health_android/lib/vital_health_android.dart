@@ -318,6 +318,8 @@ ProcessedData _mapJsonToProcessedData(
       throw Exception("Not supported on Android");
     case HealthResource.respiratoryRate:
       throw Exception("Not supported on Android");
+    case HealthResource.meal:
+      throw Exception("Not supported on Android");
   }
 }
 
