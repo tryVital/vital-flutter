@@ -81,7 +81,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   CombineCoreBluetooth: 87fc830440fa8b1e1024c35eaa5e116e743c2660
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
   vital_core_ios: 5bf95a1e5ae3d0983dd3e9d2c2ffba2cdd5633d9
@@ -94,4 +94,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1cf3c716e42756800b995a4d6976c38026aad05f
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2
