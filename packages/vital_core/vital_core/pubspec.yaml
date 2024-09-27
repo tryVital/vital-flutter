@@ -22,7 +22,8 @@ dependencies:
   chopper: ^7.0.7+1
   http: ^1.1.0
   json_annotation: ^4.8.1
-  url_launcher: ^6.2.3
+  url_launcher: ^6.3.0
+  url_launcher_ios: ^6.3.1
   fimber: ^0.6.6
   vital_core_platform_interface: ^4.3.3
   vital_core_ios: ^4.3.3

@@ -18,6 +18,8 @@ dependencies:
   vital_health: ^4.3.3
   vital_devices: ^4.3.3
   chopper: ^7.1.1
+  url_launcher_ios: ^6.3.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
