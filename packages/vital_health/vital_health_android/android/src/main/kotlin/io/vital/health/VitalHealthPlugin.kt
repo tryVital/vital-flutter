@@ -338,6 +338,10 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                             throw NotImplementedError("Not supported")
                         }
 
+                        is SummaryData.Meals -> {
+                            throw NotImplementedError("Not supported")
+                        }
+
                         is SummaryData.Profile -> {
                             JSONObject(
                                 mapOf(
