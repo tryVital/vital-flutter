@@ -1,3 +1,7 @@
+## 4.3.6
+
+ - Bump "vital_devices_platform_interface" to `4.3.6`.
+
 ## 4.3.4
 
  - Bump "vital_devices_platform_interface" to `4.3.4`.
