@@ -75,7 +75,7 @@ class VitalCoreMethodChannel extends VitalCorePlatform {
   Future<String> userConnections() {
     // NOTE: Native to respond with a JSON string
     return _channel
-        .invokeMethod("userConnectedSources")
+        .invokeMethod("userConnections")
         .then((value) => value as String);
   }
 

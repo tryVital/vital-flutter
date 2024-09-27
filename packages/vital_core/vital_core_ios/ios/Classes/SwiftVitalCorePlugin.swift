@@ -133,7 +133,7 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
               "name": $0.name,
               "slug": $0.slug.rawValue,
               "logo": $0.logo,
-              "status": $0.status,
+              "status": $0.status.rawValue,
               "resourceAvailability": Dictionary(
                 uniqueKeysWithValues: $0.resourceAvailability.map { resource, descriptor in
                   (resource.rawValue, [

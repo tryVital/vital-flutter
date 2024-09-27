@@ -134,7 +134,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
-            "userConnectedSources" -> {
+            "userConnections" -> {
                 taskScope.launch {
                     try {
                         val jsonArray = buildJsonArray {
