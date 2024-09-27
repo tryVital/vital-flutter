@@ -143,6 +143,20 @@ class UserBloc extends ChangeNotifier {
     }
   }
 
+  void getUserConnections() async {
+    try {
+      List<vital_core.UserConnection> connections =
+          await vital_core.userConnections();
+      Fimber.i("User Connections: found ${connections.length}");
+      for (var conn in connections) {
+        Fimber.i("$conn");
+        Fimber.i("${conn.resourceAvailability}");
+      }
+    } catch (err) {
+      Fimber.e("Get User Connections Failed: $err");
+    }
+  }
+
   void askForHealthResources() async {
     vital_health.PermissionOutcome outcome =
         await vital_health.askForPermission([

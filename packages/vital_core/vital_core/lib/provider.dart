@@ -26,6 +26,11 @@ class UserConnection {
     required this.resourceAvailability,
   });
 
+  @override
+  String toString() {
+    return "$slug (${status.name})";
+  }
+
   factory UserConnection.fromJson(Map<String, dynamic> json) =>
       _$UserConnectionFromJson(json);
 }
@@ -45,6 +50,15 @@ class ResourceAvailability {
     required this.status,
     this.scopeRequirements,
   });
+
+  @override
+  String toString() {
+    if (scopeRequirements != null) {
+      return "${status.name} (with scope data)";
+    } else {
+      return "${status.name} (no scope data)";
+    }
+  }
 
   factory ResourceAvailability.fromJson(Map<String, dynamic> json) =>
       _$ResourceAvailabilityFromJson(json);
