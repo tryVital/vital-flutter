@@ -1,3 +1,7 @@
+## 4.3.5
+
+ - Bump "vital_health_ios" to `4.3.5`.
+
 ## 4.3.4
 
  - Bump "vital_health_ios" to `4.3.4`.
