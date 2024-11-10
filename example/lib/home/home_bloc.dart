@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:vital_core/provider.dart';
 import 'package:vital_core/services/data/user.dart';
 import 'package:vital_core/vital_core.dart' as vital_core;
+import 'package:vital_health/vital_health.dart' as vital_health;
 
 class UserListError {
   final int statusCode;
@@ -65,5 +66,9 @@ class HomeBloc extends ChangeNotifier {
   Future<bool> launchLink(User user, ProviderSlug provider) async {
     return client.linkProvider(
         user, provider.toString(), 'vitalexample://callback');
+  }
+
+  openSyncProgressView() {
+    unawaited(vital_health.openSyncProgressView());
   }
 }

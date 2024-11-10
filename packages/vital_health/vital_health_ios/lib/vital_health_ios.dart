@@ -202,6 +202,11 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
+  Future<void> openSyncProgressView() {
+    return _channel.invokeMethod('openSyncProgressView');
+  }
+
+  @override
   Stream<SyncStatus> get status => _statusStream;
 }
 
