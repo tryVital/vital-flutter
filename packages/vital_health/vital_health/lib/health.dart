@@ -161,3 +161,11 @@ Future<void> setSyncNotificationContent(SyncNotificationContent content) async {
 Future<void> setPauseSynchronization(bool paused) async {
   return await VitalHealthPlatform.instance.setPauseSynchronization(paused);
 }
+
+Future<void> openSyncProgressView() async {
+  if (Platform.isAndroid) {
+    return;
+  }
+
+  return await VitalHealthPlatform.instance.openSyncProgressView();
+}

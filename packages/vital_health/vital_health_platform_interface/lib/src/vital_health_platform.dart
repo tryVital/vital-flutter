@@ -90,4 +90,8 @@ class VitalHealthPlatform extends PlatformInterface {
   Future<void> setSyncNotificationContent(SyncNotificationContent content) {
     throw UnimplementedError();
   }
+
+  Future<void> openSyncProgressView() {
+    throw UnimplementedError();
+  }
 }

@@ -37,6 +37,14 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     cancellable?.cancel()
   }
 
+  public func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]
+  ) -> Bool {
+    VitalHealthKitClient.automaticConfiguration()
+    return true
+  }
+
   // Because the Plugin inherits from FlutterPlugin and it is added via `addApplicationDelegate`
   // When the app terminates, the cancellable should be cancelled
   public func applicationWillTerminate(_ application: UIApplication) {
@@ -113,6 +121,9 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       case "setPauseSynchronization":
         VitalHealthKitClient.shared.pauseSynchronization = call.arguments as! Bool
         result(nil)
+        return
+      case "openSyncProgressView":
+        openSyncProgressView(result: result)
         return
       default:
         break
@@ -275,6 +286,22 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
     } catch let error {
       result(encode(ErrorResult(from: error)))
+    }
+  }
+
+  private func openSyncProgressView(result: @escaping FlutterResult) {
+    DispatchQueue.main.async {
+      defer { result(nil) }
+
+      guard
+        let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
+      else { return }
+
+      keyWindow.rootViewController?.present(
+        SyncProgressViewController(),
+        animated: true,
+        completion: nil
+      )
     }
   }
 

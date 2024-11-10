@@ -7,21 +7,21 @@ PODS:
     - Flutter
   - vital_core_ios (0.0.10):
     - Flutter
-    - VitalCore (~> 1.2.7)
+    - VitalCore (~> 1.2.11)
   - vital_devices_ios (0.0.10):
     - Flutter
-    - VitalDevices (~> 1.2.7)
+    - VitalDevices (~> 1.2.11)
   - vital_health_ios (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 1.2.7)
-  - VitalCore (1.2.7):
-    - VitalLogging (~> 1.2.7)
-  - VitalDevices (1.2.7):
+    - VitalHealthKit (~> 1.2.11)
+  - VitalCore (1.2.11):
+    - VitalLogging (~> 1.2.11)
+  - VitalDevices (1.2.11):
     - CombineCoreBluetooth (~> 0.3.1)
-    - VitalCore (~> 1.2.7)
-  - VitalHealthKit (1.2.7):
-    - VitalCore (~> 1.2.7)
-  - VitalLogging (1.2.7)
+    - VitalCore (~> 1.2.11)
+  - VitalHealthKit (1.2.11):
+    - VitalCore (~> 1.2.11)
+  - VitalLogging (1.2.11)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -30,14 +30,14 @@ DEPENDENCIES:
   - vital_core_ios (from `.symlinks/plugins/vital_core_ios/ios`)
   - vital_devices_ios (from `.symlinks/plugins/vital_devices_ios/ios`)
   - vital_health_ios (from `.symlinks/plugins/vital_health_ios/ios`)
-  - VitalCore (from `https://github.com/tryVital/vital-ios.git`, tag `1.2.7`)
-  - VitalDevices (from `https://github.com/tryVital/vital-ios.git`, tag `1.2.7`)
-  - VitalHealthKit (from `https://github.com/tryVital/vital-ios.git`, tag `1.2.7`)
-  - VitalLogging (from `https://github.com/tryVital/vital-ios.git`, tag `1.2.7`)
 
 SPEC REPOS:
   trunk:
     - CombineCoreBluetooth
+    - VitalCore
+    - VitalDevices
+    - VitalHealthKit
+    - VitalLogging
 
 EXTERNAL SOURCES:
   Flutter:
@@ -52,46 +52,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vital_devices_ios/ios"
   vital_health_ios:
     :path: ".symlinks/plugins/vital_health_ios/ios"
-  VitalCore:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-  VitalDevices:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-  VitalHealthKit:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-  VitalLogging:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-
-CHECKOUT OPTIONS:
-  VitalCore:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-  VitalDevices:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-  VitalHealthKit:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
-  VitalLogging:
-    :git: https://github.com/tryVital/vital-ios.git
-    :tag: 1.2.7
 
 SPEC CHECKSUMS:
   CombineCoreBluetooth: 87fc830440fa8b1e1024c35eaa5e116e743c2660
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
-  vital_core_ios: 5bf95a1e5ae3d0983dd3e9d2c2ffba2cdd5633d9
-  vital_devices_ios: 176cfa5888637c8b24f86951393dfcef9c4f6174
-  vital_health_ios: d9d37937a19ab8fc488400a013309507d348d941
-  VitalCore: 9d0dd409a8995098f5453564bc07aa16a430052f
-  VitalDevices: ed08fe523eeca3101f54dae8343e857f53992793
-  VitalHealthKit: ae73f4442551b4a2f39959257cb690c6f630ec96
-  VitalLogging: fc8f48f2a61b260822666b774a1fa2844ff30b8c
+  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
+  vital_core_ios: 75200c70b9a8e7d8a14e4ecab73ff4d7dda2604d
+  vital_devices_ios: 0ca75aee6c69b7de4e3c087dc90ef0aa83d13738
+  vital_health_ios: 0aade28d0b573db36c00230265f109be9dc8e58f
+  VitalCore: c6f8fcb1c6c3eb98bacbead103dbca30ad484ff8
+  VitalDevices: dcd084b080e9553352ed365200398ae28a371042
+  VitalHealthKit: 0a47ff15821613257903c99694301a2e2bd304ea
+  VitalLogging: 27a9df69403278a5f12187f61ec4b7c930a383b8
 
-PODFILE CHECKSUM: 1cf3c716e42756800b995a4d6976c38026aad05f
+PODFILE CHECKSUM: f21161b81928bd85faa21a8d8a8be5daa58b7b47
 
 COCOAPODS: 1.11.3

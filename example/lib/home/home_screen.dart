@@ -21,6 +21,10 @@ class UsersScreen extends StatelessWidget {
               icon: const Icon(Icons.bluetooth),
             ),
             IconButton(
+              onPressed: () => bloc.openSyncProgressView(),
+              icon: const Icon(Icons.cloud_sync_outlined),
+            ),
+            IconButton(
               onPressed: () => _displayCreateUserDialog(context),
               icon: const Icon(Icons.person_add),
             ),
