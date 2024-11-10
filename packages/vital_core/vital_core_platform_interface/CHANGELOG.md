@@ -1,3 +1,7 @@
+## 4.3.7
+
+ - Bump "vital_core_platform_interface" to `4.3.7`.
+
 ## 4.3.6
 
 ## 4.3.4
