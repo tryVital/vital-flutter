@@ -1,3 +1,7 @@
+## 4.4.0
+
+ - Bump "vital_core" to `4.4.0`.
+
 ## 4.3.8
 
  - Bump "vital_core" to `4.3.8`.
