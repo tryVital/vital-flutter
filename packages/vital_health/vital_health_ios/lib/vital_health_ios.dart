@@ -370,9 +370,27 @@ ProcessedData _mapJsonToProcessedData(
             .whereType<LocalQuantitySample>()
             .toList(),
       );
+    case HealthResource.heartRateAlert:
+      return TimeseriesProcessedData(
+        timeSeries:
+            (json['timeSeries']["_0"]["heartRateAlert"]["_0"] as List<dynamic>)
+                .map((it) => _sampleFromSwiftJson(it))
+                .whereType<LocalQuantitySample>()
+                .toList(),
+      );
+    case HealthResource.afibBurden:
+      return TimeseriesProcessedData(
+        timeSeries:
+            (json['timeSeries']["_0"]["afibBurden"]["_0"] as List<dynamic>)
+                .map((it) => _sampleFromSwiftJson(it))
+                .whereType<LocalQuantitySample>()
+                .toList(),
+      );
     case HealthResource.menstrualCycle:
       throw Exception("Not supported by read()");
     case HealthResource.meal:
+      throw Exception("Not supported by read()");
+    case HealthResource.electrocardiogram:
       throw Exception("Not supported by read()");
   }
 }

@@ -320,6 +320,12 @@ ProcessedData _mapJsonToProcessedData(
       throw Exception("Not supported on Android");
     case HealthResource.meal:
       throw Exception("Not supported on Android");
+    case HealthResource.afibBurden:
+      throw Exception("Not supported on Android");
+    case HealthResource.heartRateAlert:
+      throw Exception("Not supported on Android");
+    case HealthResource.electrocardiogram:
+      throw Exception("Not supported on Android");
   }
 }
 

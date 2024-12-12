@@ -20,6 +20,9 @@ enum HealthResource {
   distanceWalkingRunning,
   vo2Max,
   meal,
+  afibBurden, // Not available on Android
+  heartRateAlert, // Not available on Android
+  electrocardiogram, // Not available on Android
 }
 
 enum HealthResourceWrite {
