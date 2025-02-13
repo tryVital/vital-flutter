@@ -1,3 +1,7 @@
+## 4.4.1-beta.2
+
+ - Bump "vital_health" to `4.4.1-beta.2`.
+
 ## 4.4.1-beta.1
 
  - Bump "vital_health" to `4.4.1-beta.1`.
