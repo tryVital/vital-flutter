@@ -7,21 +7,21 @@ PODS:
     - Flutter
   - vital_core_ios (0.0.10):
     - Flutter
-    - VitalCore (~> 1.4.1-beta.2)
+    - VitalCore (~> 1.4.1)
   - vital_devices_ios (0.0.10):
     - Flutter
-    - VitalDevices (~> 1.4.1-beta.2)
+    - VitalDevices (~> 1.4.1)
   - vital_health_ios (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 1.4.1-beta.2)
-  - VitalCore (1.4.1-beta.2):
-    - VitalLogging (~> 1.4.1-beta.2)
-  - VitalDevices (1.4.1-beta.2):
+    - VitalHealthKit (~> 1.4.1)
+  - VitalCore (1.4.1):
+    - VitalLogging (~> 1.4.1)
+  - VitalDevices (1.4.1):
     - CombineCoreBluetooth (~> 0.3.1)
-    - VitalCore (~> 1.4.1-beta.2)
-  - VitalHealthKit (1.4.1-beta.2):
-    - VitalCore (~> 1.4.1-beta.2)
-  - VitalLogging (1.4.1-beta.2)
+    - VitalCore (~> 1.4.1)
+  - VitalHealthKit (1.4.1):
+    - VitalCore (~> 1.4.1)
+  - VitalLogging (1.4.1)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
