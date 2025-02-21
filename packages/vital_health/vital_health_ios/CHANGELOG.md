@@ -1,3 +1,7 @@
+## 4.4.1
+
+ - Bump "vital_health_ios" to `4.4.1`.
+
 ## 4.4.1-beta.2
 
  - Bump "vital_health_ios" to `4.4.1-beta.2`.
