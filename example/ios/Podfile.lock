@@ -7,21 +7,21 @@ PODS:
     - Flutter
   - vital_core_ios (0.0.10):
     - Flutter
-    - VitalCore (~> 1.4.4)
+    - VitalCore (~> 1.4.5)
   - vital_devices_ios (0.0.10):
     - Flutter
-    - VitalDevices (~> 1.4.4)
+    - VitalDevices (~> 1.4.5)
   - vital_health_ios (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 1.4.4)
-  - VitalCore (1.4.4):
-    - VitalLogging (~> 1.4.4)
-  - VitalDevices (1.4.4):
+    - VitalHealthKit (~> 1.4.5)
+  - VitalCore (1.4.5):
+    - VitalLogging (~> 1.4.5)
+  - VitalDevices (1.4.5):
     - CombineCoreBluetooth (~> 0.3.1)
-    - VitalCore (~> 1.4.4)
-  - VitalHealthKit (1.4.4):
-    - VitalCore (~> 1.4.4)
-  - VitalLogging (1.4.4)
+    - VitalCore (~> 1.4.5)
+  - VitalHealthKit (1.4.5):
+    - VitalCore (~> 1.4.5)
+  - VitalLogging (1.4.5)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -58,13 +58,13 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
-  vital_core_ios: bffdd06b0202f4e72f9d015d8f442e7ca366cb46
-  vital_devices_ios: 245010660bb9130f53e1412108b0a757254f75c0
-  vital_health_ios: bcb4d28d42dfc368a981b49c7df4eb105ffe4b24
-  VitalCore: 7873c088930987425fa559bdec735cbd77cdd1a3
-  VitalDevices: b654dd927e3736edcc86664eda6c62c5ade92f39
-  VitalHealthKit: eb2b27c3baeb180cfb7f7e0b8be680de2c2dde53
-  VitalLogging: 52ac4582c62985a6c65d21b59cf2817e67e650cb
+  vital_core_ios: c0ea3b7242a3a8a1e75c1ba38de379a2bd599f38
+  vital_devices_ios: 4ca4b25aff5b3d00747ff7f7d89d1af73b96bdde
+  vital_health_ios: 1183a39323f2961d5fec9b86c0616fdeaf5a625c
+  VitalCore: e60d4324027c75a0455d479eba8c146360c73f99
+  VitalDevices: eae5f77c0002911fb042fbaca680f75f249c0583
+  VitalHealthKit: faab0fc66c68ea44b7c9adb6c124a9b15d43e9ca
+  VitalLogging: e9ab8455507701fef2b19ee4a5d6c3802b3ed7b0
 
 PODFILE CHECKSUM: f21161b81928bd85faa21a8d8a8be5daa58b7b47
 

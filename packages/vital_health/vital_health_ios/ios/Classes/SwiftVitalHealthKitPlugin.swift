@@ -242,14 +242,17 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   }
 
   private func hasAskedForPermission(resource: String, result: @escaping FlutterResult) {
-    do {
-      let resource = try mapResourceToReadableVitalResource(resource)
-      let value: Bool = VitalHealthKitClient.shared.hasAskedForPermission(resource: resource)
-      result(value)
-    } catch VitalError.UnsupportedResource(let errorMessage) {
-      result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
-    } catch let error {
-      result(encode(ErrorResult(from: error)))
+    NonthrowingTask {
+      do {
+        let resource = try mapResourceToReadableVitalResource(resource)
+
+        let status = try await VitalHealthKitClient.shared.permissionStatus(for: [resource])
+        result(status[resource])
+      } catch VitalError.UnsupportedResource(let errorMessage) {
+        result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
+      } catch let error {
+        result(encode(ErrorResult(from: error)))
+      }
     }
   }
 
