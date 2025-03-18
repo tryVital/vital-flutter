@@ -1,10 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:vital_core/exceptions.dart';
 import 'package:vital_core/samples.dart';
 import 'package:vital_devices_platform_interface/vital_devices_platform_interface.dart';
@@ -12,10 +12,16 @@ import 'package:vital_devices_platform_interface/vital_devices_platform_interfac
 const _channel = MethodChannel('vital_devices');
 
 class VitalDevicesMethodChannel extends VitalDevicesPlatform {
-  final _scanSubject = PublishSubject<ScannedDevice>();
-  final _glucoseReadSubject = PublishSubject<List<LocalQuantitySample>>();
+  final _scanSubject = StreamController<ScannedDevice>();
+  final _glucoseReadSubject = StreamController<List<LocalQuantitySample>>();
   final _bloodPressureSubject =
-      PublishSubject<List<LocalBloodPressureSample>>();
+      StreamController<List<LocalBloodPressureSample>>();
+
+  late final _scanBroadcast = _scanSubject.stream.asBroadcastStream();
+  late final _glucoseReadBroadcast =
+      _glucoseReadSubject.stream.asBroadcastStream();
+  late final _bloodPressureBroadcast =
+      _bloodPressureSubject.stream.asBroadcastStream();
 
   @override
   void init() {
@@ -119,9 +125,9 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
           deviceModel.kind.name
         ]),
       ),
-    ).flatMap((outcome) {
+    ).asyncExpand((outcome) {
       if (outcome == null) {
-        return _scanSubject;
+        return _scanBroadcast;
       } else {
         throw UnknownException("Could not start scan: $outcome");
       }
@@ -149,7 +155,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
         .then((outcome) {
       if (outcome == null) {
         // Forward either the first batch delivered, or the first error.
-        return _glucoseReadSubject.first;
+        return _glucoseReadBroadcast.first;
       } else {
         throw UnknownException("Could not start scan: $outcome");
       }
@@ -165,7 +171,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
         .then((outcome) {
       if (outcome == null) {
         // Forward either the first batch delivered, or the first error.
-        return _bloodPressureSubject.first;
+        return _bloodPressureBroadcast.first;
       } else {
         throw Exception("Could not start scan: $outcome");
       }
