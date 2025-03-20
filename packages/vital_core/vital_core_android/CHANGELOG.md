@@ -1,3 +1,7 @@
+## 4.4.3
+
+ - Bump "vital_core_android" to `4.4.3`.
+
 ## 4.4.2
 
  - Bump "vital_core_android" to `4.4.2`.
