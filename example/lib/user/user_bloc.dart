@@ -158,8 +158,7 @@ class UserBloc extends ChangeNotifier {
   }
 
   void askForHealthResources() async {
-    vital_health.PermissionOutcome outcome =
-        await vital_health.askForPermission([
+    const readResources = [
       vital_health.HealthResource.profile,
       vital_health.HealthResource.body,
       vital_health.HealthResource.activity,
@@ -170,7 +169,15 @@ class UserBloc extends ChangeNotifier {
       vital_health.HealthResource.water,
       vital_health.HealthResource.caffeine,
       vital_health.HealthResource.mindfulSession
-    ], [
+    ];
+
+    for (var resource in readResources) {
+      var hasAsked = await vital_health.hasAskedForPermission(resource);
+      Fimber.i("$resource asked: $hasAsked");
+    }
+
+    vital_health.PermissionOutcome outcome =
+        await vital_health.askForPermission(readResources, [
       vital_health.HealthResourceWrite.water,
       vital_health.HealthResourceWrite.caffeine,
       vital_health.HealthResourceWrite.mindfulSession
