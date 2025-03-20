@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/services.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:vital_core/exceptions.dart';
 import 'package:vital_core/samples.dart';
 import 'package:vital_core/vital_core.dart';
@@ -16,14 +15,15 @@ class VitalHealthAndroid extends VitalHealthPlatform {
     VitalHealthPlatform.instanceFactory = () => VitalHealthAndroid();
   }
 
-  final _statusSubject = PublishSubject<SyncStatus>();
+  final _statusStream = StreamController<SyncStatus>();
+  late final _statusStreamBroadcast = _statusStream.stream.asBroadcastStream();
 
   VitalHealthAndroid() : super() {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case "status":
           {
-            _statusSubject
+            _statusStream
                 .add(mapArgumentsToStatus(call.arguments as List<dynamic>));
           }
       }
@@ -215,7 +215,7 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   }
 
   @override
-  Stream<SyncStatus> get status => _statusSubject.stream;
+  Stream<SyncStatus> get status => _statusStreamBroadcast;
 }
 
 ProcessedData _mapJsonToProcessedData(
