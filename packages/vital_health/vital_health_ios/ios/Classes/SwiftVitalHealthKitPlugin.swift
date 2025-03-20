@@ -247,7 +247,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         let resource = try mapResourceToReadableVitalResource(resource)
 
         let status = try await VitalHealthKitClient.shared.permissionStatus(for: [resource])
-        result(status[resource])
+        result(status[resource] == .asked)
       } catch VitalError.UnsupportedResource(let errorMessage) {
         result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
       } catch let error {
