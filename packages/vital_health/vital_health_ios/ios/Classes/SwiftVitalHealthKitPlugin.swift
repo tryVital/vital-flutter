@@ -359,74 +359,110 @@ private func mapStatusToArguments(_ status: VitalHealthKitClient.Status) -> [Any
 
 private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
   switch resource {
-    case .profile:
-      return "profile"
-    case .body:
-      return "body"
-    case .workout:
-      return "workout"
-    case .activity:
-      return "activity"
-    case .sleep:
-      return "sleep"
-    case .vitals(let type):
-      switch type {
-        case .glucose:
-          return "glucose"
-        case .bloodPressure:
-          return "bloodPressure"
-        case .bloodOxygen:
-          return "bloodOxygen"
-        case .heartRate:
-          return "heartRate"
-        case .heartRateVariability:
-          return "heartRateVariability"
-        case .mindfulSession:
-          return "mindfulSession"
-        case .respiratoryRate:
-          return "respiratoryRate"
-        case .temperature:
-          return "temperature"
-      }
-    case .individual(let type):
-      switch type {
-        case .steps:
-          return "steps"
-        case .activeEnergyBurned:
-          return "activeEnergyBurned"
-        case .basalEnergyBurned:
-          return "basalEnergyBurned"
-        case .floorsClimbed:
-          return "floorsClimbed"
-        case .distanceWalkingRunning:
-          return "distanceWalkingRunning"
-        case .vo2Max:
-          return "vo2Max"
-      case .exerciseTime:
-          return "exerciseTime"
-        case .weight:
-          return "weight"
-        case .bodyFat:
-          return "bodyFat"
-      }
-
-    case .nutrition(let type):
-      switch type {
-        case .water:
-          return "water"
-        case .caffeine:
-          return "caffeine"
-      }
-    case .menstrualCycle:
-      return "menstrualCycle"
-    case .meal:
-      return "meal"
-    case .electrocardiogram:
-      return "electrocardiogram"
-    case .heartRateAlert:
-      return "heartRateAlert"
-    case .afibBurden:
-        return "afibBurden"
+  case .profile:
+    return "profile"
+  case .body:
+    return "body"
+  case .workout:
+    return "workout"
+  case .activity:
+    return "activity"
+  case .sleep:
+    return "sleep"
+  case .vitals(let type):
+    switch type {
+    case .glucose:
+      return "glucose"
+    case .bloodPressure:
+      return "bloodPressure"
+    case .bloodOxygen:
+      return "bloodOxygen"
+    case .heartRate:
+      return "heartRate"
+    case .heartRateVariability:
+      return "heartRateVariability"
+    case .mindfulSession:
+      return "mindfulSession"
+    case .respiratoryRate:
+      return "respiratoryRate"
+    case .temperature:
+      return "temperature"
+    }
+  case .individual(let type):
+    switch type {
+    case .steps:
+      return "steps"
+    case .activeEnergyBurned:
+      return "activeEnergyBurned"
+    case .basalEnergyBurned:
+      return "basalEnergyBurned"
+    case .floorsClimbed:
+      return "floorsClimbed"
+    case .distance:
+      return "distanceWalkingRunning"
+    case .vo2Max:
+      return "vo2Max"
+    case .exerciseTime:
+      return "exerciseTime"
+    case .weight:
+      return "weight"
+    case .bodyFat:
+      return "bodyFat"
+    case .wheelchairPush:
+      return "wheelchairPush"
+    case .leanBodyMass:
+      return "leanBodyMass"
+    case .waistCircumference:
+      return "waistCircumference"
+    case .bodyMassIndex:
+      return "bodyMassIndex"
+    }
+    
+  case .nutrition(let type):
+    switch type {
+    case .water:
+      return "water"
+    case .caffeine:
+      return "caffeine"
+    }
+  case .menstrualCycle:
+    return "menstrualCycle"
+  case .meal:
+    return "meal"
+  case .electrocardiogram:
+    return "electrocardiogram"
+  case .heartRateAlert:
+    return "heartRateAlert"
+  case .afibBurden:
+    return "afibBurden"
+  case .standHour:
+    return "standHour"
+  case .standDuration:
+    return "standDuration"
+  case .sleepApneaAlert:
+    return "sleepApneaAlert"
+  case .sleepBreathingDisturbance:
+    return "sleepBreathingDisturbance"
+  case .forcedExpiratoryVolume1:
+    return "forcedExpiratoryVolume1"
+  case .forcedVitalCapacity:
+    return "forcedVitalCapacity"
+  case .peakExpiratoryFlowRate:
+    return "peakExpiratoryFlowRate"
+  case .inhalerUsage:
+    return "inhalerUsage"
+  case .fall:
+    return "fall"
+  case .uvExposure:
+    return "uvExposure"
+  case .daylightExposure:
+    return "daylightExposure"
+  case .handwashing:
+    return "handwashing"
+  case .basalBodyTemperature:
+    return "basalBodyTemperature"
+  case .heartRateRecoveryOneMinute:
+    return "heartRateRecoveryOneMinute"
   }
 }
 
@@ -508,7 +544,7 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
     case "floorsClimbed":
       return .individual(.floorsClimbed)
     case "distanceWalkingRunning":
-      return .individual(.distanceWalkingRunning)
+      return .individual(.distance)
     case "exerciseTime":
       return .individual(.exerciseTime)
     case "vo2Max":
