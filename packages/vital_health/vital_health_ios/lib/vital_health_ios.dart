@@ -49,15 +49,6 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<void> configureClient(
-      String apiKey, Region region, Environment environment) async {
-    Fimber.d('Healthkit configure $apiKey, $region $environment');
-
-    await _channel.invokeMethod(
-        'configureClient', [apiKey, region.name, environment.name]);
-  }
-
-  @override
   Future<void> configureHealth({required HealthConfig config}) async {
     Fimber.d('Healthkit configureHealthKit $config');
     final result = await _channel.invokeMethod('configureHealthkit', [
@@ -66,26 +57,6 @@ class VitalHealthIos extends VitalHealthPlatform {
       config.numberOfDaysToBackFill,
       config.iosConfig.dataPushMode
     ]);
-    final error = _mapError(result);
-    if (error != null) {
-      throw error;
-    }
-  }
-
-  @override
-  Future<void> setUserId(String userId) async {
-    final result = await _channel.invokeMethod('setUserId', userId);
-
-    final error = _mapError(result);
-    if (error != null) {
-      throw error;
-    }
-  }
-
-  @override
-  Future<void> cleanUp() async {
-    final result = await _channel.invokeMethod('cleanUp');
-
     final error = _mapError(result);
     if (error != null) {
       throw error;
@@ -131,18 +102,6 @@ class VitalHealthIos extends VitalHealthPlatform {
   Future<bool> hasAskedForPermission(HealthResource resource) async {
     final result =
         await _channel.invokeMethod('hasAskedForPermission', resource.name);
-
-    final error = _mapError(result);
-    if (error != null) {
-      throw error;
-    } else {
-      return result as bool;
-    }
-  }
-
-  @override
-  Future<bool> isUserConnected(String provider) async {
-    final result = await _channel.invokeMethod('isUserConnected', provider);
 
     final error = _mapError(result);
     if (error != null) {

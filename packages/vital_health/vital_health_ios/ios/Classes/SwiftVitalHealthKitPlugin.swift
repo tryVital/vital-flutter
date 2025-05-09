@@ -61,41 +61,12 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
       case "writeHealthKitData":
         writeHealthKitData(call.arguments as! [AnyObject], result: result)
         return
-      case "configureClient":
-        configureClient(call.arguments as! [AnyObject], result: result)
-        return
       case "configureHealthkit":
         configureHealthkit(call.arguments as! [AnyObject], result: result)
-        return
-      case "setUserId":
-        NonthrowingTask {
-          await VitalClient.setUserId(UUID(uuidString: call.arguments as! String)!)
-          result(nil)
-        }
         return
       case "hasAskedForPermission":
         let resource = call.arguments as! String
         hasAskedForPermission(resource: resource, result: result)
-        return
-
-      case "isUserConnected":
-        do {
-          let providerString = call.arguments as! String
-          let provider = try mapProviderToVitalProvider(providerString)
-
-          NonthrowingTask {
-            do {
-              let isConnected = try await VitalClient.shared.isUserConnected(to: provider)
-              result(isConnected)
-            } catch let error {
-              result(encode(ErrorResult(from: error)))
-            }
-          }
-        } catch VitalError.UnsupportedProvider(let errorMessage) {
-          result(encode(ErrorResult(code: .unsupportedProvider, message: errorMessage)))
-        } catch let error {
-          result(encode(ErrorResult(from: error)))
-        }
         return
       case "ask":
         ask(call.arguments as! [AnyObject], result: result)
