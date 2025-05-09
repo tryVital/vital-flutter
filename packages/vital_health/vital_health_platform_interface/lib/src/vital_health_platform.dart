@@ -28,15 +28,8 @@ class VitalHealthPlatform extends PlatformInterface {
   Future<bool> isAvailable() =>
       throw UnimplementedError('isAvailable() has not been implemented.');
 
-  Future<void> configureClient(
-          String apiKey, Region region, Environment environment) =>
-      throw UnimplementedError('configureClient() has not been implemented.');
-
   Future<void> configureHealth({required HealthConfig config}) =>
       throw UnimplementedError('configureHealth() has not been implemented.');
-
-  Future<void> setUserId(String userId) =>
-      throw UnimplementedError('setUserId() has not been implemented.');
 
   Future<PermissionOutcome> ask(List<HealthResource> readResources,
       List<HealthResourceWrite> writeResources) async {
@@ -49,13 +42,6 @@ class VitalHealthPlatform extends PlatformInterface {
 
   Future<void> syncData({List<HealthResource>? resources}) =>
       throw UnimplementedError('syncData() has not been implemented.');
-
-  Future<void> cleanUp() =>
-      throw UnimplementedError('cleanUp() has not been implemented.');
-
-  Future<bool> isUserConnected(String provider) {
-    throw UnimplementedError('isUserConnected() has not been implemented.');
-  }
 
   Future<void> writeHealthData(HealthResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) {

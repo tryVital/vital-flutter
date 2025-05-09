@@ -127,13 +127,16 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         logger.logI("onMethodCall: ${call.method}")
 
         when (call.method) {
-            "configureClient" -> configureClient(call, result)
             "configureHealthConnect" -> configureHealthConnect(call, result)
-            "setUserId" -> setUserId(call, result)
             "syncData" -> syncData(call, result)
             "askForResources" -> askForResources(call, result)
             "writeHealthData" -> writeHealthData(call, result)
             "read" -> read(call, result)
+
+            "hasAskedForPermission" -> result.execute(taskScope) {
+                val resource = VitalResource.valueOf(call.argument<String>("resource")!!)
+                vitalHealthConnectManager.hasAskedForPermission(resource)
+            }
 
             "isAvailable" -> {
                 result.success(
@@ -566,13 +569,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         }
     }
 
-    private fun setUserId(call: MethodCall, result: Result) {
-        result.execute(taskScope) {
-            VitalClient.setUserId(context, call.argument<String?>("userId")!!)
-            return@execute null
-        }
-    }
-
     private fun configureHealthConnect(call: MethodCall, result: Result) {
         val manager = VitalHealthConnectManager.getOrCreate(context)
         val availability = VitalHealthConnectManager.isAvailable(context)
@@ -590,18 +586,6 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 logsEnabled = call.argument<Boolean?>("logsEnabled")!!,
                 syncOnAppStart = call.argument<Boolean?>("syncOnAppStart")!!,
                 numberOfDaysToBackFill = call.argument<Int?>("numberOfDaysToBackFill")!!,
-            )
-            return@execute null
-        }
-    }
-
-    private fun configureClient(call: MethodCall, result: Result) {
-        result.execute(taskScope) {
-            VitalClient.configure(
-                context,
-                Region.valueOf(call.argument<String>("region")!!.uppercase()),
-                Environment.valueOf(call.argument<String>("environment")!!.replaceFirstChar { it.uppercase() }),
-                call.argument<String>("apiKey")!!
             )
             return@execute null
         }
