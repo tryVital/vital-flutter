@@ -6,6 +6,7 @@ part of 'providers_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$ProvidersService extends ProvidersService {
   _$ProvidersService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$ProvidersService extends ProvidersService {
   }
 
   @override
-  final definitionType = ProvidersService;
+  final Type definitionType = ProvidersService;
 
   @override
   Future<Response<List<AvailableProvider>>> get() {

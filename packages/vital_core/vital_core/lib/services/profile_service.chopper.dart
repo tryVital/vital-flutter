@@ -6,6 +6,7 @@ part of 'profile_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$ProfileService extends ProfileService {
   _$ProfileService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$ProfileService extends ProfileService {
   }
 
   @override
-  final definitionType = ProfileService;
+  final Type definitionType = ProfileService;
 
   @override
   Future<Response<Profile>> getProfile(

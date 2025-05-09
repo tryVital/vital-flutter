@@ -6,6 +6,7 @@ part of 'user_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$UserService extends UserService {
   _$UserService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$UserService extends UserService {
   }
 
   @override
-  final definitionType = UserService;
+  final Type definitionType = UserService;
 
   @override
   Future<Response<User>> getUser(String userId) {

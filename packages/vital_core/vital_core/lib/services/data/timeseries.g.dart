@@ -11,7 +11,7 @@ ScalarSample _$ScalarSampleFromJson(Map<String, dynamic> json) => ScalarSample(
       value: (json['value'] as num).toDouble(),
       type: json['type'] as String?,
       unit: json['unit'] as String,
-      timezoneOffset: json['timezone_offset'] as int?,
+      timezoneOffset: (json['timezone_offset'] as num?)?.toInt(),
     );
 
 IntervalSample _$IntervalSampleFromJson(Map<String, dynamic> json) =>
@@ -21,7 +21,7 @@ IntervalSample _$IntervalSampleFromJson(Map<String, dynamic> json) =>
       value: (json['value'] as num).toDouble(),
       type: json['type'] as String?,
       unit: json['unit'] as String,
-      timezoneOffset: json['timezone_offset'] as int?,
+      timezoneOffset: (json['timezone_offset'] as num?)?.toInt(),
     );
 
 BloodPressureSample _$BloodPressureSampleFromJson(Map<String, dynamic> json) =>
@@ -31,7 +31,7 @@ BloodPressureSample _$BloodPressureSampleFromJson(Map<String, dynamic> json) =>
       diastolic: (json['diastolic'] as num).toDouble(),
       type: json['type'] as String?,
       unit: json['unit'] as String,
-      timezoneOffset: json['timezone_offset'] as int?,
+      timezoneOffset: (json['timezone_offset'] as num?)?.toInt(),
     );
 
 GroupedScalarTimeseries _$GroupedScalarTimeseriesFromJson(

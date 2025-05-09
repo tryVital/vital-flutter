@@ -6,6 +6,7 @@ part of 'control_plane_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$ControlPlaneService extends ControlPlaneService {
   _$ControlPlaneService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$ControlPlaneService extends ControlPlaneService {
   }
 
   @override
-  final definitionType = ControlPlaneService;
+  final Type definitionType = ControlPlaneService;
 
   @override
   Future<Response<GetAllUsersResponse>> getAll() {

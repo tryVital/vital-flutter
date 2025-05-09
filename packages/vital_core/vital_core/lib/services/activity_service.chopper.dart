@@ -6,6 +6,7 @@ part of 'activity_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$ActivityService extends ActivityService {
   _$ActivityService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$ActivityService extends ActivityService {
   }
 
   @override
-  final definitionType = ActivityService;
+  final Type definitionType = ActivityService;
 
   @override
   Future<Response<ActivitiesResponse>> _getActivity(

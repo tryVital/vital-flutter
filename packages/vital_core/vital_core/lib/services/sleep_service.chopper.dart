@@ -6,6 +6,7 @@ part of 'sleep_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$SleepService extends SleepService {
   _$SleepService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$SleepService extends SleepService {
   }
 
   @override
-  final definitionType = SleepService;
+  final Type definitionType = SleepService;
 
   @override
   Future<Response<SleepResponse>> _getSleepData(

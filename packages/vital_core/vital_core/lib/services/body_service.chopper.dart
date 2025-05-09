@@ -6,6 +6,7 @@ part of 'body_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$BodyService extends BodyService {
   _$BodyService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$BodyService extends BodyService {
   }
 
   @override
-  final definitionType = BodyService;
+  final Type definitionType = BodyService;
 
   @override
   Future<Response<BodyDataResponse>> getBodyData(

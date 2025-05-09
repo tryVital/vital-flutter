@@ -6,6 +6,7 @@ part of 'timeseries_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$TimeseriesService extends TimeseriesService {
   _$TimeseriesService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$TimeseriesService extends TimeseriesService {
   }
 
   @override
-  final definitionType = TimeseriesService;
+  final Type definitionType = TimeseriesService;
 
   @override
   Future<Response<GroupedIntervalTimeseriesResponse>>

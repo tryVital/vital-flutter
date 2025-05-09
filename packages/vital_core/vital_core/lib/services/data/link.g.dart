@@ -33,7 +33,7 @@ OauthLinkResponse _$OauthLinkResponseFromJson(Map<String, dynamic> json) =>
       oauthUrl: json['oauth_url'] as String?,
       authType: json['auth_type'] as String?,
       isActive: json['is_active'] as bool? ?? false,
-      id: json['id'] as int? ?? -1,
+      id: (json['id'] as num?)?.toInt() ?? -1,
     );
 
 LinkResponse _$LinkResponseFromJson(Map<String, dynamic> json) => LinkResponse(
