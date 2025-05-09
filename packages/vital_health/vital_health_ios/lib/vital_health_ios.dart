@@ -351,6 +351,48 @@ ProcessedData _mapJsonToProcessedData(
       throw Exception("Not supported by read()");
     case HealthResource.electrocardiogram:
       throw Exception("Not supported by read()");
+    case HealthResource.weight:
+      throw Exception("Not supported by read()");
+    case HealthResource.bodyFat:
+      throw Exception("Not supported by read()");
+    case HealthResource.exerciseTime:
+      throw Exception("Not supported by read()");
+    case HealthResource.bodyMassIndex:
+      throw Exception("Not supported by read()");
+    case HealthResource.waistCircumference:
+      throw Exception("Not supported by read()");
+    case HealthResource.leanBodyMass:
+      throw Exception("Not supported by read()");
+    case HealthResource.wheelchairPush:
+      throw Exception("Not supported by read()");
+    case HealthResource.standHour:
+      throw Exception("Not supported by read()");
+    case HealthResource.standDuration:
+      throw Exception("Not supported by read()");
+    case HealthResource.sleepApneaAlert:
+      throw Exception("Not supported by read()");
+    case HealthResource.sleepBreathingDisturbance:
+      throw Exception("Not supported by read()");
+    case HealthResource.forcedExpiratoryVolume1:
+      throw Exception("Not supported by read()");
+    case HealthResource.forcedVitalCapacity:
+      throw Exception("Not supported by read()");
+    case HealthResource.peakExpiratoryFlowRate:
+      throw Exception("Not supported by read()");
+    case HealthResource.inhalerUsage:
+      throw Exception("Not supported by read()");
+    case HealthResource.fall:
+      throw Exception("Not supported by read()");
+    case HealthResource.uvExposure:
+      throw Exception("Not supported by read()");
+    case HealthResource.daylightExposure:
+      throw Exception("Not supported by read()");
+    case HealthResource.handwashing:
+      throw Exception("Not supported by read()");
+    case HealthResource.basalBodyTemperature:
+      throw Exception("Not supported by read()");
+    case HealthResource.heartRateRecoveryOneMinute:
+      throw Exception("Not supported by read()");
   }
 }
 

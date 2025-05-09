@@ -285,6 +285,48 @@ ProcessedData _mapJsonToProcessedData(
       throw Exception("Not supported on Android");
     case HealthResource.electrocardiogram:
       throw Exception("Not supported on Android");
+    case HealthResource.weight:
+      throw Exception("Not supported");
+    case HealthResource.bodyFat:
+      throw Exception("Not supported");
+    case HealthResource.exerciseTime:
+      throw Exception("Not supported");
+    case HealthResource.bodyMassIndex:
+      throw Exception("Not supported");
+    case HealthResource.waistCircumference:
+      throw Exception("Not supported");
+    case HealthResource.leanBodyMass:
+      throw Exception("Not supported");
+    case HealthResource.wheelchairPush:
+      throw Exception("Not supported");
+    case HealthResource.standHour:
+      throw Exception("Not supported");
+    case HealthResource.standDuration:
+      throw Exception("Not supported");
+    case HealthResource.sleepApneaAlert:
+      throw Exception("Not supported");
+    case HealthResource.sleepBreathingDisturbance:
+      throw Exception("Not supported");
+    case HealthResource.forcedExpiratoryVolume1:
+      throw Exception("Not supported");
+    case HealthResource.forcedVitalCapacity:
+      throw Exception("Not supported");
+    case HealthResource.peakExpiratoryFlowRate:
+      throw Exception("Not supported");
+    case HealthResource.inhalerUsage:
+      throw Exception("Not supported");
+    case HealthResource.fall:
+      throw Exception("Not supported");
+    case HealthResource.uvExposure:
+      throw Exception("Not supported");
+    case HealthResource.daylightExposure:
+      throw Exception("Not supported");
+    case HealthResource.handwashing:
+      throw Exception("Not supported");
+    case HealthResource.basalBodyTemperature:
+      throw Exception("Not supported");
+    case HealthResource.heartRateRecoveryOneMinute:
+      throw Exception("Not supported");
   }
 }
 
