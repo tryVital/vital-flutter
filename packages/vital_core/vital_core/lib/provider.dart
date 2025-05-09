@@ -17,6 +17,8 @@ class UserConnection {
   UserConnectionStatus status;
 
   Map<String, ResourceAvailability> resourceAvailability;
+  
+  DateTime createdOn;
 
   UserConnection({
     required this.name,
@@ -24,11 +26,12 @@ class UserConnection {
     this.logo,
     required this.status,
     required this.resourceAvailability,
+    required this.createdOn,
   });
 
   @override
   String toString() {
-    return "$slug (${status.name})";
+    return "$slug ($createdOn) (${status.name})";
   }
 
   factory UserConnection.fromJson(Map<String, dynamic> json) =>

@@ -54,10 +54,10 @@ class VitalHealthAndroid extends VitalHealthPlatform {
       List<HealthResourceWrite> writeResources) async {
     try {
       final outcome =
-          await _channel.invokeMethod('askForResources', <String, dynamic>{
-        "readResources": readResources.map((e) => e.name).toList(),
-        "writeResources": writeResources.map((e) => e.name).toList(),
-      });
+          await _channel.invokeMethod('askForResources', [
+        readResources.map((e) => e.name).toList(),
+        writeResources.map((e) => e.name).toList(),
+      ]);
 
       if (outcome == null) {
         return PermissionOutcome.success();
@@ -92,8 +92,7 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   @override
   Future<bool> hasAskedForPermission(HealthResource resource) async {
     try {
-      return await _channel.invokeMethod('hasAskedForPermission', resource.name)
-          as bool;
+      return await _channel.invokeMethod('hasAskedForPermission', resource.name) as bool;
     } on Exception catch (e) {
       throw _mapException(e);
     }

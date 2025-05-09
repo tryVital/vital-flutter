@@ -44,6 +44,7 @@ Future<void> writeHealthData(HealthResourceWrite writeResource,
       .writeHealthData(writeResource, startDate, endDate, value);
 }
 
+@Deprecated("Local read is being sunset.")
 Future<ProcessedData?> read(
     HealthResource resource, DateTime startDate, DateTime endDate) {
   return VitalHealthPlatform.instance.read(resource, startDate, endDate);

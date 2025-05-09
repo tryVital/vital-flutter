@@ -134,7 +134,12 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             "read" -> read(call, result)
 
             "hasAskedForPermission" -> result.execute(taskScope) {
-                val resource = VitalResource.valueOf(call.argument<String>("resource")!!)
+                val input = call.arguments<String>()!!
+                val resource = try {
+                    VitalResource.valueOf(input)
+                } catch (e: NoSuchElementException) {
+                    throw RuntimeException("unsupported resource: $input")
+                }
                 vitalHealthConnectManager.hasAskedForPermission(resource)
             }
 
@@ -181,12 +186,17 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             return result.error("VitalHealthError", "The MainActivity of your Flutter host app must be a `FlutterFragmentActivity` subclass for the permission request flow to function properly.", null)
         }
 
-        val readResources = call.argument<List<String>>("readResources") ?: emptyList()
-        val writeResources = call.argument<List<String>>("writeResources") ?: emptyList()
+        val inputs = call.arguments<List<Any>>() ?: emptyList()
+        if (inputs.size != 2) {
+            return result.error("VitalHealthError", "not enough number of arguments for askForResource", null)
+        }
+
+        val readResources = inputs[0] as List<*>
+        val writeResources = inputs[1] as List<*>
 
         val contract = vitalHealthConnectManager.createPermissionRequestContract(
-            readResources = readResources.mapNotNullTo(mutableSetOf()) { runCatching { VitalResource.valueOf(it) }.getOrNull() },
-            writeResources = writeResources.mapNotNullTo(mutableSetOf()) { runCatching { WritableVitalResource.valueOf(it) }.getOrNull() },
+            readResources = readResources.mapNotNullTo(mutableSetOf()) { runCatching { VitalResource.valueOf(it as String) }.getOrNull() },
+            writeResources = writeResources.mapNotNullTo(mutableSetOf()) { runCatching { WritableVitalResource.valueOf(it as String) }.getOrNull() },
         )
 
         synchronized(this) {
@@ -429,15 +439,11 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                             put("distanceInMeter", it.calories)
                                             put(
                                                 "heartRate",
-                                                JSONArray(it.heartRate.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                             put(
                                                 "respiratoryRate",
-                                                JSONArray(it.respiratoryRate.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                         }
                                     }),
@@ -457,33 +463,23 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                                             put("deviceModel", it.deviceModel)
                                             put(
                                                 "heartRate",
-                                                JSONArray(it.heartRate.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                             put(
                                                 "restingHeartRate",
-                                                JSONArray(it.restingHeartRate.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                             put(
                                                 "heartRateVariability",
-                                                JSONArray(it.heartRateVariability.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                             put(
                                                 "oxygenSaturation",
-                                                JSONArray(it.oxygenSaturation.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                             put(
                                                 "respiratoryRate",
-                                                JSONArray(it.respiratoryRate.map {
-                                                    mapSampleToJson(it)
-                                                })
+                                                JSONArray()
                                             )
                                             put("sleepStages", JSONObject().apply {
                                                 put(
@@ -576,7 +572,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         if (availability != HealthConnectAvailability.Installed) {
             return result.error(
                 "ClientSetup",
-                "Health Connect is unavailable: ${availability}",
+                "Health Connect is unavailable: $availability",
                 null
             )
         }

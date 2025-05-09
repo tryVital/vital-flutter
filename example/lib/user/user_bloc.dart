@@ -167,8 +167,6 @@ class UserBloc extends ChangeNotifier {
       vital_health.HealthResource.glucose,
       vital_health.HealthResource.sleep,
       vital_health.HealthResource.water,
-      vital_health.HealthResource.caffeine,
-      vital_health.HealthResource.mindfulSession
     ];
 
     for (var resource in readResources) {
