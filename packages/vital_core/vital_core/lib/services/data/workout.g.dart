@@ -17,7 +17,7 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
       userId: json['user_id'] as String,
       id: json['id'] as String,
       title: json['title'] as String?,
-      timezoneOffset: json['timezone_offset'] as int?,
+      timezoneOffset: (json['timezone_offset'] as num?)?.toInt(),
       averageHr: (json['average_hr'] as num?)?.toDouble(),
       maxHr: (json['max_hr'] as num?)?.toDouble(),
       distance: (json['distance'] as num?)?.toDouble(),
@@ -31,7 +31,7 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
               ?.map((e) => e as Object)
               .toList() ??
           const [],
-      movingTime: json['moving_time'] as int?,
+      movingTime: (json['moving_time'] as num?)?.toInt(),
       totalElevationGain: (json['total_elevation_gain'] as num?)?.toDouble(),
       elevHigh: (json['elev_high'] as num?)?.toDouble(),
       elevLow: (json['elev_low'] as num?)?.toDouble(),
@@ -50,7 +50,7 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
     );
 
 Sport _$SportFromJson(Map<String, dynamic> json) => Sport(
-      json['id'] as int,
+      (json['id'] as num).toInt(),
       json['name'] as String,
     );
 
@@ -63,7 +63,9 @@ MapData _$MapDataFromJson(Map<String, dynamic> json) => MapData(
 WorkoutStreamResponse _$WorkoutStreamResponseFromJson(
         Map<String, dynamic> json) =>
     WorkoutStreamResponse(
-      time: (json['time'] as List<dynamic>?)?.map((e) => e as int).toList() ??
+      time: (json['time'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
           const [],
       lat: (json['lat'] as List<dynamic>?)
               ?.map((e) => (e as num).toDouble())

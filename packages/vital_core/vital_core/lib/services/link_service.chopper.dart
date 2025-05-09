@@ -6,6 +6,7 @@ part of 'link_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$LinkService extends LinkService {
   _$LinkService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$LinkService extends LinkService {
   }
 
   @override
-  final definitionType = LinkService;
+  final Type definitionType = LinkService;
 
   @override
   Future<Response<CreateLinkResponse>> createLink({

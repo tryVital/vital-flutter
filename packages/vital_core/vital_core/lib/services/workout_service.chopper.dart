@@ -6,6 +6,7 @@ part of 'workout_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$WorkoutService extends WorkoutService {
   _$WorkoutService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$WorkoutService extends WorkoutService {
   }
 
   @override
-  final definitionType = WorkoutService;
+  final Type definitionType = WorkoutService;
 
   @override
   Future<Response<WorkoutsResponse>> getWorkouts(
