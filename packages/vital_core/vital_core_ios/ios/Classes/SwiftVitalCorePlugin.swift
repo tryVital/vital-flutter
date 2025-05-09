@@ -3,6 +3,8 @@ import UIKit
 import VitalCore
 import Combine
 
+private let iso8601Formatter = ISO8601DateFormatter()
+
 public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
   private let channel: FlutterMethodChannel
 
@@ -134,6 +136,7 @@ public class SwiftVitalCorePlugin: NSObject, FlutterPlugin {
               "slug": $0.slug.rawValue,
               "logo": $0.logo,
               "status": $0.status.rawValue,
+              "createdOn": iso8601Formatter.string(from: $0.createdOn),
               "resourceAvailability": Dictionary(
                 uniqueKeysWithValues: $0.resourceAvailability.map { resource, descriptor in
                   (resource.rawValue, [

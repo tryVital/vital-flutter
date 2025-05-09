@@ -144,6 +144,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
                                     put("slug", it.slug.toString())
                                     put("logo", it.logo)
                                     put("status", it.status.toString().lowercase())
+                                    put("createdOn", it.createdOn.toString())
                                     putJsonObject("resourceAvailability") {
                                         for ((resource, data) in it.resourceAvailability) {
                                             putJsonObject(resource.rawValue) {

@@ -18,6 +18,7 @@ UserConnection _$UserConnectionFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(
             k, ResourceAvailability.fromJson(e as Map<String, dynamic>)),
       ),
+      createdOn: DateTime.parse(json['createdOn'] as String),
     );
 
 const _$ProviderSlugEnumMap = {
