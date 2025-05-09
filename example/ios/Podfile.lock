@@ -1,7 +1,7 @@
 PODS:
   - CombineCoreBluetooth (0.3.1)
   - Flutter (1.0.0)
-  - permission_handler_apple (9.1.1):
+  - permission_handler_apple (9.3.0):
     - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
@@ -56,8 +56,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CombineCoreBluetooth: 87fc830440fa8b1e1024c35eaa5e116e743c2660
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   vital_core_ios: c0ea3b7242a3a8a1e75c1ba38de379a2bd599f38
   vital_devices_ios: 4ca4b25aff5b3d00747ff7f7d89d1af73b96bdde
   vital_health_ios: 1183a39323f2961d5fec9b86c0616fdeaf5a625c
@@ -68,4 +68,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f21161b81928bd85faa21a8d8a8be5daa58b7b47
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.16.2
