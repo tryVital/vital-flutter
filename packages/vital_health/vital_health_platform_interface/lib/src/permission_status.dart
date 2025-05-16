@@ -1,0 +1,3 @@
+enum PermissionStatus {
+  asked, notAsked,
+}

@@ -8,4 +8,5 @@ export 'src/data/sync_data.dart';
 export 'src/data/sync_notification_content.dart';
 export 'src/exceptions.dart';
 export 'src/health_resource.dart';
+export 'src/permission_status.dart';
 export 'src/vital_health_platform.dart';

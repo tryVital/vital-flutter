@@ -68,6 +68,10 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         let resource = call.arguments as! String
         hasAskedForPermission(resource: resource, result: result)
         return
+      case "permissionStatus":
+        let resources = call.arguments as! [String]
+        permissionStatus(forResources: resources, result: result)
+        return
       case "ask":
         ask(call.arguments as! [AnyObject], result: result)
         return
@@ -219,6 +223,27 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
 
         let status = try await VitalHealthKitClient.shared.permissionStatus(for: [resource])
         result(status[resource] == .asked)
+      } catch VitalError.UnsupportedResource(let errorMessage) {
+        result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
+      } catch let error {
+        result(encode(ErrorResult(from: error)))
+      }
+    }
+  }
+
+  private func permissionStatus(forResources resources: [String], result: @escaping FlutterResult) {
+    NonthrowingTask {
+      do {
+        let resources = try resources.map(mapResourceToReadableVitalResource)
+
+        let status = try await VitalHealthKitClient.shared.permissionStatus(for: resources)
+        let results = Dictionary(
+          uniqueKeysWithValues: status.map { (key, value) in
+            (mapVitalResourceToResource(key), value == .asked ? "asked" : "notAsked")
+          }
+        )  
+        result(encode(results))
+
       } catch VitalError.UnsupportedResource(let errorMessage) {
         result(encode(ErrorResult(code: .unsupportedResource, message: errorMessage)))
       } catch let error {

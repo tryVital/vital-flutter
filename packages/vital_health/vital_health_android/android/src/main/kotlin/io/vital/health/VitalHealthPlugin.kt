@@ -31,6 +31,7 @@ import io.tryvital.vitalhealthconnect.enableBackgroundSyncContract
 import io.tryvital.vitalhealthconnect.isBackgroundSyncEnabled
 import io.tryvital.vitalhealthconnect.model.HealthConnectAvailability
 import io.tryvital.vitalhealthconnect.model.PermissionOutcome
+import io.tryvital.vitalhealthconnect.model.PermissionStatus
 import io.tryvital.vitalhealthconnect.model.SyncStatus
 import io.tryvital.vitalhealthconnect.model.VitalResource
 import io.tryvital.vitalhealthconnect.model.WritableVitalResource
@@ -141,6 +142,20 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                     throw RuntimeException("unsupported resource: $input")
                 }
                 vitalHealthConnectManager.hasAskedForPermission(resource)
+            }
+
+            "permissionStatus" -> result.execute(taskScope) {
+                val resources = call.arguments<List<String>>() ?: emptyList()
+                val parsedResources = try {
+                    resources.map { VitalResource.valueOf(it) }
+                } catch (e: NoSuchElementException) {
+                    throw RuntimeException("input contains unsupported resources: $resources")
+                }
+                JSONObject(
+                    vitalHealthConnectManager.permissionStatus(parsedResources)
+                        .mapKeys { it.key.name }
+                        .mapValues { if (it.value == PermissionStatus.Asked) "asked" else "notAsked" }
+                ).toString()
             }
 
             "isAvailable" -> {

@@ -112,6 +112,20 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
+  Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resources) async {
+      final result =
+        await _channel.invokeMethod('permissionStatus', resources.map((r) => r.name).toList());
+
+    final error = _mapError(result);
+    if (error != null) {
+      throw error;
+    } else {
+      Map<String, dynamic> resultMap = jsonDecode(result);
+      return resultMap.map((key, value) => MapEntry(HealthResource.values.byName(key), PermissionStatus.values.byName(value as String)));
+    }
+  }
+
+  @override
   Future<void> writeHealthData(HealthResourceWrite writeResource,
       DateTime startDate, DateTime endDate, double value) async {
     final result = await _channel.invokeMethod('writeHealthKitData', [

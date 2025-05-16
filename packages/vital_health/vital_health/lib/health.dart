@@ -34,6 +34,10 @@ Future<bool> hasAskedForPermission(HealthResource resource) async {
   return VitalHealthPlatform.instance.hasAskedForPermission(resource);
 }
 
+Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resource) async {
+  return VitalHealthPlatform.instance.permissionStatus(resource);
+}
+
 Future<void> syncData({List<HealthResource>? resources}) async {
   await VitalHealthPlatform.instance.syncData(resources: resources);
 }

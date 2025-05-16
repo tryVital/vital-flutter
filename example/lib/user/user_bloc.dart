@@ -169,16 +169,14 @@ class UserBloc extends ChangeNotifier {
       vital_health.HealthResource.water,
     ];
 
-    for (var resource in readResources) {
-      var hasAsked = await vital_health.hasAskedForPermission(resource);
-      Fimber.i("$resource asked: $hasAsked");
-    }
+    var statuses = await vital_health.permissionStatus(readResources);
+    statuses.forEach((resource, status) {
+      Fimber.i("$resource status: $status");
+    });
 
     vital_health.PermissionOutcome outcome =
         await vital_health.askForPermission(readResources, [
-      vital_health.HealthResourceWrite.water,
-      vital_health.HealthResourceWrite.caffeine,
-      vital_health.HealthResourceWrite.mindfulSession
+      vital_health.HealthResourceWrite.water
     ]);
 
     Fimber.i("Ask Outcome: $outcome");
