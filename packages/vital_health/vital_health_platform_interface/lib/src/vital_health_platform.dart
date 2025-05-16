@@ -40,6 +40,10 @@ class VitalHealthPlatform extends PlatformInterface {
       throw UnimplementedError(
           'hasAskedForPermission() has not been implemented.');
 
+  Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resources) =>
+      throw UnimplementedError(
+          'permissionStatus() has not been implemented.');
+
   Future<void> syncData({List<HealthResource>? resources}) =>
       throw UnimplementedError('syncData() has not been implemented.');
 
