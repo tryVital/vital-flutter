@@ -5,3 +5,4 @@ export 'package:vital_health_platform_interface/src/data/sync_data.dart';
 export 'package:vital_health_platform_interface/src/health_resource.dart';
 export 'package:vital_health_platform_interface/src/data/processed_data/processed_data.dart';
 export 'package:vital_health_platform_interface/src/data/sync_notification_content.dart';
+export 'package:vital_health_platform_interface/src/permission_status.dart';

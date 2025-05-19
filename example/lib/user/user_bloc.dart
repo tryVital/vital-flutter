@@ -169,7 +169,7 @@ class UserBloc extends ChangeNotifier {
       vital_health.HealthResource.water,
     ];
 
-    var statuses = await vital_health.permissionStatus(readResources);
+    Map<vital_health.HealthResource, vital_health.PermissionStatus> statuses = await vital_health.permissionStatus(readResources);
     statuses.forEach((resource, status) {
       Fimber.i("$resource status: $status");
     });
