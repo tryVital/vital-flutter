@@ -1,6 +1,6 @@
 name: vital_core_platform_interface
 description: The platform interface of Vital Core.
-version: 4.5.1
+version: 4.5.2
 homepage: https://tryvital.io/
 repository: https://github.com/tryVital/vital-flutter
 
