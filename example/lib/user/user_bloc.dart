@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
@@ -158,7 +159,8 @@ class UserBloc extends ChangeNotifier {
   }
 
   void askForHealthResources() async {
-    const readResources = [
+    // Request all on iOS; request a subset on Android.
+    var readResources = Platform.isIOS ? vital_health.HealthResource.values : [
       vital_health.HealthResource.profile,
       vital_health.HealthResource.body,
       vital_health.HealthResource.activity,
