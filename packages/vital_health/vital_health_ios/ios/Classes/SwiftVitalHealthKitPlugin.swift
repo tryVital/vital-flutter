@@ -578,6 +578,14 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .individual(.weight)
     case "bodyFat":
       return .individual(.bodyFat)
+    case "bodyMassIndex":
+      return .individual(.bodyMassIndex)
+    case "waistCircumference":
+      return .individual(.waistCircumference)
+    case "leanBodyMass":
+      return .individual(.leanBodyMass)
+    case "wheelchairPush":
+      return .individual(.wheelchairPush)
     case "water":
       return .nutrition(.water)
     case "caffeine":
@@ -596,6 +604,34 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .heartRateAlert
     case "electrocardiogram":
       return .electrocardiogram
+    case "standHour":
+      return .standHour
+    case "standDuration":
+      return .standDuration
+    case "sleepApneaAlert":
+      return .sleepApneaAlert
+    case "sleepBreathingDisturbance":
+      return .sleepBreathingDisturbance
+    case "forcedExpiratoryVolume1":
+      return .forcedExpiratoryVolume1
+    case "forcedVitalCapacity":
+      return .forcedVitalCapacity
+    case "peakExpiratoryFlowRate":
+      return .peakExpiratoryFlowRate
+    case "inhalerUsage":
+      return .inhalerUsage
+    case "fall":
+      return .fall
+    case "uvExposure":
+      return .uvExposure
+    case "daylightExposure":
+      return .daylightExposure
+    case "handwashing":
+      return .handwashing
+    case "basalBodyTemperature":
+      return .basalBodyTemperature
+    case "heartRateRecoveryOneMinute":
+      return .heartRateRecoveryOneMinute
     default:
       throw VitalError.UnsupportedResource(name)
   }
