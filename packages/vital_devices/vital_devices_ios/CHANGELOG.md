@@ -1,3 +1,7 @@
+## 4.5.3
+
+ - Bump "vital_devices_ios" to `4.5.3`.
+
 ## 4.5.2
 
  - Bump "vital_devices_ios" to `4.5.2`.
