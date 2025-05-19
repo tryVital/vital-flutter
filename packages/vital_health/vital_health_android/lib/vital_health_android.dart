@@ -103,8 +103,6 @@ class VitalHealthAndroid extends VitalHealthPlatform {
       final result =
         await _channel.invokeMethod('permissionStatus', resources.map((r) => r.name).toList());
 
-      Fimber.i(result);
-
       Map<String, dynamic> resultMap = jsonDecode(result);
       return resultMap.map((key, value) => MapEntry(HealthResource.values.byName(key), PermissionStatus.values.byName(value as String)));
     } on Exception catch (e) {

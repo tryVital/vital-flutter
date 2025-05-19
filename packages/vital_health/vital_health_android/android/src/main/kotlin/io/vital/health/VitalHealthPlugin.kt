@@ -320,7 +320,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private fun setSyncNotificationContent(call: MethodCall, result: Result) = result.execute(taskScope) {
         val builder = VitalHealthConnectManager.syncNotificationBuilder(context)
-        
+
         if (builder is DefaultSyncNotificationBuilder) {
             val json = JSONObject(call.arguments<String>()!!)
 
