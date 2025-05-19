@@ -220,7 +220,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
         val registry = activity.activityResultRegistry
         val launcherRef = AtomicReference<ActivityResultLauncher<*>>(null)
-        val launcher = registry.register("io.tryvital.health.ask", contract, ActivityResultCallback { result ->
+        val launcher = registry.register("io.tryvital.health.ask", contract, ActivityResultCallback { activityResult ->
             val continuation = synchronized(this) {
                 val currentValue = activeAskRequest
                 activeAskRequest = null
@@ -232,7 +232,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
             if (continuation != null) {
                 taskScope.launch {
-                    val response = when (result.await()) {
+                    val response = when (activityResult.await()) {
                         // Null = success
                         is PermissionOutcome.Success -> null
                         is PermissionOutcome.Failure -> JSONObject(
@@ -256,7 +256,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         launcher.launch(Unit)
     }
 
-    private fun enableBackgroundSync(call: MethodCall, result: Result) {
+    private fun enableBackgroundSync(@Suppress("UNUSED_PARAMETER") call: MethodCall, result: Result) {
         val availability = VitalHealthConnectManager.isAvailable(context)
         if (availability != HealthConnectAvailability.Installed) {
             return result.error("VitalHealthError", "Health Connect is not available: $availability", null)
@@ -319,7 +319,8 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     }
 
     private fun setSyncNotificationContent(call: MethodCall, result: Result) = result.execute(taskScope) {
-        val builder = vitalHealthConnectManager.syncNotificationBuilder
+        val builder = VitalHealthConnectManager.syncNotificationBuilder(context)
+        
         if (builder is DefaultSyncNotificationBuilder) {
             val json = JSONObject(call.arguments<String>()!!)
 
