@@ -12,7 +12,7 @@ dependencies:
   provider: ^6.0.2
   fimber: ^0.6.6
   cupertino_icons: ^1.0.2
-  permission_handler: ^12.0.0
+  permission_handler: ">=10.2.0 <13.0.0"
   disposebag: ^1.5.0
   vital_core: ^4.5.1
   vital_health: ^4.5.1
