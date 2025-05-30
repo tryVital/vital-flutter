@@ -466,84 +466,84 @@ packages:
       path: "../packages/vital_core/vital_core"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_core_android:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_core/vital_core_android"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_core_ios:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_core/vital_core_ios"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_core_platform_interface:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_core/vital_core_platform_interface"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_devices:
     dependency: "direct main"
     description:
       path: "../packages/vital_devices/vital_devices"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_devices_android:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_devices/vital_devices_android"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_devices_ios:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_devices/vital_devices_ios"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_devices_platform_interface:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_devices/vital_devices_platform_interface"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_health:
     dependency: "direct main"
     description:
       path: "../packages/vital_health/vital_health"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_health_android:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_health/vital_health_android"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_health_ios:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_health/vital_health_ios"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vital_health_platform_interface:
     dependency: "direct overridden"
     description:
       path: "../packages/vital_health/vital_health_platform_interface"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.3"
   vm_service:
     dependency: transitive
     description:
