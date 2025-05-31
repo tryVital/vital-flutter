@@ -1,33 +1,33 @@
-name: CI
+name: Test
 
 on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  test:
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./example
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v2
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
         with:
-          distribution: 'zulu'
-          java-version: '11'
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - run: flutter --version
-      - run: flutter pub get packages/vital_core/vital_core
-      - run: flutter pub get packages/vital_core/vital_core_ios
-      - run: flutter pub get packages/vital_core/vital_core_android
-      - run: flutter pub get packages/vital_core/vital_core_platform_interface
-      - run: flutter pub get packages/vital_devices/vital_devices
-      - run: flutter pub get packages/vital_devices/vital_devices_platform_interface
-      - run: flutter pub get packages/vital_devices/vital_devices_ios
-      - run: flutter pub get packages/vital_devices/vital_devices_android
-      - run: flutter pub get packages/vital_health/vital_health
-      - run: flutter pub get packages/vital_health/vital_health_platform_interface
-      - run: flutter pub get packages/vital_health/vital_health_ios
-      - run: flutter pub get packages/vital_health/vital_health_android
+          channel: stable
+          version: 3.22.2
+
+      - name: Run pub get
+        run: flutter pub get
+
+      - name: Launch iOS Simulator
+        run: |
+          export SIMULATOR_UUID=$(xcrun simctl list devices "iOS 18.3" | grep "iPhone 16" | grep -m 1 -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})") 
+          xcrun simctl boot $SIMULATOR_UUID
+          echo "SIMULATOR_UUID=${SIMULATOR_UUID}" >> $GITHUB_ENV
+
+      - name: Run Integration Tests
+        run: flutter test integration_test --device-id="${SIMULATOR_UUID}"
