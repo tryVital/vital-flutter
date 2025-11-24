@@ -11,7 +11,7 @@ part 'sleep_service.chopper.dart';
 
 @ChopperApi()
 abstract class SleepService extends ChopperService {
-  @Get(path: 'summary/sleep/{user_id}')
+  @GET(path: 'summary/sleep/{user_id}')
   Future<Response<SleepResponse>> _getSleepData(
     @Path('user_id') String userId,
     @Query('start_date') String startDate,
@@ -29,7 +29,7 @@ abstract class SleepService extends ChopperService {
         endDate?.toIso8601String(), provider);
   }
 
-  @Get(path: 'summary/sleep/{user_id}/raw')
+  @GET(path: 'summary/sleep/{user_id}/raw')
   Future<Response<Object>> _getSleepDataRaw(
     @Path('user_id') String userId,
     @Query('start_date') String startDate,
@@ -48,7 +48,7 @@ abstract class SleepService extends ChopperService {
   }
 
   static SleepService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,

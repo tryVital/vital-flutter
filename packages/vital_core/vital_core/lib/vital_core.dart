@@ -30,7 +30,7 @@ export 'client_status.dart';
 class VitalClient {
   late final http.Client _httpClient;
   late final Uri _baseUrl;
-  late final RequestInterceptor _authInterceptor;
+  late final Interceptor _authInterceptor;
 
   // ignore: unused_field
   late final Region _region;

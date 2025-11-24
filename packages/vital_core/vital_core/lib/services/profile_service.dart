@@ -11,16 +11,16 @@ part 'profile_service.chopper.dart';
 
 @ChopperApi()
 abstract class ProfileService extends ChopperService {
-  @Get(path: 'summary/profile/{user_id}')
+  @GET(path: 'summary/profile/{user_id}')
   Future<Response<Profile>> getProfile(
       @Path('user_id') String userId, @Query('provider') String? provider);
 
-  @Get(path: 'summary/profile/{user_id}/raw')
+  @GET(path: 'summary/profile/{user_id}/raw')
   Future<Response<Object>> getProfileRaw(
       @Path('user_id') String userId, @Query('provider') String? provider);
 
   static ProfileService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,

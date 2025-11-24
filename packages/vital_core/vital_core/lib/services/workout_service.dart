@@ -11,7 +11,7 @@ part 'workout_service.chopper.dart';
 
 @ChopperApi()
 abstract class WorkoutService extends ChopperService {
-  @Get(path: 'summary/workouts/{user_id}')
+  @GET(path: 'summary/workouts/{user_id}')
   Future<Response<WorkoutsResponse>> getWorkouts(
     @Path('user_id') String userId,
     @Query('start_date') DateTime startDate, {
@@ -19,7 +19,7 @@ abstract class WorkoutService extends ChopperService {
     @Query('provider') String? provider,
   });
 
-  @Get(path: 'summary/workouts/{user_id}/raw')
+  @GET(path: 'summary/workouts/{user_id}/raw')
   Future<Response<Object>> getWorkoutsRaw(
     @Path('user_id') String userId,
     @Query('start_date') DateTime startDate,
@@ -27,13 +27,13 @@ abstract class WorkoutService extends ChopperService {
     @Query('provider') String? provider,
   );
 
-  @Get(path: 'timeseries/workouts/{workout_id}/stream')
+  @GET(path: 'timeseries/workouts/{workout_id}/stream')
   Future<Response<WorkoutStreamResponse>> getWorkoutStream(
     @Path('workout_id') String workoutId,
   );
 
   static WorkoutService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,

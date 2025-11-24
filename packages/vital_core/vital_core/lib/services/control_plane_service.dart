@@ -14,10 +14,10 @@ part 'control_plane_service.chopper.dart';
 
 @ChopperApi()
 abstract class ControlPlaneService extends ChopperService {
-  @Get(path: 'user/')
+  @GET(path: 'user/')
   Future<Response<GetAllUsersResponse>> getAll();
 
-  @Post(path: '/user')
+  @POST(path: '/user')
   @FactoryConverter(
     request: JsonConverter.requestFactory,
   )
@@ -25,23 +25,23 @@ abstract class ControlPlaneService extends ChopperService {
       @Field('client_user_id') String clientUserId,
       {@Field('fallback_time_zone') String? fallbackTimeZone});
 
-  @Post(path: '/user/{user_id}/sign_in_token', optionalBody: true)
+  @POST(path: '/user/{user_id}/sign_in_token', optionalBody: true)
   @FactoryConverter(
     request: JsonConverter.requestFactory,
   )
   Future<Response<CreateSignInTokenResponse>> createSignInToken(
       @Path('user_id') String userId);
 
-  @Delete(path: 'user/{user_id}')
+  @DELETE(path: 'user/{user_id}')
   Future<Response<DeleteUserResponse>> deleteUser(
       @Path('user_id') String userId);
 
-  @Get(path: '/user/resolve/{client_user_id}')
+  @GET(path: '/user/resolve/{client_user_id}')
   Future<Response<User>> resolveUser(
       @Path('client_user_id') String clientUserId);
 
   static ControlPlaneService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,

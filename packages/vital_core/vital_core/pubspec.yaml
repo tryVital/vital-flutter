@@ -19,7 +19,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  chopper: ^7.0.7+1
+  chopper: ^8.4.0
   http: ^1.1.0
   json_annotation: ^4.8.1
   url_launcher: ">=6.2.3 <7.0.0"
@@ -31,7 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.1
-  build: ^2.1.1
+  build: ^4.0.3
   build_runner: ^2.4.6
-  chopper_generator: ^7.0.5+1
+  chopper_generator: ^8.4.0
   json_serializable: ^6.1.1

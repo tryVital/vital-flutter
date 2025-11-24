@@ -13,7 +13,7 @@ part 'timeseries_service.chopper.dart';
 
 @ChopperApi()
 abstract class TimeseriesService extends ChopperService {
-  @Get(path: 'timeseries/{user_id}/{resource}')
+  @GET(path: 'timeseries/{user_id}/{resource}')
   Future<Response<GroupedIntervalTimeseriesResponse>>
       _intervalTimeseriesRequest(
     @Path('user_id') String userId,
@@ -24,7 +24,7 @@ abstract class TimeseriesService extends ChopperService {
     @Query('next_cursor') String? nextCursor,
   });
 
-  @Get(path: 'timeseries/{user_id}/{resource}')
+  @GET(path: 'timeseries/{user_id}/{resource}')
   Future<Response<GroupedScalarTimeseriesResponse>> _scalarTimeseriesRequest(
     @Path('user_id') String userId,
     @Path('resource') String resource,
@@ -34,7 +34,7 @@ abstract class TimeseriesService extends ChopperService {
     @Query('next_cursor') String? nextCursor,
   });
 
-  @Get(path: 'timeseries/{user_id}/blood_pressure')
+  @GET(path: 'timeseries/{user_id}/blood_pressure')
   Future<Response<GroupedBloodPressureTimeseriesResponse>>
       _bloodPressureTimeseriesRequest(
     @Path('user_id') String userId,
@@ -98,7 +98,7 @@ abstract class TimeseriesService extends ChopperService {
   }
 
   static TimeseriesService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,

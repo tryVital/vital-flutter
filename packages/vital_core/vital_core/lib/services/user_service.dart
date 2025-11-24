@@ -13,27 +13,27 @@ part 'user_service.chopper.dart';
 
 @ChopperApi()
 abstract class UserService extends ChopperService {
-  @Get(path: 'user/{user_id}')
+  @GET(path: 'user/{user_id}')
   Future<Response<User>> getUser(@Path('user_id') String userId);
 
-  @Patch(path: '/user/{user_id}')
+  @PATCH(path: '/user/{user_id}')
   @FactoryConverter(
     request: JsonConverter.requestFactory,
   )
   Future<Response<NoContent>> patchUser(@Path('user_id') String userId,
       {@Field('fallback_time_zone') String? fallbackTimeZone});
 
-  @Delete(path: '/user/{user_id}/{provider}')
+  @DELETE(path: '/user/{user_id}/{provider}')
   Future<Response<DeregisterProviderResponse>> deregisterProvider(
     @Path('user_id') String userId,
     @Path('provider') String provider,
   );
 
-  @Post(path: '/user/refresh/{user_id}', optionalBody: true)
+  @POST(path: '/user/refresh/{user_id}', optionalBody: true)
   Future<Response<RefreshResponse>> refreshUser(@Path('user_id') String userId);
 
   static UserService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
         client: httpClient,
         baseUrl: baseUrl,

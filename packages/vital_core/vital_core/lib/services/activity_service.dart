@@ -12,7 +12,7 @@ part 'activity_service.chopper.dart';
 
 @ChopperApi()
 abstract class ActivityService extends ChopperService {
-  @Get(path: 'summary/activity/{user_id}')
+  @GET(path: 'summary/activity/{user_id}')
   @FactoryConverter(request: JsonConverter.requestFactory)
   Future<Response<ActivitiesResponse>> _getActivity(
     @Path('user_id') String userId,
@@ -31,7 +31,7 @@ abstract class ActivityService extends ChopperService {
         endDate?.toIso8601String(), provider);
   }
 
-  @Get(path: 'summary/activity/{user_id}/raw')
+  @GET(path: 'summary/activity/{user_id}/raw')
   Future<Response<Object>> getActivityRaw(
     @Path('user_id') String userId,
     @Query('start_date') DateTime startDate,
@@ -40,7 +40,7 @@ abstract class ActivityService extends ChopperService {
   );
 
   static ActivityService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,
