@@ -13,6 +13,16 @@ import 'package:vital_health_platform_interface/vital_health_platform_interface.
 /// Note that this stream does not replay any status already emitted.
 Stream<SyncStatus> get syncStatus => VitalHealthPlatform.instance.status;
 
+/// Current Health SDK connection status.
+Future<ConnectionStatus> connectionStatus() async {
+  return VitalHealthPlatform.instance.getConnectionStatus();
+}
+
+/// Health SDK connection status updates.
+Stream<ConnectionStatus> connectionStatusDidChange() {
+  return VitalHealthPlatform.instance.connectionStatus();
+}
+
 /// Android: Whether Health Connect is available on the current device.
 /// iOS: Always return `true`.
 Future<bool> isAvailable() async {
@@ -25,6 +35,20 @@ Future<void> configure({
   await VitalHealthPlatform.instance.configureHealth(config: config);
 }
 
+/// Setup a HealthKit (iOS) or Health Connect (Android) connection with this device.
+///
+/// Precondition: configure the SDK with [ConnectionPolicy.explicit].
+Future<void> connect() async {
+  return VitalHealthPlatform.instance.connect();
+}
+
+/// Disconnect the active HealthKit (iOS) or Health Connect (Android) connection.
+///
+/// Precondition: configure the SDK with [ConnectionPolicy.explicit].
+Future<void> disconnect() async {
+  return VitalHealthPlatform.instance.disconnect();
+}
+
 Future<PermissionOutcome> askForPermission(List<HealthResource> readResources,
     List<HealthResourceWrite> writeResources) async {
   return VitalHealthPlatform.instance.ask(readResources, writeResources);
@@ -34,7 +58,8 @@ Future<bool> hasAskedForPermission(HealthResource resource) async {
   return VitalHealthPlatform.instance.hasAskedForPermission(resource);
 }
 
-Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resource) async {
+Future<Map<HealthResource, PermissionStatus>> permissionStatus(
+    List<HealthResource> resource) async {
   return VitalHealthPlatform.instance.permissionStatus(resource);
 }
 

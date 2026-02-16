@@ -16,6 +16,8 @@ class VitalHealthAndroid extends VitalHealthPlatform {
 
   final _statusStream = StreamController<SyncStatus>();
   late final _statusStreamBroadcast = _statusStream.stream.asBroadcastStream();
+  late final  _connectionStatusStream = StreamController<ConnectionStatus>();
+  late final  _connectionStatusStreamBroadcast = _connectionStatusStream.stream.asBroadcastStream();
 
   VitalHealthAndroid() : super() {
     _channel.setMethodCallHandler((call) async {
@@ -24,6 +26,13 @@ class VitalHealthAndroid extends VitalHealthPlatform {
           {
             _statusStream
                 .add(mapArgumentsToStatus(call.arguments as List<dynamic>));
+            break;
+          }
+        case "connectionStatus":
+          {
+            _connectionStatusStream
+                .add(_mapConnectionStatus(call.arguments as String));
+            break;
           }
       }
     });
@@ -41,7 +50,8 @@ class VitalHealthAndroid extends VitalHealthPlatform {
       await _channel.invokeMethod('configureHealthConnect', <String, dynamic>{
         "logsEnabled": config.logsEnabled,
         "numberOfDaysToBackFill": config.numberOfDaysToBackFill,
-        "syncOnAppStart": config.androidConfig.syncOnAppStart
+        "syncOnAppStart": config.androidConfig.syncOnAppStart,
+        "connectionPolicy": config.connectionPolicy.name,
       });
     } on Exception catch (e) {
       throw _mapException(e);
@@ -52,8 +62,7 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   Future<PermissionOutcome> ask(List<HealthResource> readResources,
       List<HealthResourceWrite> writeResources) async {
     try {
-      final outcome =
-          await _channel.invokeMethod('askForResources', [
+      final outcome = await _channel.invokeMethod('askForResources', [
         readResources.map((e) => e.name).toList(),
         writeResources.map((e) => e.name).toList(),
       ]);
@@ -91,20 +100,24 @@ class VitalHealthAndroid extends VitalHealthPlatform {
   @override
   Future<bool> hasAskedForPermission(HealthResource resource) async {
     try {
-      return await _channel.invokeMethod('hasAskedForPermission', resource.name) as bool;
+      return await _channel.invokeMethod('hasAskedForPermission', resource.name)
+          as bool;
     } on Exception catch (e) {
       throw _mapException(e);
     }
   }
 
   @override
-  Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resources) async {
+  Future<Map<HealthResource, PermissionStatus>> permissionStatus(
+      List<HealthResource> resources) async {
     try {
-      final result =
-        await _channel.invokeMethod('permissionStatus', resources.map((r) => r.name).toList());
+      final result = await _channel.invokeMethod(
+          'permissionStatus', resources.map((r) => r.name).toList());
 
       Map<String, dynamic> resultMap = jsonDecode(result);
-      return resultMap.map((key, value) => MapEntry(HealthResource.values.byName(key), PermissionStatus.values.byName(value as String)));
+      return resultMap.map((key, value) => MapEntry(
+          HealthResource.values.byName(key),
+          PermissionStatus.values.byName(value as String)));
     } on Exception catch (e) {
       throw _mapException(e);
     }
@@ -186,6 +199,47 @@ class VitalHealthAndroid extends VitalHealthPlatform {
 
   @override
   Stream<SyncStatus> get status => _statusStreamBroadcast;
+
+  @override
+  Stream<ConnectionStatus> connectionStatus() async* {
+    yield await getConnectionStatus();
+    yield* _connectionStatusStreamBroadcast;
+  }
+
+  @override
+  Future<ConnectionStatus> getConnectionStatus() async {
+    try {
+      final result = await _channel.invokeMethod<String>('getConnectionStatus');
+      return _mapConnectionStatus(result!);
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
+  }
+
+  @override
+  Future<void> connect() async {
+    try {
+      await _channel.invokeMethod('connect');
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
+  }
+
+  @override
+  Future<void> disconnect() async {
+    try {
+      await _channel.invokeMethod('disconnect');
+    } on Exception catch (e) {
+      throw _mapException(e);
+    }
+  }
+}
+
+ConnectionStatus _mapConnectionStatus(String value) {
+  return ConnectionStatus.values.firstWhere(
+    (status) => status.name == value,
+    orElse: () => ConnectionStatus.autoConnect,
+  );
 }
 
 ProcessedData _mapJsonToProcessedData(

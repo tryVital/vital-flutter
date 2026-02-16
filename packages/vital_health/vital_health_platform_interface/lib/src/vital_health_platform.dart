@@ -1,5 +1,4 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 class VitalHealthPlatform extends PlatformInterface {
@@ -25,6 +24,9 @@ class VitalHealthPlatform extends PlatformInterface {
   Stream<SyncStatus> get status =>
       throw UnimplementedError('status() has not been implemented.');
 
+  Stream<ConnectionStatus> connectionStatus() =>
+      throw UnimplementedError('connectionStatus() has not been implemented.');
+
   Future<bool> isAvailable() =>
       throw UnimplementedError('isAvailable() has not been implemented.');
 
@@ -40,9 +42,9 @@ class VitalHealthPlatform extends PlatformInterface {
       throw UnimplementedError(
           'hasAskedForPermission() has not been implemented.');
 
-  Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resources) =>
-      throw UnimplementedError(
-          'permissionStatus() has not been implemented.');
+  Future<Map<HealthResource, PermissionStatus>> permissionStatus(
+          List<HealthResource> resources) =>
+      throw UnimplementedError('permissionStatus() has not been implemented.');
 
   Future<void> syncData({List<HealthResource>? resources}) =>
       throw UnimplementedError('syncData() has not been implemented.');
@@ -82,6 +84,18 @@ class VitalHealthPlatform extends PlatformInterface {
   }
 
   Future<void> openSyncProgressView() {
+    throw UnimplementedError();
+  }
+
+  Future<ConnectionStatus> getConnectionStatus() {
+    throw UnimplementedError();
+  }
+
+  Future<void> connect() {
+    throw UnimplementedError();
+  }
+
+  Future<void> disconnect() {
     throw UnimplementedError();
   }
 }

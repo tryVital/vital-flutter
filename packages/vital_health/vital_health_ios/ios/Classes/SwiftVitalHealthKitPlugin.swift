@@ -16,6 +16,7 @@ private let jsonEncoder: JSONEncoder = {
 public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   private let channel: FlutterMethodChannel
   private var cancellable: Cancellable? = nil
+  private var connectionStatusCancellable: Cancellable? = nil
   private var flutterRunning = true
 
   init(_ channel: FlutterMethodChannel){
@@ -35,6 +36,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     flutterRunning = false
     cancellable?.cancel()
+    connectionStatusCancellable?.cancel()
   }
 
   public func application(
@@ -50,6 +52,7 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
   public func applicationWillTerminate(_ application: UIApplication) {
     flutterRunning = false
     cancellable?.cancel()
+    connectionStatusCancellable?.cancel()
   }
 
   public static func detachFromEngineForRegistrar(registrar: FlutterPluginRegistrar) {
@@ -87,6 +90,14 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         cancellable?.cancel()
         result(nil)
         return
+      case "subscribeToConnectionStatus":
+        subscribeToConnectionStatus()
+        result(nil)
+        return
+      case "unsubscribeFromConnectionStatus":
+        connectionStatusCancellable?.cancel()
+        result(nil)
+        return
       case "read":
         read(call.arguments as! [AnyObject], result: result)
         return
@@ -99,6 +110,15 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         return
       case "openSyncProgressView":
         openSyncProgressView(result: result)
+        return
+      case "getConnectionStatus":
+        result(mapConnectionStatusToString(VitalHealthKitClient.shared.connectionStatus))
+        return
+      case "connect":
+        connect(result: result)
+        return
+      case "disconnect":
+        disconnect(result: result)
         return
       default:
         break
@@ -196,16 +216,19 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
     let logsEnabled = arguments[1] as! Bool
     let numberOfDaysToBackFill: Int = arguments[2] as! Int
     let modeString: String = arguments[3] as! String
+    let connectionPolicyString: String = arguments[4] as! String
 
     do {
       let mode = try mapToMode(modeString)
+      let connectionPolicy = try mapToConnectionPolicy(connectionPolicyString)
 
       VitalHealthKitClient.configure(
         .init(
           backgroundDeliveryEnabled: backgroundDeliveryEnabled,
           numberOfDaysToBackFill: numberOfDaysToBackFill,
           logsEnabled: logsEnabled,
-          mode: mode
+          mode: mode,
+          connectionPolicy: connectionPolicy
         )
       )
 
@@ -316,6 +339,53 @@ public class SwiftVitalHealthKitPlugin: NSObject, FlutterPlugin {
         self?.channel.invokeMethod("sendStatus", arguments: mapStatusToArguments(value))
       }
     }
+
+  private func subscribeToConnectionStatus() {
+    connectionStatusCancellable?.cancel()
+    connectionStatusCancellable = VitalHealthKitClient.shared.connectionStatusPublisher()
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] value in
+        guard self?.flutterRunning ?? false else {
+          return
+        }
+
+        self?.channel.invokeMethod("sendConnectionStatus", arguments: mapConnectionStatusToString(value))
+      }
+  }
+
+  private func connect(result: @escaping FlutterResult) {
+    Task { @MainActor in
+      do {
+        try await VitalHealthKitClient.shared.connect()
+        result(nil)
+      } catch {
+        result(
+          FlutterError(
+            code: "VitalHealthError",
+            message: "\(error)",
+            details: nil
+          )
+        )
+      }
+    }
+  }
+
+  private func disconnect(result: @escaping FlutterResult) {
+    Task { @MainActor in
+      do {
+        try await VitalHealthKitClient.shared.disconnect()
+        result(nil)
+      } catch {
+        result(
+          FlutterError(
+            code: "VitalHealthError",
+            message: "\(error)",
+            details: nil
+          )
+        )
+      }
+    }
+  }
 }
 
 struct AnyEncodable: Encodable {
@@ -364,6 +434,7 @@ enum VitalError: Error {
   case UnsupportedEnvironment(String)
   case UnsupportedResource(String)
   case UnsupportedDataPushMode(String)
+  case UnsupportedConnectionPolicy(String)
   case UnsupportedProvider(String)
 }
 
@@ -533,6 +604,30 @@ private func mapToMode(_ mode: String) throws -> VitalHealthKitClient.Configurat
       return .automatic
     default:
       throw VitalError.UnsupportedDataPushMode("\(mode)")
+  }
+}
+
+private func mapToConnectionPolicy(_ policy: String) throws -> VitalHealthKitClient.ConnectionPolicy {
+  switch policy {
+    case "autoConnect":
+      return .autoConnect
+    case "explicit":
+      return .explicit
+    default:
+      throw VitalError.UnsupportedConnectionPolicy("\(policy)")
+  }
+}
+
+private func mapConnectionStatusToString(_ status: VitalHealthKitClient.ConnectionStatus) -> String {
+  switch status {
+    case .autoConnect:
+      return "autoConnect"
+    case .connected:
+      return "connected"
+    case .connectionPaused:
+      return "connectionPaused"
+    case .disconnected:
+      return "disconnected"
   }
 }
 

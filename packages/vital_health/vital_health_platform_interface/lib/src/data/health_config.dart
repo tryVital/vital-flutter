@@ -1,19 +1,33 @@
+enum ConnectionPolicy {
+  autoConnect,
+  explicit,
+}
+
+enum ConnectionStatus {
+  autoConnect,
+  connected,
+  disconnected,
+  connectionPaused,
+}
+
 class HealthConfig {
   final bool logsEnabled;
   final int numberOfDaysToBackFill;
+  final ConnectionPolicy connectionPolicy;
   final AndroidHealthConfig androidConfig;
   final IosHealthConfig iosConfig;
 
   const HealthConfig({
     this.logsEnabled = true,
     this.numberOfDaysToBackFill = 90,
+    this.connectionPolicy = ConnectionPolicy.autoConnect,
     this.androidConfig = const AndroidHealthConfig(),
     this.iosConfig = const IosHealthConfig(),
   });
 
   @override
   String toString() {
-    return 'HealthConfig{logsEnabled: $logsEnabled, numberOfDaysToBackFill: $numberOfDaysToBackFill, androidConfig: $androidConfig, iosConfig: $iosConfig}';
+    return 'HealthConfig{logsEnabled: $logsEnabled, numberOfDaysToBackFill: $numberOfDaysToBackFill, connectionPolicy: $connectionPolicy, androidConfig: $androidConfig, iosConfig: $iosConfig}';
   }
 }
 
