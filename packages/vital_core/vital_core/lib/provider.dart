@@ -17,7 +17,7 @@ class UserConnection {
   UserConnectionStatus status;
 
   Map<String, ResourceAvailability> resourceAvailability;
-  
+
   DateTime createdOn;
 
   UserConnection({

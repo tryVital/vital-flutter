@@ -6,7 +6,9 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets("test permissionStatus round-trip", (WidgetTester tester) async {
-    var result = await vital_health.permissionStatus(vital_health.HealthResource.values);
-    expect(result.keys.toSet(), equals(vital_health.HealthResource.values.toSet()));
+    var result =
+        await vital_health.permissionStatus(vital_health.HealthResource.values);
+    expect(result.keys.toSet(),
+        equals(vital_health.HealthResource.values.toSet()));
   });
 }

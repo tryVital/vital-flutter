@@ -26,12 +26,16 @@ class UserBloc extends ChangeNotifier {
 
   bool pauseSync = false;
   bool isBackgroundSyncEnabled = false;
+  bool useExplicitConnectMode = false;
+  bool isConnectingDisconnecting = false;
 
   bool hasDisposed = false;
   bool showBackgroundSyncSwitch = false;
 
   Stream<String> get healthSyncStatus =>
       vital_health.syncStatus.map((event) => event.status.name);
+  Stream<vital_health.ConnectionStatus> get healthConnectionStatus =>
+      vital_health.connectionStatusDidChange();
 
   UserBloc(this.user, this.vitalClient) {
     subscription = vital_core.clientStatusStream.listen((status) {
@@ -58,6 +62,8 @@ class UserBloc extends ChangeNotifier {
     isHealthDataAvailable = await vital_health.isAvailable();
     isBackgroundSyncEnabled = await vital_health.isBackgroundSyncEnabled;
     pauseSync = await vital_health.pauseSynchronization;
+    useExplicitConnectMode = (await vital_health.connectionStatus()) !=
+        vital_health.ConnectionStatus.autoConnect;
     initialSyncDone = true;
 
     if (!hasDisposed) {
@@ -105,8 +111,11 @@ class UserBloc extends ChangeNotifier {
 
     // [2] Configure Vital Health SDK
     await vital_health.configure(
-      config: const vital_health.HealthConfig(
-        iosConfig: vital_health.IosHealthConfig(
+      config: vital_health.HealthConfig(
+        connectionPolicy: useExplicitConnectMode
+            ? vital_health.ConnectionPolicy.explicit
+            : vital_health.ConnectionPolicy.autoConnect,
+        iosConfig: const vital_health.IosHealthConfig(
           backgroundDeliveryEnabled: true,
         ),
       ),
@@ -160,26 +169,28 @@ class UserBloc extends ChangeNotifier {
 
   void askForHealthResources() async {
     // Request all on iOS; request a subset on Android.
-    var readResources = Platform.isIOS ? vital_health.HealthResource.values : [
-      vital_health.HealthResource.profile,
-      vital_health.HealthResource.body,
-      vital_health.HealthResource.activity,
-      vital_health.HealthResource.heartRate,
-      vital_health.HealthResource.bloodPressure,
-      vital_health.HealthResource.glucose,
-      vital_health.HealthResource.sleep,
-      vital_health.HealthResource.water,
-    ];
+    var readResources = Platform.isIOS
+        ? vital_health.HealthResource.values
+        : [
+            vital_health.HealthResource.profile,
+            vital_health.HealthResource.body,
+            vital_health.HealthResource.activity,
+            vital_health.HealthResource.heartRate,
+            vital_health.HealthResource.bloodPressure,
+            vital_health.HealthResource.glucose,
+            vital_health.HealthResource.sleep,
+            vital_health.HealthResource.water,
+          ];
 
-    Map<vital_health.HealthResource, vital_health.PermissionStatus> statuses = await vital_health.permissionStatus(readResources);
+    Map<vital_health.HealthResource, vital_health.PermissionStatus> statuses =
+        await vital_health.permissionStatus(readResources);
     statuses.forEach((resource, status) {
       Fimber.i("$resource status: $status");
     });
 
-    vital_health.PermissionOutcome outcome =
-        await vital_health.askForPermission(readResources, [
-      vital_health.HealthResourceWrite.water
-    ]);
+    vital_health.PermissionOutcome outcome = await vital_health
+        .askForPermission(
+            readResources, [vital_health.HealthResourceWrite.water]);
 
     Fimber.i("Ask Outcome: $outcome");
   }
@@ -239,5 +250,35 @@ class UserBloc extends ChangeNotifier {
     vital_health.setPauseSynchronization(paused);
     pauseSync = paused;
     notifyListeners();
+  }
+
+  void setUseExplicitConnectMode(bool value) {
+    useExplicitConnectMode = value;
+    notifyListeners();
+  }
+
+  Future<void> connectDisconnect() async {
+    if (isConnectingDisconnecting) {
+      return;
+    }
+
+    isConnectingDisconnecting = true;
+    notifyListeners();
+
+    try {
+      final status = await vital_health.connectionStatus();
+      if (status == vital_health.ConnectionStatus.disconnected) {
+        await vital_health.connect();
+      } else {
+        await vital_health.disconnect();
+      }
+    } catch (err) {
+      Fimber.e("Connect/disconnect failed: $err");
+    } finally {
+      isConnectingDisconnecting = false;
+      if (!hasDisposed) {
+        notifyListeners();
+      }
+    }
   }
 }

@@ -1,3 +1,4 @@
 enum PermissionStatus {
-  asked, notAsked,
+  asked,
+  notAsked,
 }
