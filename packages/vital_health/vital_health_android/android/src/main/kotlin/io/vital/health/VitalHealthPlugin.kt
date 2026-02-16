@@ -30,6 +30,7 @@ import io.tryvital.vitalhealthconnect.disableBackgroundSync
 import io.tryvital.vitalhealthconnect.enableBackgroundSyncContract
 import io.tryvital.vitalhealthconnect.isBackgroundSyncEnabled
 import io.tryvital.vitalhealthconnect.model.HealthConnectAvailability
+import io.tryvital.vitalhealthconnect.model.ConnectionPolicy
 import io.tryvital.vitalhealthconnect.model.PermissionOutcome
 import io.tryvital.vitalhealthconnect.model.PermissionStatus
 import io.tryvital.vitalhealthconnect.model.SyncStatus
@@ -117,6 +118,17 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 }
             }
         }
+
+        taskScope.launch {
+            vitalHealthConnectManager.connectionStatus.collect {
+                withContext(Dispatchers.Main) {
+                    channel.invokeMethod(
+                        "connectionStatus",
+                        it.name.replaceFirstChar { char -> char.lowercase() }
+                    )
+                }
+            }
+        }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -182,6 +194,17 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             }
 
             "setSyncNotificationContent" -> setSyncNotificationContent(call, result)
+            "getConnectionStatus" -> result.success(
+                vitalHealthConnectManager.connectionStatus.value.name.replaceFirstChar { it.lowercase() }
+            )
+            "connect" -> result.execute(taskScope) {
+                vitalHealthConnectManager.connect()
+                return@execute null
+            }
+            "disconnect" -> result.execute(taskScope) {
+                vitalHealthConnectManager.disconnect()
+                return@execute null
+            }
             else -> throw Exception("Unsupported method ${call.method}")
         }
     }
@@ -598,6 +621,12 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 logsEnabled = call.argument<Boolean?>("logsEnabled")!!,
                 syncOnAppStart = call.argument<Boolean?>("syncOnAppStart")!!,
                 numberOfDaysToBackFill = call.argument<Int?>("numberOfDaysToBackFill")!!,
+                connectionPolicy = runCatching {
+                    ConnectionPolicy.valueOf(
+                        (call.argument<String?>("connectionPolicy") ?: "autoConnect")
+                            .replaceFirstChar { it.titlecase() }
+                    )
+                }.getOrNull() ?: ConnectionPolicy.AutoConnect,
             )
             return@execute null
         }
@@ -643,4 +672,3 @@ private inline fun Result.execute(scope: CoroutineScope, crossinline action: sus
         error("VitalHealthError", "${e::class.simpleName} ${e.message}", e.stackTraceToString())
     }
 }
-

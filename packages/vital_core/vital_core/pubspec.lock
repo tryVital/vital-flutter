@@ -651,21 +651,21 @@ packages:
       path: "../vital_core_android"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.6"
   vital_core_ios:
     dependency: "direct main"
     description:
       path: "../vital_core_ios"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.6"
   vital_core_platform_interface:
     dependency: "direct main"
     description:
       path: "../vital_core_platform_interface"
       relative: true
     source: path
-    version: "4.5.2"
+    version: "4.5.6"
   vm_service:
     dependency: transitive
     description:

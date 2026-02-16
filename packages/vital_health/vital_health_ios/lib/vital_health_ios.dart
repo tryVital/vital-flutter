@@ -25,6 +25,17 @@ class VitalHealthIos extends VitalHealthPlatform {
   );
 
   late final _statusStream = _streamController.stream.asBroadcastStream();
+  late final StreamController<ConnectionStatus> _connectionStatusController =
+      StreamController(
+    onListen: () async {
+      await _channel.invokeMethod('subscribeToConnectionStatus');
+    },
+    onCancel: () async {
+      await _channel.invokeMethod('unsubscribeFromConnectionStatus');
+    },
+  );
+  late final _connectionStatusStream =
+      _connectionStatusController.stream.asBroadcastStream();
 
   VitalHealthIos() : super() {
     _channel.setMethodCallHandler((call) async {
@@ -34,6 +45,10 @@ class VitalHealthIos extends VitalHealthPlatform {
               "sendStatus ${call.arguments[0]} ${call.arguments[1]} ${call.arguments[2]}");
           _streamController.sink
               .add(mapArgumentsToStatus(call.arguments as List<dynamic>));
+          break;
+        case 'sendConnectionStatus':
+          _connectionStatusController.sink
+              .add(_mapConnectionStatus(call.arguments as String));
           break;
         default:
           break;
@@ -54,7 +69,8 @@ class VitalHealthIos extends VitalHealthPlatform {
       config.iosConfig.backgroundDeliveryEnabled,
       config.logsEnabled,
       config.numberOfDaysToBackFill,
-      config.iosConfig.dataPushMode
+      config.iosConfig.dataPushMode,
+      config.connectionPolicy.name,
     ]);
     final error = _mapError(result);
     if (error != null) {
@@ -111,16 +127,19 @@ class VitalHealthIos extends VitalHealthPlatform {
   }
 
   @override
-  Future<Map<HealthResource, PermissionStatus>> permissionStatus(List<HealthResource> resources) async {
-      final result =
-        await _channel.invokeMethod('permissionStatus', resources.map((r) => r.name).toList());
-      Map<String, dynamic> resultMap = jsonDecode(result);
+  Future<Map<HealthResource, PermissionStatus>> permissionStatus(
+      List<HealthResource> resources) async {
+    final result = await _channel.invokeMethod(
+        'permissionStatus', resources.map((r) => r.name).toList());
+    Map<String, dynamic> resultMap = jsonDecode(result);
 
     final error = _mapError(resultMap);
     if (error != null) {
       throw error;
     } else {
-      return resultMap.map((key, value) => MapEntry(HealthResource.values.byName(key), PermissionStatus.values.byName(value as String)));
+      return resultMap.map((key, value) => MapEntry(
+          HealthResource.values.byName(key),
+          PermissionStatus.values.byName(value as String)));
     }
   }
 
@@ -180,6 +199,35 @@ class VitalHealthIos extends VitalHealthPlatform {
 
   @override
   Stream<SyncStatus> get status => _statusStream;
+
+  @override
+  Stream<ConnectionStatus> connectionStatus() async* {
+    yield await getConnectionStatus();
+    yield* _connectionStatusStream;
+  }
+
+  @override
+  Future<ConnectionStatus> getConnectionStatus() async {
+    final result = await _channel.invokeMethod<String>('getConnectionStatus');
+    return _mapConnectionStatus(result!);
+  }
+
+  @override
+  Future<void> connect() {
+    return _channel.invokeMethod('connect');
+  }
+
+  @override
+  Future<void> disconnect() {
+    return _channel.invokeMethod('disconnect');
+  }
+}
+
+ConnectionStatus _mapConnectionStatus(String value) {
+  return ConnectionStatus.values.firstWhere(
+    (status) => status.name == value,
+    orElse: () => ConnectionStatus.autoConnect,
+  );
 }
 
 ProcessedData _mapJsonToProcessedData(
