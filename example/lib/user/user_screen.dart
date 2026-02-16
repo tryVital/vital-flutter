@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -106,6 +107,13 @@ class UserScreen extends StatelessWidget {
         Text("SDK is currently unconfigured.",
             style: Theme.of(context).textTheme.bodyMedium),
         ListTile(
+          title: const Text('Health SDK Explicit Connect mode'),
+          trailing: Switch(
+            value: bloc.useExplicitConnectMode,
+            onChanged: (value) => bloc.setUseExplicitConnectMode(value),
+          ),
+        ),
+        ListTile(
           title: const Text('Vital Sign-In Token Demo mode'),
           trailing: OutlinedButton(
             onPressed: () => bloc.configureSDK(SDKAuthMode.signInTokenDemo),
@@ -167,9 +175,47 @@ class UserScreen extends StatelessWidget {
   }
 
   List<Widget> healthDataWidgets(BuildContext context, UserBloc bloc) {
+    final connectionStatusWidget = StreamBuilder<ConnectionStatus>(
+      stream: bloc.healthConnectionStatus,
+      builder: (context, snapshot) {
+        final status = snapshot.data;
+
+        Fimber.i("Connection Status: $status");
+
+        if (status == null) {
+          return const SizedBox.shrink();
+        }
+
+        final isDisconnected = status == ConnectionStatus.disconnected;
+        return Column(
+          children: [
+            ListTile(
+              title: const Text('Explicit Connection Status'),
+              subtitle: Text(status.name),
+              trailing: status != ConnectionStatus.autoConnect
+                  ? OutlinedButton(
+                      onPressed: bloc.isConnectingDisconnecting
+                          ? null
+                          : () => bloc.connectDisconnect(),
+                      child: bloc.isConnectingDisconnecting
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(isDisconnected ? "Connect" : "Disconnect"),
+                    )
+                  : null,
+            ),
+          ],
+        );
+      },
+    );
+
     return [
       Text("Health Data Sync",
           style: Theme.of(context).textTheme.headlineSmall),
+      connectionStatusWidget,
       ListTile(
         title: const Text('Request the permissions for health data'),
         trailing: OutlinedButton(
