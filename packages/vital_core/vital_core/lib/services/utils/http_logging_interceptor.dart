@@ -1,27 +1,27 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
+
 import 'package:chopper/chopper.dart';
+import 'package:http/http.dart' as http;
 
-class HttpRequestLoggingInterceptor extends HttpLoggingInterceptor {
+/// Matches the previous logging output while using the new interceptor API.
+class HttpRequestLoggingInterceptor implements Interceptor {
   @override
-  FutureOr<Request> onRequest(Request request) {
+  FutureOr<Response<BodyType>> intercept<BodyType>(
+    Chain<BodyType> chain,
+  ) async {
+    final request = chain.request;
     chopperLogger.info('--> ${request.method} ${request.url}');
-
     request.headers.forEach((k, v) {
       chopperLogger.info('$k: $v');
     });
 
-    if (request is http.Request) {
-      if (request.body.isNotEmpty) {
-        chopperLogger.info(request.body);
-      }
+    final body = request.body;
+    if (body is String && body.isNotEmpty) {
+      chopperLogger.info(body);
     }
 
-    return super.onRequest(request);
-  }
+    final response = await chain.proceed(request);
 
-  @override
-  FutureOr<Response> onResponse(Response response) {
     final base = response.base.request;
     chopperLogger.info('<-- ${response.statusCode} ${base?.url}');
 

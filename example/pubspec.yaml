@@ -17,7 +17,7 @@ dependencies:
   vital_core: ^4.5.6
   vital_health: ^4.5.6
   vital_devices: ^4.5.6
-  chopper: ^7.1.1
+  chopper: ^8.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

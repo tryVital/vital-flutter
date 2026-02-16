@@ -11,7 +11,7 @@ part 'body_service.chopper.dart';
 
 @ChopperApi()
 abstract class BodyService extends ChopperService {
-  @Get(path: '/summary/body/{user_id}')
+  @GET(path: '/summary/body/{user_id}')
   Future<Response<BodyDataResponse>> getBodyData(
     @Path('user_id') String userId,
     @Query('start_date') DateTime startDate,
@@ -20,7 +20,7 @@ abstract class BodyService extends ChopperService {
   );
 
   static BodyService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,

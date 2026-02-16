@@ -11,11 +11,11 @@ part 'providers_service.chopper.dart';
 
 @ChopperApi()
 abstract class ProvidersService extends ChopperService {
-  @Get(path: 'providers')
+  @GET(path: 'providers')
   Future<Response<List<AvailableProvider>>> get();
 
   static ProvidersService create(
-      http.Client httpClient, Uri baseUrl, RequestInterceptor authInterceptor) {
+      http.Client httpClient, Uri baseUrl, Interceptor authInterceptor) {
     final client = ChopperClient(
       client: httpClient,
       baseUrl: baseUrl,

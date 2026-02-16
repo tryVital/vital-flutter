@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:vital_core/core.dart' as vital_core;
 
-class VitalInterceptor extends HeadersInterceptor {
+class VitalInterceptor implements Interceptor {
   final String? apiKey;
   final bool useAccessToken;
 
-  VitalInterceptor(this.useAccessToken, this.apiKey) : super({}) {
+  VitalInterceptor(this.useAccessToken, this.apiKey) {
     if (useAccessToken && apiKey != null) {
       throw Exception("useAccessToken is true, but an API key is provided.");
     }
@@ -19,7 +19,9 @@ class VitalInterceptor extends HeadersInterceptor {
   }
 
   @override
-  Future<Request> onRequest(Request request) async {
+  FutureOr<Response<BodyType>> intercept<BodyType>(
+    Chain<BodyType> chain,
+  ) async {
     Map<String, String> headers;
 
     if (useAccessToken) {
@@ -31,6 +33,6 @@ class VitalInterceptor extends HeadersInterceptor {
       };
     }
 
-    return applyHeaders(request, headers);
+    return chain.proceed(applyHeaders(chain.request, headers));
   }
 }
