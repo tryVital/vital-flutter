@@ -9,21 +9,21 @@ PODS:
     - Flutter
   - vital_core_ios (0.0.10):
     - Flutter
-    - VitalCore (~> 1.8.4)
+    - VitalCore (~> 1.8.7)
   - vital_devices_ios (0.0.10):
     - Flutter
-    - VitalDevices (~> 1.8.4)
+    - VitalDevices (~> 1.8.7)
   - vital_health_ios (0.0.10):
     - Flutter
-    - VitalHealthKit (~> 1.8.4)
-  - VitalCore (1.8.4):
-    - VitalLogging (~> 1.8.4)
-  - VitalDevices (1.8.4):
+    - VitalHealthKit (~> 1.8.7)
+  - VitalCore (1.8.7):
+    - VitalLogging (~> 1.8.7)
+  - VitalDevices (1.8.7):
     - CombineCoreBluetooth (~> 0.3.1)
-    - VitalCore (~> 1.8.4)
-  - VitalHealthKit (1.8.4):
-    - VitalCore (~> 1.8.4)
-  - VitalLogging (1.8.4)
+    - VitalCore (~> 1.8.7)
+  - VitalHealthKit (1.8.7):
+    - VitalCore (~> 1.8.7)
+  - VitalLogging (1.8.7)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -61,16 +61,16 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CombineCoreBluetooth: 87fc830440fa8b1e1024c35eaa5e116e743c2660
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
-  vital_core_ios: 96c90e1d67b22ce741d3e4fff42e9242120ee72a
-  vital_devices_ios: ffda3b361279ab058bc2d947606d0e7d5bc7305e
-  vital_health_ios: b4d27a913eec55106b85b57bfa0673e7971dac50
-  VitalCore: 803a9314f0679123a0ca45d4b8352e669cf7b6ed
-  VitalDevices: 7cf77defa4fc273a1c40b3dd551486e547a80f87
-  VitalHealthKit: aa0afb705c0ce1c7285a6f8567aded9c56852430
-  VitalLogging: 40689db5c89b720f5cb0e1175c2f219621e16c09
+  integration_test: d5929033778cc4991a187e4e1a85396fa4f59b3a
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
+  vital_core_ios: 0248e3cc0a616ecbeeab298edccd01c993d54a53
+  vital_devices_ios: d8bd219bdc4f3c193575a6620b7c960ed5858a50
+  vital_health_ios: 12046445e7959e68f0edba0460136d23fddcae19
+  VitalCore: 2875d0d5839ff53f6c0ccaa0083d2865fbd05de8
+  VitalDevices: 2fdf14463a9637f6547ff2eeea81479ff61d08fe
+  VitalHealthKit: 5c3ca5a305209bf62c959ead88977b99ff1ae58b
+  VitalLogging: 15726d14ebfc2414e4171d9ebd7793ad0d7ecad4
 
 PODFILE CHECKSUM: f21161b81928bd85faa21a8d8a8be5daa58b7b47
 
