@@ -2,8 +2,8 @@ group 'io.vital.health'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.8.22'
-    ext.vital_sdk_version = '4.2.2'
+    ext.kotlin_version = '2.1.21'
+    ext.vital_sdk_version = '5.0.2'
 
     repositories {
         google()
@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.0'
+        classpath 'com.android.tools.build:gradle:8.10.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -29,7 +29,7 @@ apply plugin: 'kotlin-android'
 android {
     namespace "io.vital.health"
 
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         minSdkVersion 26
