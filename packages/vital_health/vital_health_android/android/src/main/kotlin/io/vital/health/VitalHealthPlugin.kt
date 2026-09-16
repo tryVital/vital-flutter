@@ -29,16 +29,16 @@ import io.tryvital.vitalhealthconnect.VitalHealthConnectManager
 import io.tryvital.vitalhealthconnect.disableBackgroundSync
 import io.tryvital.vitalhealthconnect.enableBackgroundSyncContract
 import io.tryvital.vitalhealthconnect.isBackgroundSyncEnabled
-import io.tryvital.vitalhealthconnect.model.HealthConnectAvailability
-import io.tryvital.vitalhealthconnect.model.ConnectionPolicy
 import io.tryvital.vitalhealthconnect.model.PermissionOutcome
-import io.tryvital.vitalhealthconnect.model.PermissionStatus
-import io.tryvital.vitalhealthconnect.model.SyncStatus
-import io.tryvital.vitalhealthconnect.model.VitalResource
-import io.tryvital.vitalhealthconnect.model.WritableVitalResource
 import io.tryvital.vitalhealthconnect.model.processedresource.ProcessedResourceData
 import io.tryvital.vitalhealthconnect.model.processedresource.SummaryData
 import io.tryvital.vitalhealthconnect.model.processedresource.TimeSeriesData
+import io.tryvital.vitalhealthcore.model.ConnectionPolicy
+import io.tryvital.vitalhealthcore.model.PermissionStatus
+import io.tryvital.vitalhealthcore.model.ProviderAvailability
+import io.tryvital.vitalhealthcore.model.SyncStatus
+import io.tryvital.vitalhealthcore.model.VitalResource
+import io.tryvital.vitalhealthcore.model.WritableVitalResource
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -172,7 +172,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
             "isAvailable" -> {
                 result.success(
-                    VitalHealthConnectManager.isAvailable(context) == HealthConnectAvailability.Installed
+                    VitalHealthConnectManager.isAvailable(context) == ProviderAvailability.Installed
                 )
             }
             "getPauseSynchronization" -> {
@@ -211,7 +211,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private fun askForResources(call: MethodCall, result: Result) {
         val availability = VitalHealthConnectManager.isAvailable(context)
-        if (availability != HealthConnectAvailability.Installed) {
+        if (availability != ProviderAvailability.Installed) {
             return result.error("VitalHealthError", "Health Connect is not available: $availability", null)
         }
 
@@ -281,7 +281,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
     private fun enableBackgroundSync(@Suppress("UNUSED_PARAMETER") call: MethodCall, result: Result) {
         val availability = VitalHealthConnectManager.isAvailable(context)
-        if (availability != HealthConnectAvailability.Installed) {
+        if (availability != ProviderAvailability.Installed) {
             return result.error("VitalHealthError", "Health Connect is not available: $availability", null)
         }
 
@@ -608,7 +608,7 @@ class VitalHealthPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         val manager = VitalHealthConnectManager.getOrCreate(context)
         val availability = VitalHealthConnectManager.isAvailable(context)
 
-        if (availability != HealthConnectAvailability.Installed) {
+        if (availability != ProviderAvailability.Installed) {
             return result.error(
                 "ClientSetup",
                 "Health Connect is unavailable: $availability",

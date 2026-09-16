@@ -273,6 +273,8 @@ ProcessedData _mapJsonToProcessedData(
             .whereType<Workout>()
             .toList(),
       );
+    case HealthResource.workoutStream:
+      throw Exception("Not supported on Android");
     case HealthResource.sleep:
       return SleepProcessedData(
         sleeps: (json['sleeps'] as List<dynamic>)

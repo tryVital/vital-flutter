@@ -559,6 +559,8 @@ private func mapVitalResourceToResource(_ resource: VitalResource) -> String {
     return "basalBodyTemperature"
   case .heartRateRecoveryOneMinute:
     return "heartRateRecoveryOneMinute"
+  case .workoutStream:
+    return "workoutStream"
   }
 }
 
@@ -639,6 +641,8 @@ private func mapResourceToReadableVitalResource(_ name: String) throws -> VitalR
       return .body
     case "workout":
       return .workout
+    case "workoutStream":
+      return .workoutStream
     case "activity":
       return .activity
     case "sleep":

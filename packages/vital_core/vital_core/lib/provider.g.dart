@@ -30,6 +30,7 @@ const _$ProviderSlugEnumMap = {
   ProviderSlug.manual: 'manual',
   ProviderSlug.appleHealthKit: 'apple_health_kit',
   ProviderSlug.healthConnect: 'health_connect',
+  ProviderSlug.samsungHealth: 'samsung_health',
   ProviderSlug.iHealth: 'ihealth',
   ProviderSlug.oura: 'oura',
   ProviderSlug.garmin: 'garmin',
@@ -44,6 +45,7 @@ const _$ProviderSlugEnumMap = {
   ProviderSlug.eightSleep: 'eight_sleep',
   ProviderSlug.withings: 'withings',
   ProviderSlug.googleFit: 'google_fit',
+  ProviderSlug.googleHealth: 'google_health',
   ProviderSlug.hammerhead: 'hammerhead',
   ProviderSlug.dexcom: 'dexcom',
   ProviderSlug.myFitnessPal: 'my_fitness_pal',
@@ -104,4 +106,5 @@ const _$ManualProviderSlugEnumMap = {
   ManualProviderSlug.manual: 'manual',
   ManualProviderSlug.appleHealthKit: 'apple_health_kit',
   ManualProviderSlug.healthConnect: 'health_connect',
+  ManualProviderSlug.samsungHealth: 'samsung_health',
 };

@@ -266,6 +266,8 @@ ProcessedData _mapJsonToProcessedData(
             .whereType<Workout>()
             .toList(),
       );
+    case HealthResource.workoutStream:
+      throw Exception("Not supported by read()");
     case HealthResource.sleep:
       return SleepProcessedData(
         sleeps: (json['summary']["_0"]["sleep"]["_0"]['sleep'] as List<dynamic>)
