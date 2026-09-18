@@ -4,6 +4,12 @@
 
 A Flutter plugin for Vital Core.
 
+## Android requirements
+
+The Android SDK requires `minSdk 26` or newer and must be built with
+`compileSdk 36`, Android Gradle Plugin 8.9.1 or newer, Kotlin 2.1.20 or newer,
+Gradle 8.11.1 or newer, and JDK 17.
+
 ## Getting Started
 
 The Vital SDK is split into three main components: `vital_core`, `vital_health` and `vital_devices`.
@@ -61,4 +67,3 @@ the `Adept Labs Enterprise Edition (EE) license (the “EE License”)`. Please 
 [2]: https://pub.dev/packages/vital_health
 
 [3]: https://pub.dev/packages/vital_devices
-

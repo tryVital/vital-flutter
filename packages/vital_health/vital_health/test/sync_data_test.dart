@@ -63,6 +63,20 @@ void main() {
       expect(data, isA<List<LocalBloodPressureSample>>());
       expect((data as List<LocalBloodPressureSample>).length, 1);
     });
+
+    test('Workout stream sync arguments', () {
+      final result = mapArgumentsToStatus([
+        'successSyncing',
+        'workoutStream',
+        '{}',
+      ]);
+
+      expect(result, isA<SyncStatusSuccessSyncing>());
+      expect(
+        (result as SyncStatusSuccessSyncing).resource,
+        HealthResource.workoutStream,
+      );
+    });
   });
 }
 

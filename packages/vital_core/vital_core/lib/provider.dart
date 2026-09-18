@@ -115,7 +115,8 @@ enum ManualProviderSlug {
   libreBLE,
   manual,
   appleHealthKit,
-  healthConnect;
+  healthConnect,
+  samsungHealth;
 
   @override
   String toString() {
@@ -138,6 +139,7 @@ enum ProviderSlug {
   manual,
   appleHealthKit,
   healthConnect,
+  samsungHealth,
 
   @JsonValue("ihealth")
   iHealth,
@@ -154,6 +156,7 @@ enum ProviderSlug {
   eightSleep,
   withings,
   googleFit,
+  googleHealth,
   hammerhead,
   dexcom,
   myFitnessPal,

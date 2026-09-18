@@ -123,7 +123,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
             "hasUserConnectedTo" -> {
                 val arguments = call.arguments as? Map<*, *> ?: return reportInvalidArguments()
                 val rawProvider = arguments ["provider"] as? String ?: return reportInvalidArguments()
-                val provider = runCatching { ProviderSlug.valueOf(rawProvider) }.getOrNull()
+                val provider = ProviderSlug.values().firstOrNull { it.toString() == rawProvider }
                     ?: return reportInvalidArguments("unrecognized provider $rawProvider")
 
                 try {
@@ -194,7 +194,7 @@ class VitalCorePlugin : FlutterPlugin, MethodCallHandler {
             "deregisterProvider" -> {
                 val arguments = call.arguments as? Map<*, *> ?: return reportInvalidArguments()
                 val rawProvider = arguments["provider"] as? String ?: return reportInvalidArguments()
-                val provider = runCatching { ProviderSlug.valueOf(rawProvider) }.getOrNull()
+                val provider = ProviderSlug.values().firstOrNull { it.toString() == rawProvider }
                     ?: return reportInvalidArguments("unrecognized provider $rawProvider")
 
                 taskScope.launch {

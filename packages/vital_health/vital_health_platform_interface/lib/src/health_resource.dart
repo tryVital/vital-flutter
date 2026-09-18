@@ -2,6 +2,7 @@ enum HealthResource {
   profile,
   body,
   workout,
+  workoutStream, // Not available on Android
   activity,
   sleep,
   glucose,
