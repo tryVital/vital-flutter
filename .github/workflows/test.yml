@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -14,7 +15,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
@@ -31,3 +32,61 @@ jobs:
       - run: flutter pub get packages/vital_health/vital_health_platform_interface
       - run: flutter pub get packages/vital_health/vital_health_ios
       - run: flutter pub get packages/vital_health/vital_health_android
+
+  android:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - flutter: '3.44.0'
+            built-in-kotlin: false
+          - flutter: '3.47.0'
+            built-in-kotlin: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ matrix.flutter }}
+      - uses: android-actions/setup-android@v3
+      - name: Use local packages and configure Android toolchain
+        env:
+          BUILT_IN_KOTLIN: ${{ matrix.built-in-kotlin }}
+        run: |
+          python3 - <<'PYTHON'
+          import os
+          from pathlib import Path
+
+          root = Path.cwd()
+          packages = sorted(root.glob('packages/*/*/pubspec.yaml'))
+          overrides = 'dependency_overrides:\n'
+          for pubspec in packages:
+              name = pubspec.parent.name
+              overrides += f'  {name}:\n    path: {pubspec.parent}\n'
+          (root / 'example/pubspec_overrides.yaml').write_text(overrides)
+
+          if os.environ['BUILT_IN_KOTLIN'] == 'false':
+              settings = root / 'example/android/settings.gradle'
+              content = settings.read_text().replace('version "9.0.1"', 'version "8.8.2"')
+              content = content.replace('version "2.2.20"', 'version "2.1.0"')
+              settings.write_text(content)
+              app = root / 'example/android/app/build.gradle'
+              app.write_text(app.read_text().replace('    id "com.android.application"', '    id "com.android.application"\n    id "kotlin-android"'))
+              wrapper = root / 'example/android/gradle/wrapper/gradle-wrapper.properties'
+              wrapper.write_text(wrapper.read_text().replace('gradle-9.1.0-bin.zip', 'gradle-8.10.2-bin.zip'))
+              properties = root / 'example/android/gradle.properties'
+              properties.write_text(properties.read_text().replace('android.builtInKotlin=true', 'android.builtInKotlin=false'))
+              pubspec = root / 'example/pubspec.yaml'
+              pubspec.write_text(pubspec.read_text().replace('>=3.47.0', '>=3.44.0'))
+          PYTHON
+      - name: Build Android debug and release APKs
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter build apk --debug
+          flutter build apk --release

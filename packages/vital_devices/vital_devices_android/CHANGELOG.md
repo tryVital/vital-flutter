@@ -1,3 +1,8 @@
+## Unreleased
+
+ - Support AGP 9 built-in Kotlin.
+ - Raise the minimum supported SDK versions to Flutter 3.44 and Dart 3.12.
+
 ## 4.6.2
 
  - Bump "vital_devices_android" to `4.6.2`.
